@@ -21,7 +21,6 @@ target/
 .env
 .env.prod
 .env.*
-
 .idea/
 
 build.log
