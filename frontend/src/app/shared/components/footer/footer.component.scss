@@ -1,0 +1,17 @@
+footer {
+  margin-top: auto;
+}
+
+input[type='email'] {
+  &::placeholder {
+    @apply text-gray-400 dark:text-gray-500;
+  }
+}
+
+@media (max-width: 768px) {
+  footer {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

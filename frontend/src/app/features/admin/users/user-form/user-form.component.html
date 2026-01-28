@@ -1,0 +1,242 @@
+<div class="user-form-container max-w-3xl mx-auto">
+  <!-- Header -->
+  <div class="header-section mb-6">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+      {{ isEditMode() ? 'Edit User' : 'Add New User' }}
+    </h1>
+    <p class="text-gray-600 dark:text-gray-400">
+      {{ isEditMode() ? 'Update user information and permissions' : 'Create a new user account' }}
+    </p>
+  </div>
+
+  <!-- Form Card -->
+  <div class="form-card bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <div class="space-y-6">
+        <!-- First Name -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            First Name <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            formControlName="firstName"
+            placeholder="Enter first name"
+            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+            [class.border-red-500]="isFieldInvalid('firstName')"
+            [class.border-gray-300]="!isFieldInvalid('firstName')"
+            [class.dark:border-gray-600]="!isFieldInvalid('firstName')"
+          />
+          @if (isFieldInvalid('firstName')) {
+            <p class="mt-1 text-sm text-red-500">First name is required</p>
+          }
+        </div>
+
+        <!-- Last Name -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Last Name <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            formControlName="lastName"
+            placeholder="Enter last name"
+            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+            [class.border-red-500]="isFieldInvalid('lastName')"
+            [class.border-gray-300]="!isFieldInvalid('lastName')"
+            [class.dark:border-gray-600]="!isFieldInvalid('lastName')"
+          />
+          @if (isFieldInvalid('lastName')) {
+            <p class="mt-1 text-sm text-red-500">Last name is required</p>
+          }
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Email <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="Enter email address"
+            [readonly]="isEditMode()"
+            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+            [class.bg-gray-50]="isEditMode()"
+            [class.dark:bg-gray-700/50]="isEditMode()"
+            [class.border-red-500]="isFieldInvalid('email')"
+            [class.border-gray-300]="!isFieldInvalid('email')"
+            [class.dark:border-gray-600]="!isFieldInvalid('email')"
+          />
+          @if (isFieldInvalid('email')) {
+            <p class="mt-1 text-sm text-red-500">Valid email is required</p>
+          }
+          @if (isEditMode()) {
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Email cannot be changed</p>
+          }
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Password
+            <span class="text-red-500">{{ isEditMode() ? '' : '*' }}</span>
+            @if (isEditMode()) {
+              <span class="text-gray-500 text-xs ml-1">(Leave blank to keep current password)</span>
+            }
+          </label>
+          <input
+            type="password"
+            formControlName="password"
+            [placeholder]="isEditMode() ? 'Enter new password (optional)' : 'Enter password'"
+            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+            [class.border-red-500]="isFieldInvalid('password')"
+            [class.border-gray-300]="!isFieldInvalid('password')"
+            [class.dark:border-gray-600]="!isFieldInvalid('password')"
+          />
+          @if (isFieldInvalid('password')) {
+            <p class="mt-1 text-sm text-red-500">Password must be at least 8 characters</p>
+          }
+          @if (!isEditMode()) {
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Minimum 8 characters</p>
+          }
+        </div>
+
+        <!-- Role -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Role <span class="text-red-500">*</span>
+          </label>
+          <div class="grid grid-cols-2 gap-4">
+            <label
+              class="role-option relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all"
+              [class.border-indigo-600]="userForm.value.role === 'USER'"
+              [class.bg-indigo-50]="userForm.value.role === 'USER'"
+              [class.dark:bg-indigo-900/20]="userForm.value.role === 'USER'"
+              [class.border-gray-300]="userForm.value.role !== 'USER'"
+              [class.dark:border-gray-600]="userForm.value.role !== 'USER'"
+            >
+              <input type="radio" formControlName="role" value="USER" class="sr-only" />
+              <div class="text-center">
+                <svg
+                  class="w-8 h-8 mx-auto mb-2 text-blue-600 dark:text-blue-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                <span class="font-semibold text-gray-900 dark:text-white">User</span>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Standard access</p>
+              </div>
+            </label>
+
+            <label
+              class="role-option relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all"
+              [class.border-purple-600]="userForm.value.role === 'ADMIN'"
+              [class.bg-purple-50]="userForm.value.role === 'ADMIN'"
+              [class.dark:bg-purple-900/20]="userForm.value.role === 'ADMIN'"
+              [class.border-gray-300]="userForm.value.role !== 'ADMIN'"
+              [class.dark:border-gray-600]="userForm.value.role !== 'ADMIN'"
+            >
+              <input type="radio" formControlName="role" value="ADMIN" class="sr-only" />
+              <div class="text-center">
+                <svg
+                  class="w-8 h-8 mx-auto mb-2 text-purple-600 dark:text-purple-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                  />
+                </svg>
+                <span class="font-semibold text-gray-900 dark:text-white">Admin</span>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Full system access</p>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Box -->
+      <div
+        class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800"
+      >
+        <div class="flex items-start space-x-3">
+          <svg
+            class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <div class="text-sm text-blue-700 dark:text-blue-300">
+            <p class="font-semibold mb-1">Role Permissions:</p>
+            <ul class="list-disc list-inside space-y-1">
+              <li>
+                <strong>User:</strong> Can track activities, view recommendations, manage own
+                profile
+              </li>
+              <li>
+                <strong>Admin:</strong> Full system access including user management and analytics
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="flex items-center justify-end space-x-4 mt-8">
+        <button
+          type="button"
+          (click)="onCancel()"
+          [disabled]="isSubmitting()"
+          class="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          [disabled]="isSubmitting()"
+          class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          @if (isSubmitting()) {
+            <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            <span>{{ isEditMode() ? 'Updating...' : 'Creating...' }}</span>
+          } @else {
+            <span>{{ isEditMode() ? 'Update User' : 'Create User' }}</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
