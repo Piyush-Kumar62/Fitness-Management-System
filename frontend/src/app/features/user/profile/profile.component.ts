@@ -1,10 +1,14 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { UserService } from '../../../core/services/user.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { FileUploadService } from '../../../core/services/file-upload.service';
 import { User } from '../../../core/models/user.model';
+import { environment } from '../../../../environments/environment';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-profile',
@@ -23,11 +27,65 @@ import { User } from '../../../core/models/user.model';
           <!-- Profile Header -->
           <div class="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 rounded-t-lg">
             <div class="flex items-center space-x-4">
-              <div
-                class="h-20 w-20 rounded-full bg-white flex items-center justify-center text-3xl font-bold text-indigo-600"
-              >
-                {{ getInitials() }}
+              <!-- Profile Picture with Upload -->
+              <div class="relative">
+                <div
+                  class="h-20 w-20 rounded-full bg-white flex items-center justify-center text-3xl font-bold overflow-hidden"
+                  [class.text-indigo-600]="!profilePictureBlobUrl()"
+                >
+                  @if (profilePictureBlobUrl()) {
+                    <img
+                      [src]="profilePictureBlobUrl()"
+                      alt="Profile"
+                      class="w-full h-full object-cover"
+                      (error)="onImageError($event)"
+                    />
+                  } @else {
+                    <span>{{ getInitials() }}</span>
+                  }
+                </div>
+
+                <!-- Upload Button Overlay -->
+                <label
+                  class="absolute bottom-0 right-0 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-full p-1.5 cursor-pointer shadow-lg transition-colors"
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    (change)="onProfilePictureSelected($event)"
+                    class="hidden"
+                    [disabled]="isUploadingPicture()"
+                  />
+                  <svg
+                    class="w-4 h-4 text-indigo-600 dark:text-indigo-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                </label>
+
+                @if (isUploadingPicture()) {
+                  <div
+                    class="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center"
+                  >
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                  </div>
+                }
               </div>
+
               <div class="text-white">
                 <h2 class="text-2xl font-bold">
                   {{ profile()?.firstName }} {{ profile()?.lastName }}
@@ -215,16 +273,21 @@ import { User } from '../../../core/models/user.model';
     </div>
   `,
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
+  private fileUploadService = inject(FileUploadService);
+  private http = inject(HttpClient);
+  private sanitizer = inject(DomSanitizer);
 
   profile = signal<User | null>(null);
+  profilePictureBlobUrl = signal<SafeUrl | null>(null);
   isLoading = signal(true);
   isEditing = signal(false);
   isSaving = signal(false);
   isChangingPassword = signal(false);
+  isUploadingPicture = signal(false);
   showPasswordChange = false;
 
   editForm = {
@@ -242,11 +305,75 @@ export class ProfileComponent implements OnInit {
     this.loadProfile();
   }
 
+  ngOnDestroy() {
+    // Clean up blob URL to prevent memory leaks
+    const blobUrl = this.profilePictureBlobUrl();
+    if (blobUrl && typeof blobUrl === 'string') {
+      URL.revokeObjectURL(blobUrl);
+    }
+  }
+
+  loadProfilePicture(profilePictureUrl: string): void {
+    if (!profilePictureUrl) {
+      this.profilePictureBlobUrl.set(null);
+      return;
+    }
+
+    // Construct full URL
+    let fullUrl = profilePictureUrl;
+    if (!fullUrl.startsWith('http://') && !fullUrl.startsWith('https://')) {
+      fullUrl = `${environment.apiUrl.replace('/api', '')}${fullUrl}`;
+    }
+
+    // Load image with authentication via HttpClient
+    this.http.get(fullUrl, { responseType: 'blob' }).subscribe({
+      next: (blob) => {
+        // Revoke old blob URL if exists
+        const oldUrl = this.profilePictureBlobUrl();
+        if (oldUrl && typeof oldUrl === 'string') {
+          URL.revokeObjectURL(oldUrl);
+        }
+
+        // Create new blob URL
+        const objectUrl = URL.createObjectURL(blob);
+        this.profilePictureBlobUrl.set(this.sanitizer.bypassSecurityTrustUrl(objectUrl));
+      },
+      error: (error) => {
+        console.error('Failed to load profile picture:', error);
+        this.profilePictureBlobUrl.set(null);
+      },
+    });
+  }
+
+  getProfilePictureUrl(): string | null {
+    const url = this.profile()?.profilePictureUrl;
+    if (!url) return null;
+
+    // If URL is already absolute, return it
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+
+    // If URL is relative, prepend the API base URL
+    return `${environment.apiUrl.replace('/api', '')}${url}`;
+  }
+
+  onImageError(event: Event): void {
+    console.error('Failed to load profile picture');
+    this.profilePictureBlobUrl.set(null);
+  }
+
   loadProfile() {
     this.isLoading.set(true);
     this.userService.getProfile().subscribe({
       next: (user) => {
         this.profile.set(user);
+        // Load profile picture with authentication
+        if (user.profilePictureUrl) {
+          this.loadProfilePicture(user.profilePictureUrl);
+        } else {
+          this.profilePictureBlobUrl.set(null);
+        }
         this.isLoading.set(false);
       },
       error: (error) => {
@@ -261,6 +388,47 @@ export class ProfileComponent implements OnInit {
     const p = this.profile();
     if (!p) return '?';
     return `${p.firstName.charAt(0)}${p.lastName.charAt(0)}`.toUpperCase();
+  }
+
+  onProfilePictureSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    const file = input.files[0];
+
+    // Validate file before upload
+    const validation = this.fileUploadService.validateFile(file, 5, [
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'image/webp',
+    ]);
+
+    if (!validation.valid) {
+      this.toastService.error(validation.error || 'Invalid file');
+      input.value = ''; // Reset input
+      return;
+    }
+
+    // Upload profile picture
+    this.isUploadingPicture.set(true);
+    this.fileUploadService.uploadProfilePicture(file).subscribe({
+      next: (response) => {
+        this.toastService.success('Profile picture updated successfully');
+        // Reload profile to get the updated picture URL
+        this.loadProfile();
+        this.isUploadingPicture.set(false);
+        input.value = ''; // Reset input
+      },
+      error: (error) => {
+        console.error('Failed to upload profile picture:', error);
+        this.toastService.error(error?.error?.message || 'Failed to upload profile picture');
+        this.isUploadingPicture.set(false);
+        input.value = ''; // Reset input
+      },
+    });
   }
 
   startEditing() {
