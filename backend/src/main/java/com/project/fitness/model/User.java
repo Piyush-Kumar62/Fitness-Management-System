@@ -40,8 +40,11 @@ public class User {
   private String firstName;
   private String lastName;
 
+  @Column(name = "profile_picture_id")
+  private String profilePictureId;
+
   @Enumerated(EnumType.STRING)
-  @Builder.Default  // <--- FIX: Add this
+  @Builder.Default
   private UserRole role = UserRole.USER;
 
   @CreationTimestamp
