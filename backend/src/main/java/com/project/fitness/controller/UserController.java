@@ -8,10 +8,15 @@ import com.project.fitness.exceptions.ResourceNotFoundException;
 import com.project.fitness.exceptions.UnauthorizedException;
 import com.project.fitness.model.User;
 import com.project.fitness.repository.UserRepository;
+import com.project.fitness.service.IFileStorageService;
 import com.project.fitness.service.UserService;
 import jakarta.validation.Valid;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,32 +27,84 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Controller for user operations.
+ * Updated to support profile picture uploads following Dependency Inversion Principle.
+ */
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
 
   private final UserRepository userRepository;
   private final UserService userService;
   private final PasswordEncoder passwordEncoder;
+  private final IFileStorageService fileStorageService;
 
-  public UserController(UserRepository userRepository, UserService userService,
-      PasswordEncoder passwordEncoder) {
-    this.userRepository = userRepository;
-    this.userService = userService;
-    this.passwordEncoder = passwordEncoder;
+  /**
+   * Upload profile picture
+   */
+  @PostMapping("/profile-picture")
+  public ResponseEntity<?> uploadProfilePicture(
+      @RequestParam("file") MultipartFile file,
+      Authentication authentication
+  ) {
+    try {
+      String userId = (String) authentication.getPrincipal();
+      
+      // Upload file
+      String fileId = fileStorageService.storeFile(file, "PROFILE_PICTURE", userId);
+      String fileUrl = fileStorageService.getFileUrl(fileId);
+      
+      // Update user
+      User user = userRepository.findById(userId)
+          .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+      
+      // Delete old profile picture if exists
+      if (user.getProfilePictureId() != null) {
+        try {
+          fileStorageService.deleteFile(user.getProfilePictureId());
+        } catch (IOException e) {
+          // Log but don't fail
+        }
+      }
+      
+      user.setProfilePictureId(fileId);
+      userRepository.save(user);
+      
+      Map<String, Object> response = new HashMap<>();
+      response.put("fileId", fileId);
+      response.put("fileUrl", fileUrl);
+      response.put("message", "Profile picture updated successfully");
+      
+      return ResponseEntity.ok(response);
+    } catch (IOException e) {
+      return ResponseEntity.badRequest()
+          .body(Map.of("error", "Failed to upload profile picture"));
+    }
   }
 
   /**
-   * Get current user profile
+   * Get current user profile (includes profile picture URL)
    */
   @GetMapping("/profile")
   public ResponseEntity<UserResponse> getProfile(Authentication authentication) {
     String userId = (String) authentication.getPrincipal();
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-    return ResponseEntity.ok(userService.MapToResponse(user));
+    
+    UserResponse response = userService.MapToResponse(user);
+    
+    // Add profile picture URL if exists
+    if (user.getProfilePictureId() != null) {
+      response.setProfilePictureUrl(fileStorageService.getFileUrl(user.getProfilePictureId()));
+    }
+    
+    return ResponseEntity.ok(response);
   }
 
   /**
@@ -68,7 +125,6 @@ public class UserController {
       user.setLastName(request.getLastName().trim());
     }
     if (request.getEmail() != null && !request.getEmail().trim().isEmpty()) {
-      // Check if email is already taken by another user
       User existingUser = userRepository.findByEmail(request.getEmail().trim());
       if (existingUser != null && !existingUser.getId().equals(userId)) {
         throw new BadRequestException("Email already in use");
@@ -91,12 +147,10 @@ public class UserController {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
-    // Verify current password
     if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
       throw new UnauthorizedException("Current password is incorrect");
     }
 
-    // Update password
     user.setPassword(passwordEncoder.encode(request.getNewPassword()));
     userRepository.save(user);
 

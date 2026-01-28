@@ -6,23 +6,23 @@ import java.time.LocalDateTime;
 public class UserResponse {
   private String id;
   private String email;
-  private String password;
   private String firstName;
   private String lastName;
   private UserRole role;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
+  private String profilePictureUrl;
 
   public UserResponse() {
   }
 
-  public UserResponse(String id, String email, String password, String firstName,
-      String lastName, LocalDateTime createdAt, LocalDateTime updatedAt) {
+  public UserResponse(String id, String email, String firstName,
+      String lastName, UserRole role, LocalDateTime createdAt, LocalDateTime updatedAt) {
     this.id = id;
     this.email = email;
-    this.password = password;
     this.firstName = firstName;
     this.lastName = lastName;
+    this.role = role;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
@@ -41,14 +41,6 @@ public class UserResponse {
 
   public void setEmail(String email) {
     this.email = email;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
   }
 
   public String getFirstName() {
@@ -89,5 +81,13 @@ public class UserResponse {
 
   public void setRole(UserRole role) {
     this.role = role;
+  }
+
+  public String getProfilePictureUrl() {
+    return profilePictureUrl;
+  }
+
+  public void setProfilePictureUrl(String profilePictureUrl) {
+    this.profilePictureUrl = profilePictureUrl;
   }
 }
