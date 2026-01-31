@@ -1,0 +1,16 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Angular
+.angular/
+dist/
+out-tsc/
+coverage/
+bazel-out/
+
+# Frontend secrets
+.env
+.env.*

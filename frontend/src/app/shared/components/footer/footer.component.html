@@ -1,0 +1,136 @@
+<footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <!-- Brand Section -->
+      <div class="col-span-1 md:col-span-1">
+        <div class="flex items-center space-x-2 mb-4">
+          <svg
+            class="w-8 h-8 text-indigo-600 dark:text-indigo-400"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          <span class="text-xl font-bold text-gray-900 dark:text-white">FitnessPro</span>
+        </div>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          Your comprehensive fitness management solution. Track activities, get personalized
+          recommendations, and achieve your health goals.
+        </p>
+        <p class="text-xs text-gray-500 dark:text-gray-500">
+          © {{ currentYear }} FitnessPro. All rights reserved.
+        </p>
+      </div>
+
+      <!-- Company Links -->
+      <div>
+        <h3
+          class="text-sm font-semibold text-gray-900 dark:text-white mb-4 uppercase tracking-wider"
+        >
+          Company
+        </h3>
+        <ul class="space-y-2">
+          @for (link of footerLinks.company; track link.route) {
+            <li>
+              <a
+                [routerLink]="link.route"
+                class="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+              >
+                {{ link.label }}
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Resources Links -->
+      <div>
+        <h3
+          class="text-sm font-semibold text-gray-900 dark:text-white mb-4 uppercase tracking-wider"
+        >
+          Resources
+        </h3>
+        <ul class="space-y-2">
+          @for (link of footerLinks.resources; track link.route) {
+            <li>
+              <a
+                [routerLink]="link.route"
+                class="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+              >
+                {{ link.label }}
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Social Links -->
+      <div>
+        <h3
+          class="text-sm font-semibold text-gray-900 dark:text-white mb-4 uppercase tracking-wider"
+        >
+          Connect
+        </h3>
+        <div class="flex space-x-4">
+          @for (social of footerLinks.social; track social.url) {
+            <a
+              [href]="social.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              [title]="social.label"
+              class="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+            >
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path [attr.d]="getSocialIcon(social.icon)" />
+              </svg>
+            </a>
+          }
+        </div>
+        <div class="mt-6">
+          <p class="text-xs text-gray-500 dark:text-gray-500 mb-2">Subscribe to our newsletter</p>
+          <div class="flex">
+            <input
+              type="email"
+              placeholder="Your email"
+              class="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-l-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <button
+              class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-r-lg hover:bg-indigo-700 transition-colors"
+            >
+              Subscribe
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+      <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <p class="text-xs text-gray-500 dark:text-gray-500 text-center md:text-left">
+          Built with ❤️ using Angular {{ '20' }} and Tailwind CSS
+        </p>
+        <div class="flex space-x-6">
+          <a
+            href="#"
+            class="text-xs text-gray-500 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
+          >
+            Privacy Policy
+          </a>
+          <a
+            href="#"
+            class="text-xs text-gray-500 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
+          >
+            Terms of Service
+          </a>
+          <a
+            href="#"
+            class="text-xs text-gray-500 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
+          >
+            Cookie Policy
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

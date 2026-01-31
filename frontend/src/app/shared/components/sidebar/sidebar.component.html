@@ -1,0 +1,71 @@
+<aside
+  class="sidebar bg-white dark:bg-gray-800 shadow-lg border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out"
+  [class.sidebar-open]="isOpen"
+  [class.sidebar-closed]="!isOpen"
+>
+  <div class="sidebar-content h-full flex flex-col">
+    <!-- Sidebar Header -->
+    <div class="sidebar-header px-4 py-6 border-b border-gray-200 dark:border-gray-700">
+      <h2 class="text-lg font-bold text-gray-900 dark:text-white">
+        {{ role === 'ADMIN' ? 'Admin Panel' : 'User Dashboard' }}
+      </h2>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        {{ role === 'ADMIN' ? 'System Management' : 'Track Your Fitness' }}
+      </p>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="sidebar-nav flex-1 overflow-y-auto px-3 py-4">
+      <ul class="space-y-1">
+        @for (item of menuItems; track item.route) {
+          <li>
+            <a
+              [routerLink]="item.route"
+              routerLinkActive="active"
+              (click)="onMenuItemClick()"
+              class="menu-item flex items-center space-x-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-200 group"
+            >
+              <svg
+                class="w-5 h-5 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  [attr.d]="getIconPath(item.icon)"
+                />
+              </svg>
+              <span class="font-medium">{{ item.label }}</span>
+              @if (item.badge) {
+                <span
+                  class="ml-auto bg-indigo-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full"
+                >
+                  {{ item.badge }}
+                </span>
+              }
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer px-4 py-4 border-t border-gray-200 dark:border-gray-700">
+      <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg p-4 text-white">
+        <h3 class="text-sm font-semibold mb-1">Need Help?</h3>
+        <p class="text-xs opacity-90 mb-3">Check our documentation</p>
+        <a
+          href="https://github.com/Piyush-Kumar62/Fitness-Management-System#readme"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="block w-full bg-white text-indigo-600 text-xs font-semibold py-2 rounded hover:bg-gray-100 transition-colors text-center"
+        >
+          View Docs
+        </a>
+      </div>
+    </div>
+  </div>
+</aside>
