@@ -1,0 +1,28 @@
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+.sts4-cache
+
+# Logs
+*.log
+build.log
+
+# Secrets (global)
+.env
+.env.*
+*.key
+*.pem
+
+# Local scripts
+/cleanup.sh
