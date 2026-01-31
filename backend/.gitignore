@@ -1,0 +1,14 @@
+# Maven / Gradle
+target/
+bin/
+
+# Maven wrapper (keep this)
+!.mvn/wrapper/maven-wrapper.jar
+
+# Spring
+.springBeans
+.factorypath
+
+# Backend secrets
+.env
+.env.*
