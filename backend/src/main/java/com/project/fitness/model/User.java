@@ -44,6 +44,11 @@ public class User {
   @Builder.Default  // <--- FIX: Add this
   private UserRole role = UserRole.USER;
 
+  // OAuth2 fields
+  private String provider; // "google", "github", "local"
+  private String providerId; // OAuth2 provider user ID
+  private String profileImageUrl;
+
   @CreationTimestamp
   private LocalDateTime createdAt;
 

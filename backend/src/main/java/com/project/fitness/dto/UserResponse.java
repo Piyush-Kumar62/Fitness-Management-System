@@ -4,6 +4,7 @@ import com.project.fitness.model.UserRole;
 import java.time.LocalDateTime;
 
 public class UserResponse {
+
   private String id;
   private String email;
   private String password;
@@ -12,6 +13,8 @@ public class UserResponse {
   private UserRole role;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
+  private String provider;
+  private String profileImageUrl;
 
   public UserResponse() {
   }
@@ -89,5 +92,21 @@ public class UserResponse {
 
   public void setRole(UserRole role) {
     this.role = role;
+  }
+
+  public String getProvider() {
+    return provider;
+  }
+
+  public void setProvider(String provider) {
+    this.provider = provider;
+  }
+
+  public String getProfileImageUrl() {
+    return profileImageUrl;
+  }
+
+  public void setProfileImageUrl(String profileImageUrl) {
+    this.profileImageUrl = profileImageUrl;
   }
 }
