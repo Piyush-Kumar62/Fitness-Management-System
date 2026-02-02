@@ -2,7 +2,7 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <artifactId>fitness-management-system</artifactId>
 
@@ -46,6 +46,11 @@
       <groupId>org.springframework.boot</groupId>
     </dependency>
 
+    <dependency>
+      <artifactId>spring-boot-starter-oauth2-client</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <scope>compile</scope>
+    </dependency>
     <!-- JWT -->
     <dependency>
       <artifactId>jjwt-api</artifactId>
@@ -65,16 +70,16 @@
       <version>${jjwt.version}</version>
     </dependency>
 
-    <!-- DB -->
+    <!-- Database -->
     <dependency>
-      <artifactId>mysql-connector-j</artifactId>
-      <groupId>com.mysql</groupId>
+      <artifactId>postgresql</artifactId>
+      <groupId>org.postgresql</groupId>
       <scope>runtime</scope>
     </dependency>
 
     <dependency>
-      <artifactId>postgresql</artifactId>
-      <groupId>org.postgresql</groupId>
+      <artifactId>mysql-connector-j</artifactId>
+      <groupId>com.mysql</groupId>
       <scope>runtime</scope>
     </dependency>
 
@@ -99,7 +104,7 @@
       <version>${lombok.version}</version>
     </dependency>
 
-    <!-- Dev tools -->
+    <!-- Dev -->
     <dependency>
       <artifactId>spring-boot-devtools</artifactId>
       <groupId>org.springframework.boot</groupId>
@@ -114,18 +119,13 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <artifactId>spring-security-test</artifactId>
-      <groupId>org.springframework.security</groupId>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
   <description>Full Stack Fitness Management System</description>
   <groupId>com.project</groupId>
-
   <modelVersion>4.0.0</modelVersion>
+
   <name>Fitness Management System</name>
+  <packaging>jar</packaging>
 
   <parent>
     <artifactId>spring-boot-starter-parent</artifactId>
