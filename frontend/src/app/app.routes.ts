@@ -29,6 +29,13 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'oauth2/redirect',
+    loadComponent: () =>
+      import('./features/auth/oauth2-redirect/oauth2-redirect.component').then(
+        (m) => m.OAuth2RedirectComponent,
+      ),
+  },
+  {
     path: 'user',
     canActivate: [authGuard],
     loadComponent: () =>

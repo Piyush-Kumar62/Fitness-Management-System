@@ -77,6 +77,53 @@ export class AuthService {
   }
 
   /**
+   * Login with Google OAuth2
+   */
+  loginWithGoogle(): void {
+    const backendUrl = environment.apiUrl.replace('/api', '');
+    window.location.href = `${backendUrl}/oauth2/authorization/google`;
+  }
+
+  /**
+   * Login with GitHub OAuth2
+   */
+  loginWithGithub(): void {
+    const backendUrl = environment.apiUrl.replace('/api', '');
+    window.location.href = `${backendUrl}/oauth2/authorization/github`;
+  }
+
+  /**
+   * Handle OAuth2 token after redirect
+   */
+  handleOAuth2Token(token: string): Observable<User> {
+    // Store token
+    this.storage.setToken(token);
+
+    // Decode token to get user info
+    const payload = JwtUtil.decode(token);
+    if (!payload) {
+      return throwError(() => new Error('Invalid token'));
+    }
+
+    // Fetch full user profile from backend
+    return this.http.get<User>(`${environment.apiUrl}/users/profile`).pipe(
+      tap((user) => {
+        this.storage.set(StorageKey.USER, user);
+        this.userSignal.set(user);
+        this.isAuthenticatedSignal.set(true);
+
+        // Navigate based on role
+        const redirectUrl = user.role === UserRole.ADMIN ? '/admin/dashboard' : '/user/dashboard';
+        this.router.navigate([redirectUrl]);
+      }),
+      catchError((error) => {
+        this.clearAuthData();
+        return throwError(() => error);
+      }),
+    );
+  }
+
+  /**
    * Logout user
    */
   logout(): void {

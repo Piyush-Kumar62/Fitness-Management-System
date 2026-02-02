@@ -38,9 +38,17 @@ export class StorageService {
 
     try {
       const item = localStorage.getItem(key);
-      return item ? JSON.parse(item) : null;
+
+      // Handle null, undefined, or empty values
+      if (!item || item === 'null' || item === 'undefined') {
+        return null;
+      }
+
+      return JSON.parse(item);
     } catch (error) {
       console.error(`Error retrieving ${key}:`, error);
+      // Clear invalid data
+      this.remove(key);
       return null;
     }
   }
