@@ -8,8 +8,6 @@ public class FitnessManagementSystemApplication {
 
   public static void main(String[] args) {
     SpringApplication.run(FitnessManagementSystemApplication.class, args);
-    System.out.println("Project Running Successfully");
-
   }
 
 }
