@@ -1,0 +1,11 @@
+${AnsiColor.BRIGHT_CYAN}  ______ _ _                              __  __                                                   _      _____           _                 ${AnsiColor.DEFAULT}
+${AnsiColor.BRIGHT_CYAN} |  ____(_) |                            |  \/  |                                                 | |    / ____|         | |                ${AnsiColor.DEFAULT}
+${AnsiColor.BRIGHT_CYAN} | |__   _| |_ _ __   ___  ___ ___      | \  / | __ _ _ __   __ _  __ _  ___ _ __ ___   ___ _ __ | |_  | (___  _   _ ___| |_ ___ _ __ ___  ${AnsiColor.DEFAULT}
+${AnsiColor.BRIGHT_CYAN} |  __| | | __| '_ \ / _ \/ __/ __|     | |\/| |/ _` | '_ \ / _` |/ _` |/ _ \ '_ ` _ \ / _ \ '_ \| __|  \___ \| | | / __| __/ _ \ '_ ` _ \ ${AnsiColor.DEFAULT}
+${AnsiColor.BRIGHT_CYAN} | |    | | |_| | | |  __/\__ \__ \     | |  | | (_| | | | | (_| | (_| |  __/ | | | | |  __/ | | | |_   ____) | |_| \__ \ ||  __/ | | | | |${AnsiColor.DEFAULT}
+${AnsiColor.BRIGHT_CYAN} |_|    |_|\__|_| |_|\___||___/___/     |_|  |_|\__,_|_| |_|\__,_|\__, |\___|_| |_| |_|\___|_| |_|\__| |_____/ \__, |___/\__\___|_| |_| |_|${AnsiColor.DEFAULT}
+${AnsiColor.BRIGHT_CYAN}                                                                     __/ |                                         __/ |                      ${AnsiColor.DEFAULT}
+${AnsiColor.BRIGHT_CYAN}                                                                    |___/                                         |___/                       ${AnsiColor.DEFAULT}
+
+${AnsiColor.BRIGHT_GREEN}:: Fitness Management System ::${AnsiColor.DEFAULT}
+${AnsiColor.BRIGHT_YELLOW}:: Build ${application.version:dev-build} | Profile ${spring.profiles.active:dev} ::${AnsiColor.DEFAULT}

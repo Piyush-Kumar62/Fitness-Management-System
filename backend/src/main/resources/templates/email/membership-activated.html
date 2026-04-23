@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Membership Activated</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Segoe UI',Helvetica,Arial,sans-serif; background:#0f0f0f; color:#e2e8f0; }
+    .wrapper { max-width:620px; margin:40px auto; background:#1a1a2e; border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+    .header { background:linear-gradient(135deg,#6366f1 0%,#7c3aed 100%); padding:48px 40px; text-align:center; }
+    .header-icon { font-size:60px; display:block; margin-bottom:16px; }
+    .header h1 { font-size:26px; font-weight:700; color:#fff; }
+    .header p  { color:rgba(255,255,255,.85); margin-top:8px; }
+    .body { padding:40px; }
+    .greeting { font-size:20px; font-weight:600; margin-bottom:16px; }
+    .text { color:#94a3b8; line-height:1.7; font-size:15px; margin-bottom:24px; }
+    /* Membership Card */
+    .card { background:linear-gradient(135deg,#1e1b4b,#312e81); border-radius:16px; padding:28px; margin:24px 0; border:1px solid #4338ca; position:relative; overflow:hidden; }
+    .card::after { content:''; position:absolute; right:-20px; top:-20px; width:120px; height:120px; border-radius:50%; background:rgba(99,102,241,.12); }
+    .card-plan { font-size:22px; font-weight:700; margin-bottom:18px; }
+    .card-badge { display:inline-block; background:#6366f133; border:1px solid #6366f1; color:#a5b4fc; border-radius:50px; font-size:12px; font-weight:700; padding:4px 14px; margin-bottom:20px; }
+    .card-dates { display:flex; gap:24px; }
+    .card-date-item { flex:1; }
+    .card-date-label { color:#6366f1; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px; }
+    .card-date-value { font-size:15px; font-weight:600; }
+    /* Perks */
+    .perks { display:flex; flex-direction:column; gap:10px; margin:20px 0; }
+    .perk { display:flex; align-items:center; gap:10px; color:#94a3b8; font-size:14px; }
+    .perk::before { content:'✓'; color:#6366f1; font-weight:700; flex-shrink:0; }
+    /* CTA */
+    .cta-wrapper { text-align:center; margin:32px 0; }
+    .cta { display:inline-block; background:linear-gradient(135deg,#6366f1,#7c3aed); color:#fff !important; text-decoration:none; font-weight:700; font-size:15px; padding:14px 36px; border-radius:50px; }
+    .footer { border-top:1px solid #2d3748; padding:28px 40px; text-align:center; }
+    .footer p { color:#475569; font-size:13px; line-height:1.6; }
+    .footer a { color:#6366f1; text-decoration:none; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <span class="header-icon">🎉</span>
+    <h1>Membership Activated!</h1>
+    <p>You're all set. Start training today!</p>
+  </div>
+  <div class="body">
+    <p class="greeting">Congrats, <span th:text="${recipientName}">there</span>!</p>
+    <p class="text">
+      Your <strong th:text="${planName}">Premium</strong> membership is now active.
+      Head to your dashboard to explore classes, book sessions with trainers, and track your progress.
+    </p>
+    <!-- Membership Card -->
+    <div class="card">
+      <div class="card-badge">ACTIVE MEMBER</div>
+      <div class="card-plan" th:text="${planName}">Premium Plan</div>
+      <div class="card-dates">
+        <div class="card-date-item">
+          <div class="card-date-label">Start Date</div>
+          <div class="card-date-value" th:text="${startDate}">2025-01-01</div>
+        </div>
+        <div class="card-date-item">
+          <div class="card-date-label">Expires On</div>
+          <div class="card-date-value" th:text="${endDate}">2025-12-31</div>
+        </div>
+      </div>
+    </div>
+    <!-- Perks -->
+    <div class="perks">
+      <div class="perk">Unlimited gym access during membership period</div>
+      <div class="perk">Book classes with certified trainers</div>
+      <div class="perk">Track workouts, goals, and body measurements</div>
+      <div class="perk">Access diet and workout plan recommendations</div>
+    </div>
+    <div class="cta-wrapper">
+      <a href="http://localhost:4200/member/dashboard" class="cta">Go to My Dashboard →</a>
+    </div>
+  </div>
+  <div class="footer">
+    <p>© <span th:text="${currentYear}">2025</span> <span th:text="${appName}">Fitness Management System</span>. All rights reserved.</p>
+    <p style="margin-top:6px;">Questions? <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">support@fitness.app</a></p>
+  </div>
+</div>
+</body>
+</html>

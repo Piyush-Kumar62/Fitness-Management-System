@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Class Booking Confirmed</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Segoe UI',Helvetica,Arial,sans-serif; background:#0f0f0f; color:#e2e8f0; }
+    .wrapper { max-width:620px; margin:40px auto; background:#1a1a2e; border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+    .header { background:linear-gradient(135deg,#10b981 0%,#059669 100%); padding:48px 40px; text-align:center; }
+    .header-icon { font-size:52px; display:block; margin-bottom:16px; }
+    .header h1 { font-size:26px; font-weight:700; color:#fff; letter-spacing:-0.5px; }
+    .header p { color:rgba(255,255,255,.85); margin-top:8px; font-size:15px; }
+    .body { padding:40px; }
+    .greeting { font-size:20px; font-weight:600; margin-bottom:16px; }
+    .text { color:#94a3b8; line-height:1.7; font-size:15px; margin-bottom:24px; }
+    .detail-box { background:#16213e; border:1px solid #10b981; border-radius:12px; padding:20px 24px; margin:24px 0; }
+    .detail-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #2d3748; font-size:14px; }
+    .detail-row:last-child { border-bottom:none; }
+    .detail-label { color:#64748b; }
+    .detail-value { font-weight:600; color:#e2e8f0; }
+    .cta-wrapper { text-align:center; margin:32px 0; }
+    .cta { display:inline-block; background:linear-gradient(135deg,#10b981,#059669); color:#fff !important; text-decoration:none; font-weight:700; font-size:15px; padding:14px 36px; border-radius:50px; }
+    .footer { border-top:1px solid #2d3748; padding:28px 40px; text-align:center; }
+    .footer p { color:#475569; font-size:13px; line-height:1.6; }
+    .footer a { color:#6366f1; text-decoration:none; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <span class="header-icon">📅</span>
+    <h1>Booking Confirmed!</h1>
+    <p>Your spot is reserved</p>
+  </div>
+  <div class="body">
+    <p class="greeting">Hi <span th:text="${recipientName}">there</span>,</p>
+    <p class="text">
+      Great news! Your booking for <strong th:text="${className}">Yoga Class</strong> has been confirmed.
+      We look forward to seeing you there!
+    </p>
+    <div class="detail-box">
+      <div class="detail-row">
+        <span class="detail-label">Class</span>
+        <span class="detail-value" th:text="${className}">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Date &amp; Time</span>
+        <span class="detail-value" th:text="${scheduleDate}">—</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Trainer</span>
+        <span class="detail-value" th:text="${trainerName}">—</span>
+      </div>
+    </div>
+    <p class="text">
+      Please arrive 5 minutes early. If you need to cancel, do so at least 2 hours before the class starts.
+    </p>
+    <div class="cta-wrapper">
+      <a href="http://localhost:4200/member/classes" class="cta">View My Classes →</a>
+    </div>
+  </div>
+  <div class="footer">
+    <p>Need help? Contact us at <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">support@fitness.app</a></p>
+    <p style="margin-top:8px;">© <span th:text="${currentYear}">2025</span> <span th:text="${appName}">Fitness Management System</span>. All rights reserved.</p>
+  </div>
+</div>
+</body>
+</html>

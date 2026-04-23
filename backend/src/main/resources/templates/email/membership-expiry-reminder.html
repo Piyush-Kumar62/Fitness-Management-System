@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Membership Expiry Reminder</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Segoe UI',Helvetica,Arial,sans-serif; background:#0f0f0f; color:#e2e8f0; }
+    .wrapper { max-width:620px; margin:40px auto; background:#1a1a2e; border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+    .header { background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%); padding:48px 40px; text-align:center; }
+    .header-icon { font-size:60px; display:block; margin-bottom:16px; }
+    .header h1 { font-size:26px; font-weight:700; color:#fff; }
+    .header p  { color:rgba(255,255,255,.85); margin-top:8px; }
+    .body { padding:40px; }
+    .greeting { font-size:20px; font-weight:600; margin-bottom:16px; }
+    .text { color:#94a3b8; line-height:1.7; font-size:15px; margin-bottom:24px; }
+    /* Countdown Banner */
+    .countdown { background:linear-gradient(135deg,#1c1400,#2d1f00); border:2px solid #f59e0b; border-radius:14px; padding:24px; text-align:center; margin:24px 0; }
+    .countdown-number { font-size:64px; font-weight:700; color:#f59e0b; line-height:1; }
+    .countdown-label { color:#fbbf24; font-size:14px; text-transform:uppercase; letter-spacing:2px; margin-top:6px; }
+    .countdown-sub { color:#d97706; font-size:13px; margin-top:8px; }
+    /* Info Row */
+    .info-row { display:flex; gap:16px; margin:20px 0; }
+    .info-box { flex:1; background:#16213e; border:1px solid #2d3748; border-radius:12px; padding:16px; text-align:center; }
+    .info-box-label { color:#64748b; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+    .info-box-value { font-weight:700; font-size:15px; color:#fbbf24; }
+    /* CTA */
+    .cta-wrapper { text-align:center; margin:32px 0; }
+    .cta { display:inline-block; background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff !important; text-decoration:none; font-weight:700; font-size:15px; padding:14px 36px; border-radius:50px; }
+    .footer { border-top:1px solid #2d3748; padding:28px 40px; text-align:center; }
+    .footer p { color:#475569; font-size:13px; line-height:1.6; }
+    .footer a { color:#f59e0b; text-decoration:none; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <span class="header-icon">⏰</span>
+    <h1>Your Membership is Expiring Soon!</h1>
+    <p>Don't let your journey lose momentum.</p>
+  </div>
+  <div class="body">
+    <p class="greeting">Hey <span th:text="${recipientName}">there</span>,</p>
+    <p class="text">
+      Your <strong th:text="${planName}">Premium</strong> membership is expiring soon.
+      Renew now to continue enjoying all the benefits without any interruption!
+    </p>
+    <!-- Countdown -->
+    <div class="countdown">
+      <div class="countdown-number" th:text="${daysLeft}">7</div>
+      <div class="countdown-label">Days Remaining</div>
+      <div class="countdown-sub" th:text="'Expires on ' + ${expiryDate}">Expires on 2025-12-31</div>
+    </div>
+    <!-- Info -->
+    <div class="info-row">
+      <div class="info-box">
+        <div class="info-box-label">Current Plan</div>
+        <div class="info-box-value" th:text="${planName}">Premium</div>
+      </div>
+      <div class="info-box">
+        <div class="info-box-label">Expiry Date</div>
+        <div class="info-box-value" th:text="${expiryDate}">2025-12-31</div>
+      </div>
+    </div>
+    <p class="text">
+      Renewing keeps your access, streak, and progress uninterrupted.
+      Pick up from exactly where you left off. 💪
+    </p>
+    <div class="cta-wrapper">
+      <a href="http://localhost:4200/member/memberships" class="cta">Renew My Membership →</a>
+    </div>
+  </div>
+  <div class="footer">
+    <p>© <span th:text="${currentYear}">2025</span> <span th:text="${appName}">Fitness Management System</span>. All rights reserved.</p>
+    <p style="margin-top:6px;"><a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">support@fitness.app</a></p>
+  </div>
+</div>
+</body>
+</html>

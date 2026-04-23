@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Account Created</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Segoe UI',Helvetica,Arial,sans-serif; background:#0f0f0f; color:#e2e8f0; }
+    .wrapper { max-width:620px; margin:40px auto; background:#1a1a2e; border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+    .header { background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%); padding:48px 40px; text-align:center; }
+    .header-icon { font-size:60px; display:block; margin-bottom:16px; }
+    .header h1 { font-size:26px; font-weight:700; color:#fff; }
+    .header p  { color:rgba(255,255,255,.85); margin-top:8px; }
+    .body { padding:40px; }
+    .greeting { font-size:20px; font-weight:600; margin-bottom:16px; }
+    .text { color:#94a3b8; line-height:1.7; font-size:15px; margin-bottom:24px; }
+    /* Credentials Card */
+    .creds { background:linear-gradient(135deg,#1a0f2e,#1e1040); border:2px solid #7c3aed; border-radius:14px; padding:24px; margin:24px 0; }
+    .creds-title { font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#a78bfa; margin-bottom:16px; }
+    .cred-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #2d1b4e; }
+    .cred-row:last-child { border-bottom:none; }
+    .cred-label { color:#64748b; font-size:13px; }
+    .cred-value { font-weight:700; font-family:monospace; font-size:15px; color:#c4b5fd; }
+    .role-badge { display:inline-block; background:#7c3aed33; color:#c4b5fd; border:1px solid #7c3aed; border-radius:50px; font-size:12px; font-weight:700; padding:4px 12px; }
+    /* Warning */
+    .warn { background:#1c1400; border:1px solid #f59e0b; border-radius:12px; padding:16px 20px; margin:20px 0; display:flex; gap:12px; align-items:flex-start; }
+    .warn-text { color:#fbbf24; font-size:13px; line-height:1.6; }
+    /* CTA */
+    .cta-wrapper { text-align:center; margin:32px 0; }
+    .cta { display:inline-block; background:linear-gradient(135deg,#8b5cf6,#7c3aed); color:#fff !important; text-decoration:none; font-weight:700; font-size:15px; padding:14px 36px; border-radius:50px; }
+    .footer { border-top:1px solid #2d3748; padding:28px 40px; text-align:center; }
+    .footer p { color:#475569; font-size:13px; line-height:1.6; }
+    .footer a { color:#8b5cf6; text-decoration:none; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <span class="header-icon">🚀</span>
+    <h1>Your Account is Ready!</h1>
+    <p>An administrator has set up your Fitness Management System account.</p>
+  </div>
+  <div class="body">
+    <p class="greeting">Welcome, <span th:text="${recipientName}">there</span>! 👋</p>
+    <p class="text">
+      Your <strong th:text="${appName}">Fitness Management System</strong> account has been created by an administrator.
+      Here are your login credentials. Please change your password after your first login.
+    </p>
+    <!-- Credentials Card -->
+    <div class="creds">
+      <div class="creds-title">🔑 Your Login Details</div>
+      <div class="cred-row">
+        <span class="cred-label">Role</span>
+        <span class="role-badge" th:text="${role}">MEMBER</span>
+      </div>
+      <div class="cred-row">
+        <span class="cred-label">Temporary Password</span>
+        <span class="cred-value" th:text="${temporaryPassword}">Temp@1234</span>
+      </div>
+    </div>
+    <!-- Warning -->
+    <div class="warn">
+      <span style="font-size:20px;">⚠️</span>
+      <div class="warn-text">
+        <strong>Important:</strong> For your security, please change your password immediately after logging in
+        for the first time. Go to <em>Profile → Change Password</em>.
+      </div>
+    </div>
+    <div class="cta-wrapper">
+      <a href="http://localhost:4200/auth/login" class="cta">Login to Fitness Management System →</a>
+    </div>
+  </div>
+  <div class="footer">
+    <p>© <span th:text="${currentYear}">2025</span> <span th:text="${appName}">Fitness Management System</span>. All rights reserved.</p>
+    <p style="margin-top:6px;"><a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">support@fitness.app</a></p>
+  </div>
+</div>
+</body>
+</html>

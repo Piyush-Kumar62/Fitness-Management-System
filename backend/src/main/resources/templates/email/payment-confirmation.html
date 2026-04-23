@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payment Confirmed</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Segoe UI',Helvetica,Arial,sans-serif; background:#0f0f0f; color:#e2e8f0; }
+    .wrapper { max-width:620px; margin:40px auto; background:#1a1a2e; border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+
+    /* Header */
+    .header { background:linear-gradient(135deg,#10b981 0%,#059669 60%,#047857 100%); padding:48px 40px; text-align:center; }
+    .header-icon { font-size:60px; display:block; margin-bottom:16px; }
+    .header h1 { font-size:26px; font-weight:700; color:#fff; }
+    .header p  { color:rgba(255,255,255,.85); margin-top:8px; }
+
+    /* Body */
+    .body { padding:40px; }
+    .greeting { font-size:20px; font-weight:600; margin-bottom:16px; }
+    .text { color:#94a3b8; line-height:1.7; font-size:15px; margin-bottom:24px; }
+
+    /* Receipt Card */
+    .receipt { background:#16213e; border:1px solid #1e3a5f; border-radius:14px; overflow:hidden; margin:24px 0; }
+    .receipt-header { background:linear-gradient(90deg,#10b981,#059669); padding:14px 24px; }
+    .receipt-header span { font-weight:700; font-size:13px; letter-spacing:1px; text-transform:uppercase; color:#fff; }
+    .receipt-body { padding:0; }
+    .receipt-row { display:flex; justify-content:space-between; align-items:center; padding:14px 24px; border-bottom:1px solid #1e293b; }
+    .receipt-row:last-child { border-bottom:none; }
+    .receipt-label { color:#64748b; font-size:13px; }
+    .receipt-value { font-weight:600; font-size:14px; }
+    .receipt-total { background:#0f172a; }
+    .receipt-total .receipt-value { font-size:20px; color:#10b981; }
+
+    /* Status Badge */
+    .badge { display:inline-block; background:#10b98122; color:#10b981; border:1px solid #10b981; border-radius:50px; font-size:12px; font-weight:700; letter-spacing:.5px; padding:4px 12px; }
+
+    /* CTA */
+    .cta-wrapper { text-align:center; margin:32px 0; }
+    .cta { display:inline-block; background:linear-gradient(135deg,#10b981,#059669); color:#fff !important; text-decoration:none; font-weight:700; font-size:15px; padding:14px 36px; border-radius:50px; }
+
+    /* Footer */
+    .footer { border-top:1px solid #2d3748; padding:28px 40px; text-align:center; }
+    .footer p { color:#475569; font-size:13px; line-height:1.6; }
+    .footer a { color:#10b981; text-decoration:none; }
+    .txn { background:#0f172a; border:1px solid #2d3748; border-radius:8px; padding:8px 14px; font-size:12px; color:#64748b; margin-top:12px; font-family:monospace; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <span class="header-icon">✅</span>
+    <h1>Payment Successful!</h1>
+    <p>Your membership has been activated. Here's your receipt.</p>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+    <p class="greeting">Hi <span th:text="${recipientName}">there</span>,</p>
+    <p class="text">
+      Great news! Your payment was processed successfully and your membership plan is now active.
+      Below is a summary of your transaction for your records.
+    </p>
+
+    <!-- Receipt Card -->
+    <div class="receipt">
+      <div class="receipt-header">
+        <span>Payment Receipt</span>
+        <span th:text="'  •  ' + ${appName}" style="opacity:.7;font-size:12px;"></span>
+      </div>
+      <div class="receipt-body">
+        <div class="receipt-row">
+          <span class="receipt-label">Plan</span>
+          <span class="receipt-value" th:text="${planName}">Premium Plan</span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Payment Method</span>
+          <span class="receipt-value" th:text="${paymentMethod}">CARD</span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Valid Until</span>
+          <span class="receipt-value" th:text="${validUntil}">2025-12-31</span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Status</span>
+          <span class="badge">SUCCESS</span>
+        </div>
+        <div class="receipt-row receipt-total">
+          <span class="receipt-label" style="font-size:15px;color:#94a3b8;">Total Charged</span>
+          <span class="receipt-value">₹<span th:text="${amount}">999</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transaction ID -->
+    <p class="text" style="text-align:center;margin-bottom:4px;font-size:13px;">Transaction Reference</p>
+    <div class="txn" th:text="${transactionId}">TXN-xxxx-xxxx</div>
+
+    <div class="cta-wrapper">
+      <a href="http://localhost:4200/member/memberships" class="cta">View My Membership →</a>
+    </div>
+
+    <p class="text" style="font-size:13px;margin-bottom:0;">
+      💡 Keep this email as proof of payment. If you have any questions, contact us at
+      <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}" style="color:#10b981;">support@fitness.app</a>.
+    </p>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>© <span th:text="${currentYear}">2025</span> <span th:text="${appName}">Fitness Management System</span>. All rights reserved.</p>
+    <p style="margin-top:6px;">This is an automated transactional email. Please do not reply.</p>
+  </div>
+
+</div>
+</body>
+</html>

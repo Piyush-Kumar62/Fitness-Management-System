@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome to Fitness Management System</title>
+  <style>
+    /* ─── Reset ─── */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Segoe UI',Helvetica,Arial,sans-serif; background:#0f0f0f; color:#e2e8f0; }
+
+    /* ─── Wrapper ─── */
+    .wrapper { max-width:620px; margin:40px auto; background:#1a1a2e; border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+
+    /* ─── Header ─── */
+    .header { background:linear-gradient(135deg,#6366f1 0%,#8b5cf6 50%,#ec4899 100%); padding:48px 40px; text-align:center; }
+    .header-icon { font-size:52px; display:block; margin-bottom:16px; }
+    .header h1 { font-size:28px; font-weight:700; color:#fff; letter-spacing:-0.5px; }
+    .header p { color:rgba(255,255,255,.85); margin-top:8px; font-size:15px; }
+
+    /* ─── Body ─── */
+    .body { padding:40px; }
+    .greeting { font-size:20px; font-weight:600; margin-bottom:16px; }
+    .text { color:#94a3b8; line-height:1.7; font-size:15px; margin-bottom:24px; }
+
+    /* ─── Feature Cards ─── */
+    .features { display:flex; flex-direction:column; gap:12px; margin:28px 0; }
+    .feature { display:flex; align-items:center; gap:14px; background:#16213e; border:1px solid #2d3748; border-radius:12px; padding:16px; }
+    .feature-icon { font-size:24px; flex-shrink:0; }
+    .feature-title { font-weight:600; font-size:14px; margin-bottom:2px; }
+    .feature-text  { color:#64748b; font-size:13px; }
+
+    /* ─── CTA ─── */
+    .cta-wrapper { text-align:center; margin:32px 0; }
+    .cta { display:inline-block; background:linear-gradient(135deg,#6366f1,#8b5cf6); color:#fff !important; text-decoration:none; font-weight:700; font-size:15px; padding:14px 36px; border-radius:50px; letter-spacing:.5px; }
+
+    /* ─── Footer ─── */
+    .footer { border-top:1px solid #2d3748; padding:28px 40px; text-align:center; }
+    .footer p { color:#475569; font-size:13px; line-height:1.6; }
+    .footer a { color:#6366f1; text-decoration:none; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <span class="header-icon">🏋️</span>
+    <h1>Welcome to <span th:text="${appName}">Fitness Management System</span>!</h1>
+    <p>Your fitness journey starts right here.</p>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+    <p class="greeting">Hey <span th:text="${recipientName}">there</span>,</p>
+    <p class="text">
+      We're thrilled to have you on board! <strong th:text="${appName}">Fitness Management System</strong> is your all-in-one platform
+      to track workouts, set goals, manage memberships, and connect with top-tier trainers —
+      all in one beautiful dashboard.
+    </p>
+
+    <!-- Feature Cards -->
+    <div class="features">
+      <div class="feature">
+        <span class="feature-icon">📊</span>
+        <div>
+          <div class="feature-title">Activity Tracking</div>
+          <div class="feature-text">Log every run, lift, or swim and watch your progress build.</div>
+        </div>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">🎯</span>
+        <div>
+          <div class="feature-title">Smart Goal Setting</div>
+          <div class="feature-text">Set targets with milestones and celebrate every win.</div>
+        </div>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">🏪</span>
+        <div>
+          <div class="feature-title">Gym Memberships</div>
+          <div class="feature-text">Browse gyms, grab plans, and manage everything in one place.</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="text">Ready to crush your first goal? 💪</p>
+
+    <div class="cta-wrapper">
+      <a href="http://localhost:4200/auth/login" class="cta">Get Started Now →</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>
+      Questions? Reach us at <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">support@fitness.app</a>
+    </p>
+    <p style="margin-top:8px;">
+      © <span th:text="${currentYear}">2025</span> <span th:text="${appName}">Fitness Management System</span>. All rights reserved.
+    </p>
+  </div>
+
+</div>
+</body>
+</html>

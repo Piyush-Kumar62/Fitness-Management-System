@@ -1,42 +1,92 @@
 version: '3.8'
 
+# ===========================================================
+#  Fitness Management System — Docker Compose
+#  Usage:
+#    1. cp backend/.env.example backend/.env  (fill in secrets)
+#    2. docker-compose up --build
+# ===========================================================
+
 services:
-  # PostgreSQL Database
-  postgres:
-    image: postgres:15-alpine
-    container_name: fitness-postgres
+  # ── MySQL Database ──────────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: fitness-mysql
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: ${DB_NAME:-fitness_db}
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      MYSQL_DATABASE: ${DB_NAME:-fitness_db}
+      MYSQL_USER: ${DB_USER:-fitness_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-changeme}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-changeme_root}
     ports:
-      - '5432:5432'
+      - '3306:3306'
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - mysql-data:/var/lib/mysql
+      - ./db:/docker-entrypoint-initdb.d:ro   # auto-run SQL on first start
     networks:
       - fitness-network
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p${DB_ROOT_PASSWORD:-changeme_root}']
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # Spring Boot Backend
+  # ── Redis Cache ─────────────────────────────────────────────
+  redis:
+    image: redis:7.2-alpine
+    container_name: fitness-redis
+    restart: unless-stopped
+    # Enable append-only file for durability
+    command: redis-server --appendonly yes
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+    networks:
+      - fitness-network
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Spring Boot Backend ────────────────────────────────────
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: fitness-backend
+    restart: unless-stopped
     depends_on:
-      postgres:
+      mysql:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-fitness_db}
-      SPRING_DATASOURCE_USERNAME: ${DB_USER:-postgres}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-password}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${DB_NAME:-fitness_db}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-fitness_user}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-changeme}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:80}
+      APP_NAME: ${APP_NAME:-Fitness Management System}
+      # OAuth2
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      OAUTH2_REDIRECT_URI: ${OAUTH2_REDIRECT_URI:-http://localhost:80/oauth2/redirect}
+      # Stripe
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      # Email (SMTP)
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
     ports:
       - '8080:8080'
     networks:
@@ -48,12 +98,13 @@ services:
       retries: 3
       start_period: 40s
 
-  # Angular Frontend
+  # ── Angular Frontend ────────────────────────────────────────
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: fitness-frontend
+    restart: unless-stopped
     depends_on:
       - backend
     ports:
@@ -71,5 +122,7 @@ networks:
     driver: bridge
 
 volumes:
-  postgres-data:
+  mysql-data:
+    driver: local
+  redis-data:
     driver: local

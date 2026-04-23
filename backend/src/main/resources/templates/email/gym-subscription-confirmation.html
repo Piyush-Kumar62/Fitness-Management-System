@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gym Subscription Confirmed</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Segoe UI',Helvetica,Arial,sans-serif; background:#0f0f0f; color:#e2e8f0; }
+    .wrapper { max-width:620px; margin:40px auto; background:#1a1a2e; border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+    .header { background:linear-gradient(135deg,#0ea5e9 0%,#0284c7 100%); padding:48px 40px; text-align:center; }
+    .header-icon { font-size:60px; display:block; margin-bottom:16px; }
+    .header h1 { font-size:26px; font-weight:700; color:#fff; }
+    .header p  { color:rgba(255,255,255,.85); margin-top:8px; }
+    .body { padding:40px; }
+    .greeting { font-size:20px; font-weight:600; margin-bottom:16px; }
+    .text { color:#94a3b8; line-height:1.7; font-size:15px; margin-bottom:24px; }
+    /* Gym Card */
+    .gym-card { background:linear-gradient(135deg,#0c1a2e,#0a1628); border:1px solid #0284c7; border-radius:14px; padding:24px; margin:24px 0; }
+    .gym-name { font-size:22px; font-weight:700; color:#38bdf8; margin-bottom:18px; }
+    .gym-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #1e293b; }
+    .gym-row:last-child { border-bottom:none; }
+    .gym-label { color:#64748b; font-size:13px; }
+    .gym-value { font-weight:600; font-size:14px; }
+    .gym-total .gym-value { font-size:20px; color:#38bdf8; }
+    .badge { display:inline-block; background:#0ea5e922; color:#38bdf8; border:1px solid #38bdf8; border-radius:50px; font-size:12px; font-weight:700; padding:4px 12px; }
+    /* CTA */
+    .cta-wrapper { text-align:center; margin:32px 0; }
+    .cta { display:inline-block; background:linear-gradient(135deg,#0ea5e9,#0284c7); color:#fff !important; text-decoration:none; font-weight:700; font-size:15px; padding:14px 36px; border-radius:50px; }
+    .footer { border-top:1px solid #2d3748; padding:28px 40px; text-align:center; }
+    .footer p { color:#475569; font-size:13px; line-height:1.6; }
+    .footer a { color:#0ea5e9; text-decoration:none; }
+    .txn { background:#0f172a; border:1px solid #2d3748; border-radius:8px; padding:8px 14px; font-size:12px; color:#64748b; margin-top:12px; font-family:monospace; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <span class="header-icon">🏪</span>
+    <h1>Gym Subscription Confirmed!</h1>
+    <p>Your gym listing plan is now active.</p>
+  </div>
+  <div class="body">
+    <p class="greeting">Hi <span th:text="${recipientName}">there</span>,</p>
+    <p class="text">
+      Congratulations! Your gym <strong th:text="${gymName}">FitZone</strong> is now live on
+      <strong th:text="${appName}">Fitness Management System</strong> under the <strong th:text="${planName}">Pro</strong> plan.
+      Members in your area can now discover and join your gym!
+    </p>
+    <!-- Gym Subscription Card -->
+    <div class="gym-card">
+      <div class="gym-name" th:text="${gymName}">FitZone Gym</div>
+      <div class="gym-row">
+        <span class="gym-label">Subscription Plan</span>
+        <span class="gym-value" th:text="${planName}">Pro Plan</span>
+      </div>
+      <div class="gym-row">
+        <span class="gym-label">Valid Until</span>
+        <span class="gym-value" th:text="${validUntil}">2025-12-31</span>
+      </div>
+      <div class="gym-row">
+        <span class="gym-label">Status</span>
+        <span class="badge">ACTIVE</span>
+      </div>
+      <div class="gym-row gym-total">
+        <span class="gym-label" style="font-size:15px;color:#94a3b8;">Total Charged</span>
+        <span class="gym-value">₹<span th:text="${amount}">2999</span></span>
+      </div>
+    </div>
+    <!-- Transaction ID -->
+    <p class="text" style="text-align:center;margin-bottom:4px;font-size:13px;">Transaction Reference</p>
+    <div class="txn" th:text="${transactionId}">TXN-xxxx-xxxx</div>
+    <div class="cta-wrapper">
+      <a href="http://localhost:4200/owner/dashboard" class="cta">Manage My Gym →</a>
+    </div>
+  </div>
+  <div class="footer">
+    <p>© <span th:text="${currentYear}">2025</span> <span th:text="${appName}">Fitness Management System</span>. All rights reserved.</p>
+    <p style="margin-top:6px;"><a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">support@fitness.app</a></p>
+  </div>
+</div>
+</body>
+</html>
