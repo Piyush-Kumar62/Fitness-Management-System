@@ -1,0 +1,91 @@
+<div class="checkout-overlay">
+  <div class="checkout-card">
+
+    <!-- Header -->
+    <div class="checkout-header">
+      <div class="stripe-logo">
+        <svg viewBox="0 0 60 25" xmlns="http://www.w3.org/2000/svg" aria-label="Stripe">
+          <path d="M59.64 14.28h-8.06c.19 1.93 1.6 2.55 3.2 2.55 1.64 0 2.96-.37 4.05-.95v3.32a8.33 8.33 0 0 1-4.56 1.1c-4.01 0-6.83-2.5-6.83-7.48 0-4.19 2.39-7.52 6.3-7.52 3.92 0 5.96 3.28 5.96 7.5 0 .4-.04 1.26-.06 1.48zm-5.92-5.62c-1.03 0-2.17.73-2.17 2.58h4.23c0-1.85-1.07-2.58-2.06-2.58zM40.95 20.3c-1.44 0-2.32-.6-2.9-1.04l-.02 4.63-4.45.94V5.2h3.96l.1 1.05c.55-.72 1.59-1.38 3.18-1.38 3.34 0 5.9 2.81 5.9 7.38 0 5.23-2.52 8.05-5.77 8.05zM40 8.95c-.55 0-1.55.2-1.9.73l.03 5.09c.34.47 1.32.73 1.87.73 1.57 0 2.54-1.67 2.54-3.27 0-1.73-.97-3.28-2.54-3.28zM28.24 5.2h4.46v14.83h-4.46zm0-4.7l4.46-.96v3.67l-4.46.96zm-6.69 14.6c1.05 0 2.38-.44 2.38-.44v3.52s-1.2.63-3.58.63c-3.34 0-5.57-1.96-5.57-5.1V9.04H13V5.2h2.78V1.8l4.45-.96V5.2h3.39v3.84h-3.39v5.1c0 1.38.95 1.92 1.32 1.92zm-9.64-4.1c0 2.83-2.3 5.15-5.36 5.15A5.15 5.15 0 0 1 1.04 16c0-2.83 2.3-5.17 5.51-5.17 3.14 0 5.36 2.34 5.36 5.17z" fill="#6772E5"/>
+        </svg>
+        <span class="secure-badge">🔒 Secure Checkout</span>
+      </div>
+      <button class="close-btn" (click)="onCancel()" title="Cancel">✕</button>
+    </div>
+
+    <!-- Plan Summary -->
+    <div class="plan-summary">
+      <div class="plan-info">
+        <div class="plan-label">Membership Plan</div>
+        <div class="plan-name">{{ planName }}</div>
+      </div>
+      <div class="plan-price">
+        <div class="price-label">Total</div>
+        <div class="price-value">₹{{ planPrice | number:'1.2-2' }}</div>
+      </div>
+    </div>
+
+    <!-- Test Mode Banner -->
+    <div class="test-banner">
+      <span>🧪 Test Mode</span>
+      <span>Use card <strong>4242 4242 4242 4242</strong> with any future date &amp; any 3-digit CVC</span>
+    </div>
+
+    <!-- Payment Form -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="payment-form">
+
+      <!-- Cardholder Name -->
+      <div class="field-group">
+        <label class="field-label" for="cardHolderName">Cardholder Name</label>
+        <input
+          id="cardHolderName"
+          class="text-input"
+          formControlName="cardHolderName"
+          type="text"
+          placeholder="Full name on card"
+          autocomplete="cc-name"
+        />
+        <div class="field-error" *ngIf="form.get('cardHolderName')?.invalid && form.get('cardHolderName')?.touched">
+          Please enter the name as it appears on your card.
+        </div>
+      </div>
+
+      <!-- Stripe Card Element -->
+      <div class="field-group">
+        <label class="field-label">Card Information</label>
+        <div class="card-element-wrapper" [class.has-error]="cardError">
+          <div #cardElementRef id="stripe-card-element"></div>
+        </div>
+        <div class="field-error" *ngIf="cardError">{{ cardError }}</div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="actions">
+        <button type="button" class="btn-cancel" (click)="onCancel()" [disabled]="isLoading">
+          ← Back
+        </button>
+        <button
+          type="submit"
+          class="btn-pay"
+          [disabled]="isLoading || !intentReady"
+        >
+          <ng-container *ngIf="isLoading; else payLabel">
+            <span class="spinner"></span> Processing...
+          </ng-container>
+          <ng-template #payLabel>
+            Pay ₹{{ planPrice | number:'1.2-2' }}
+          </ng-template>
+        </button>
+      </div>
+
+      <!-- Stripe Trust Badge -->
+      <div class="trust-row">
+        <span>Powered by</span>
+        <svg width="40" viewBox="0 0 60 25" xmlns="http://www.w3.org/2000/svg">
+          <path d="M59.64 14.28h-8.06c.19 1.93 1.6 2.55 3.2 2.55 1.64 0 2.96-.37 4.05-.95v3.32a8.33 8.33 0 0 1-4.56 1.1c-4.01 0-6.83-2.5-6.83-7.48 0-4.19 2.39-7.52 6.3-7.52 3.92 0 5.96 3.28 5.96 7.5 0 .4-.04 1.26-.06 1.48zm-5.92-5.62c-1.03 0-2.17.73-2.17 2.58h4.23c0-1.85-1.07-2.58-2.06-2.58zM40.95 20.3c-1.44 0-2.32-.6-2.9-1.04l-.02 4.63-4.45.94V5.2h3.96l.1 1.05c.55-.72 1.59-1.38 3.18-1.38 3.34 0 5.9 2.81 5.9 7.38 0 5.23-2.52 8.05-5.77 8.05zM40 8.95c-.55 0-1.55.2-1.9.73l.03 5.09c.34.47 1.32.73 1.87.73 1.57 0 2.54-1.67 2.54-3.27 0-1.73-.97-3.28-2.54-3.28zM28.24 5.2h4.46v14.83h-4.46zm0-4.7l4.46-.96v3.67l-4.46.96zm-6.69 14.6c1.05 0 2.38-.44 2.38-.44v3.52s-1.2.63-3.58.63c-3.34 0-5.57-1.96-5.57-5.1V9.04H13V5.2h2.78V1.8l4.45-.96V5.2h3.39v3.84h-3.39v5.1c0 1.38.95 1.92 1.32 1.92zm-9.64-4.1c0 2.83-2.3 5.15-5.36 5.15A5.15 5.15 0 0 1 1.04 16c0-2.83 2.3-5.17 5.51-5.17 3.14 0 5.36 2.34 5.36 5.17z" fill="#6772E5"/>
+        </svg>
+        <span>• 256-bit SSL encryption</span>
+      </div>
+
+    </form>
+  </div>
+</div>

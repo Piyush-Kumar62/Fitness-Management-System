@@ -1,0 +1,269 @@
+:host {
+  display: block;
+}
+
+// ── Overlay ────────────────────────────────────────────────────
+.checkout-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+// ── Card ───────────────────────────────────────────────────────
+.checkout-card {
+  background: #1a1a2e;
+  border: 1px solid #2d3748;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 480px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  animation: slideUp 0.3s cubic-bezier(.17,.67,.41,1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+// ── Header ─────────────────────────────────────────────────────
+.checkout-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #2d3748;
+}
+
+.stripe-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  svg { width: 52px; }
+}
+
+.secure-badge {
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: #16213e;
+  border: 1px solid #2d3748;
+  color: #64748b;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #ef444422;
+    border-color: #ef4444;
+    color: #ef4444;
+  }
+}
+
+// ── Plan Summary ───────────────────────────────────────────────
+.plan-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #0f172a, #162032);
+  border-bottom: 1px solid #2d3748;
+}
+
+.plan-label, .price-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #475569;
+  margin-bottom: 4px;
+}
+
+.plan-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.price-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: #6366f1;
+  text-align: right;
+}
+
+// ── Test Banner ────────────────────────────────────────────────
+.test-banner {
+  background: #1c1400;
+  border-bottom: 1px solid #92400e44;
+  padding: 10px 24px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 12px;
+  color: #d97706;
+
+  strong { color: #fbbf24; font-family: monospace; }
+}
+
+// ── Form ───────────────────────────────────────────────────────
+.payment-form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.text-input {
+  background: #16213e;
+  border: 1px solid #2d3748;
+  border-radius: 10px;
+  padding: 14px 16px;
+  color: #e2e8f0;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+
+  &::placeholder { color: #4a5568; }
+
+  &:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  }
+}
+
+.card-element-wrapper {
+  background: #16213e;
+  border: 1px solid #2d3748;
+  border-radius: 10px;
+  padding: 14px 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus-within {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  }
+
+  &.has-error {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+  }
+}
+
+.field-error {
+  color: #fc8181;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+// ── Actions ────────────────────────────────────────────────────
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.btn-cancel {
+  flex: 0 0 auto;
+  background: transparent;
+  border: 1px solid #2d3748;
+  border-radius: 10px;
+  color: #64748b;
+  padding: 0 20px;
+  height: 50px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    border-color: #6366f1;
+    color: #e2e8f0;
+  }
+}
+
+.btn-pay {
+  flex: 1;
+  background: linear-gradient(135deg, #6366f1, #7c3aed);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  height: 50px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity 0.2s, transform 0.1s;
+
+  &:hover:not(:disabled) {
+    opacity: 0.92;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ── Spinner ────────────────────────────────────────────────────
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ── Trust Row ──────────────────────────────────────────────────
+.trust-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #475569;
+  font-size: 12px;
+
+  svg { fill-opacity: 0.5; }
+}

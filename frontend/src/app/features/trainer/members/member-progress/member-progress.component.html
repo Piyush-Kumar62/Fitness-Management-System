@@ -1,0 +1,72 @@
+<div class="container mx-auto">
+  <a routerLink="/trainer/members" class="text-indigo-600 hover:underline mb-4 inline-block"
+    >← Back to Members</a
+  >
+
+  <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Member Progress</h1>
+
+  @if (isLoading()) {
+    <div class="flex justify-center py-12">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+    </div>
+  } @else {
+    <!-- Member Info Card -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Member Information</h2>
+      @if (progress()?.member; as member) {
+        <p class="text-gray-900 dark:text-white font-medium">
+          {{ member.firstName }} {{ member.lastName }}
+        </p>
+        <p class="text-gray-500">{{ member.email }}</p>
+      } @else {
+        <p class="text-gray-500 dark:text-gray-400">No member data available.</p>
+      }
+    </div>
+
+    <!-- Activity Summary -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Activity Summary</h2>
+      <p class="text-gray-700 dark:text-gray-300">
+        Total Activities Logged: <strong>{{ progress()?.totalActivities || 0 }}</strong>
+      </p>
+    </div>
+
+    <!-- Goals Progress -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Plan Assignment</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <p class="text-sm text-gray-500 mb-2">Assign Workout Plan</p>
+          @for (plan of workoutPlans(); track plan.id) {
+            <button
+              (click)="assign(plan.id, undefined)"
+              class="w-full text-left px-3 py-2 mb-2 rounded border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm"
+            >
+              {{ plan.title }}
+            </button>
+          }
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 mb-2">Assign Diet Plan</p>
+          @for (plan of dietPlans(); track plan.id) {
+            <button
+              (click)="assign(undefined, plan.id)"
+              class="w-full text-left px-3 py-2 mb-2 rounded border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm"
+            >
+              {{ plan.title }}
+            </button>
+          }
+        </div>
+      </div>
+      <div class="mt-4">
+        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">Active Assignments</h3>
+        @for (assignment of progress()?.activePlans || []; track assignment.id) {
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            Workout: {{ assignment.workoutPlanTitle || 'N/A' }} | Diet:
+            {{ assignment.dietPlanTitle || 'N/A' }}
+          </p>
+        }
+      </div>
+    </div>
+  }
+</div>

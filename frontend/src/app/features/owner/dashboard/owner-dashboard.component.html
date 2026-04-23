@@ -1,0 +1,48 @@
+<section class="dashboard-page space-y-6">
+  <header>
+    <h1 class="text-3xl font-extrabold text-white">Gym Owner Dashboard</h1>
+    <p class="text-gray-200">Manage members, trainers, and monthly growth from one place.</p>
+  </header>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+    @for (metric of metrics(); track metric.label) {
+      <article class="glass-card p-5 rounded-2xl border border-white/20">
+        <p class="text-sm text-gray-300">{{ metric.label }}</p>
+        <h2 class="text-2xl font-bold text-white mt-1">{{ metric.value }}</h2>
+      </article>
+    }
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Revenue Trend Chart -->
+    <div class="glass-card p-6 rounded-2xl border border-white/20">
+      <h3 class="text-lg font-semibold text-white mb-4">Revenue Growth (6 Months)</h3>
+      <div class="h-72 w-full relative">
+        <canvas #revenueCanvas></canvas>
+      </div>
+    </div>
+    
+    <!-- Member Distribution Chart -->
+    <div class="glass-card p-6 rounded-2xl border border-white/20">
+      <h3 class="text-lg font-semibold text-white mb-4">Membership Status</h3>
+      <div class="h-72 w-full relative">
+        <canvas #memberCanvas></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <a routerLink="/owner/gyms" class="glass-card p-5 rounded-2xl border border-white/20">
+      <h3 class="text-lg font-semibold text-white">Manage Gym Profile</h3>
+      <p class="text-gray-300 mt-2">Update branch details, timings, and status.</p>
+    </a>
+    <a routerLink="/owner/trainers" class="glass-card p-5 rounded-2xl border border-white/20">
+      <h3 class="text-lg font-semibold text-white">Trainers</h3>
+      <p class="text-gray-300 mt-2">Assign trainers and monitor active schedules.</p>
+    </a>
+    <a routerLink="/owner/members" class="glass-card p-5 rounded-2xl border border-white/20">
+      <h3 class="text-lg font-semibold text-white">Members</h3>
+      <p class="text-gray-300 mt-2">View plans, renewals, and attendance progress.</p>
+    </a>
+  </div>
+</section>

@@ -1,0 +1,41 @@
+<div class="container mx-auto">
+  <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">My Plans</h1>
+
+  @if (isLoading()) {
+    <div class="flex justify-center py-12">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+    </div>
+  } @else {
+    <!-- Workout Plan -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        🏋️ Current Workout Plan
+      </h2>
+      @if (workoutPlan()) {
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <h3 class="font-medium text-gray-900 dark:text-white">{{ workoutPlan()?.title }}</h3>
+          <p class="text-sm text-gray-500 mt-1">{{ workoutPlan()?.description }}</p>
+        </div>
+      } @else {
+        <p class="text-gray-500 dark:text-gray-400 text-center py-4">
+          No workout plan assigned yet. Your trainer will assign one to you.
+        </p>
+      }
+    </div>
+
+    <!-- Diet Plan -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">🥗 Current Diet Plan</h2>
+      @if (dietPlan()) {
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <h3 class="font-medium text-gray-900 dark:text-white">{{ dietPlan()?.title }}</h3>
+          <p class="text-sm text-gray-500 mt-1">{{ dietPlan()?.description }}</p>
+        </div>
+      } @else {
+        <p class="text-gray-500 dark:text-gray-400 text-center py-4">
+          No diet plan assigned yet. Your trainer will assign one to you.
+        </p>
+      }
+    </div>
+  }
+</div>

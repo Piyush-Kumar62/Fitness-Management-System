@@ -1,0 +1,111 @@
+<section class="dashboard-page space-y-6">
+  <header>
+    <h1 class="text-3xl font-extrabold text-white">Class Management</h1>
+    <p class="text-gray-200">Create schedules and mark attendance.</p>
+  </header>
+
+  <article class="glass-card p-5 rounded-2xl border border-white/20">
+    <h2 class="text-xl font-semibold text-white mb-4">Create Class</h2>
+    <form
+      [formGroup]="form"
+      (ngSubmit)="createClass()"
+      class="grid grid-cols-1 md:grid-cols-2 gap-3"
+    >
+      <input
+        formControlName="className"
+        placeholder="Class name"
+        class="px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white"
+      />
+      <input
+        type="number"
+        formControlName="capacity"
+        placeholder="Capacity"
+        class="px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white"
+      />
+      <input
+        type="datetime-local"
+        formControlName="startTime"
+        class="px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white"
+      />
+      <input
+        type="datetime-local"
+        formControlName="endTime"
+        class="px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white"
+      />
+      <button
+        class="md:col-span-2 px-4 py-2 rounded-lg bg-pink-500 hover:bg-pink-600 text-white disabled:opacity-60"
+        [disabled]="form.invalid || isLoading()"
+      >
+        Create Schedule
+      </button>
+    </form>
+  </article>
+
+  <article class="glass-card p-5 rounded-2xl border border-white/20">
+    <h2 class="text-xl font-semibold text-white mb-4">My Classes</h2>
+    <div class="space-y-3">
+      @for (row of classes(); track row.id) {
+        <div class="bg-white/5 rounded-lg border border-white/15 p-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-white font-medium">{{ row.className }}</p>
+              <p class="text-sm text-gray-300">{{ row.startTime | date: 'medium' }}</p>
+            </div>
+            <button
+              class="px-3 py-1 text-xs rounded bg-indigo-500 hover:bg-indigo-600 text-white"
+              (click)="loadClassDetails(row.id)"
+            >
+              Manage
+            </button>
+          </div>
+        </div>
+      }
+      @if (!classes().length) {
+        <p class="text-gray-300 text-sm">No classes created yet.</p>
+      }
+    </div>
+  </article>
+
+  @if (selectedClassId()) {
+    <article class="glass-card p-5 rounded-2xl border border-white/20">
+      <h2 class="text-xl font-semibold text-white mb-4">Class Attendance</h2>
+      <div class="space-y-3">
+        @for (row of bookings(); track row.id) {
+          <div
+            class="flex items-center justify-between bg-white/5 rounded p-3 border border-white/10"
+          >
+            <span class="text-gray-200">{{ row.memberName }}</span>
+            <div class="flex gap-2">
+              <button
+                class="px-2 py-1 text-xs rounded bg-emerald-500 text-white"
+                (click)="mark(row.memberId, 'PRESENT')"
+              >
+                Present
+              </button>
+              <button
+                class="px-2 py-1 text-xs rounded bg-red-500 text-white"
+                (click)="mark(row.memberId, 'ABSENT')"
+              >
+                Absent
+              </button>
+            </div>
+          </div>
+        }
+        @if (!bookings().length) {
+          <p class="text-gray-300 text-sm">No booked members for this class.</p>
+        }
+      </div>
+      <div class="mt-4 border-t border-white/15 pt-3 space-y-2">
+        <h3 class="text-sm font-semibold text-white">Marked</h3>
+        @for (row of attendance(); track row.id) {
+          <div
+            class="flex items-center justify-between bg-white/5 rounded p-2 border border-white/10"
+          >
+            <span class="text-gray-200">{{ row.memberName }}</span>
+            <span class="text-xs text-white">{{ row.status }}</span>
+          </div>
+        }
+      </div>
+    </article>
+  }
+</section>

@@ -1,0 +1,130 @@
+<div class="dashboard-container">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Trainer Dashboard</h1>
+    <p class="text-gray-600 dark:text-gray-400">
+      Welcome back, {{ user()?.firstName }}! Here's your overview.
+    </p>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Assigned Members</h3>
+      <p class="text-3xl font-bold text-indigo-600">{{ totalMembers() }}</p>
+      <p class="text-sm text-gray-500 mt-2">Active trainees</p>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Workout Plans</h3>
+      <p class="text-3xl font-bold text-green-600">{{ totalWorkoutPlans() }}</p>
+      <p class="text-sm text-gray-500 mt-2">Created plans</p>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Diet Plans</h3>
+      <p class="text-3xl font-bold text-orange-600">{{ totalDietPlans() }}</p>
+      <p class="text-sm text-gray-500 mt-2">Created plans</p>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Active Goals</h3>
+      <p class="text-3xl font-bold text-purple-600">{{ activeGoals() }}</p>
+      <p class="text-sm text-gray-500 mt-2">Members' goals</p>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <a
+        routerLink="/trainer/members"
+        class="flex items-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+      >
+        <div class="flex-shrink-0 bg-indigo-100 dark:bg-indigo-900 p-3 rounded-lg">
+          <svg
+            class="h-6 w-6 text-indigo-600 dark:text-indigo-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+            ></path>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="font-medium text-gray-900 dark:text-white">View Members</p>
+          <p class="text-sm text-gray-500">Check your trainees</p>
+        </div>
+      </a>
+
+      <a
+        routerLink="/trainer/workout-plans"
+        class="flex items-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+      >
+        <div class="flex-shrink-0 bg-green-100 dark:bg-green-900 p-3 rounded-lg">
+          <svg
+            class="h-6 w-6 text-green-600 dark:text-green-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4v16m8-8H4"
+            ></path>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="font-medium text-gray-900 dark:text-white">Workout Plans</p>
+          <p class="text-sm text-gray-500">Create & manage plans</p>
+        </div>
+      </a>
+
+      <a
+        routerLink="/trainer/diet-plans"
+        class="flex items-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+      >
+        <div class="flex-shrink-0 bg-orange-100 dark:bg-orange-900 p-3 rounded-lg">
+          <svg
+            class="h-6 w-6 text-orange-600 dark:text-orange-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+            ></path>
+          </svg>
+        </div>
+        <div class="ml-4">
+          <p class="font-medium text-gray-900 dark:text-white">Diet Plans</p>
+          <p class="text-sm text-gray-500">Create & manage diets</p>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Recent Member Activity -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Recent Member Activity</h2>
+    @if (isLoading()) {
+      <div class="flex justify-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      </div>
+    } @else {
+      <p class="text-gray-500 dark:text-gray-400 text-center py-8">
+        Member activity data will be available when the backend API is connected.
+      </p>
+    }
+  </div>
+</div>

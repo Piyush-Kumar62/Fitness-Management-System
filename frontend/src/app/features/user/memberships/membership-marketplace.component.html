@@ -1,0 +1,136 @@
+<section class="checkout-page">
+
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Memberships</h1>
+      <p class="page-subtitle">Browse available plans and pay securely with Stripe.</p>
+    </div>
+    @if (hasActiveMembership()) {
+      <div class="active-badge">✅ Active Member</div>
+    }
+  </header>
+
+  <!-- No gym linked -->
+  @if (!gymId()) {
+    <div class="info-card warn-card">
+      <span class="info-icon">⚠️</span>
+      <div>
+        <strong>No Gym Linked</strong>
+        <p>Your profile is not linked to a gym yet. Please contact your administrator.</p>
+      </div>
+    </div>
+  }
+
+  <!-- Available Plans -->
+  @if (gymId()) {
+    <div class="section-card">
+      <h2 class="section-title">
+        <span class="section-icon">🏋️</span> Available Plans
+      </h2>
+
+      @if (isLoadingPlans()) {
+        <div class="loading-row">
+          <span class="spinner"></span> Loading plans...
+        </div>
+      } @else if (!plans().length) {
+        <p class="empty-state">No membership plans available for your gym yet.</p>
+      } @else {
+        <div class="plans-grid">
+          @for (plan of plans(); track plan.id) {
+            <div class="plan-card" [class.plan-featured]="plan.price > 500">
+              @if (plan.price > 500) {
+                <div class="plan-featured-badge">⭐ Popular</div>
+              }
+              <div class="plan-header">
+                <h3 class="plan-name">{{ plan.name }}</h3>
+                <div class="plan-duration">{{ plan.durationDays }} days</div>
+              </div>
+              <div class="plan-price">
+                <span class="price-currency">₹</span>
+                <span class="price-amount">{{ plan.price | number:'1.0-0' }}</span>
+              </div>
+              <p class="plan-features">{{ plan.features || 'Full gym access included.' }}</p>
+              <button
+                class="btn-buy"
+                [disabled]="hasActiveMembership()"
+                (click)="openCheckout(plan)"
+                [title]="hasActiveMembership() ? 'You already have an active membership' : 'Pay with Stripe'"
+              >
+                @if (hasActiveMembership()) {
+                  <span>Already Active</span>
+                } @else {
+                  <span>💳 Pay with Stripe</span>
+                }
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- History Grid -->
+  <div class="history-grid">
+
+    <!-- Membership History -->
+    <div class="section-card">
+      <h2 class="section-title">
+        <span class="section-icon">📋</span> Membership History
+      </h2>
+      @if (!memberships().length) {
+        <p class="empty-state">No memberships yet.</p>
+      } @else {
+        <div class="history-list">
+          @for (row of memberships(); track row.id) {
+            <div class="history-item">
+              <div class="history-item-left">
+                <span class="history-plan">{{ row.planName }}</span>
+                <span class="history-dates">{{ row.startDate }} → {{ row.endDate }}</span>
+              </div>
+              <span class="status-badge" [ngClass]="getStatusBadgeClass(row.status)">
+                {{ row.status }}
+              </span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Payment History -->
+    <div class="section-card">
+      <h2 class="section-title">
+        <span class="section-icon">💳</span> Payment History
+      </h2>
+      @if (!payments().length) {
+        <p class="empty-state">No payments yet.</p>
+      } @else {
+        <div class="history-list">
+          @for (row of payments(); track row.id) {
+            <div class="history-item">
+              <div class="history-item-left">
+                <span class="history-plan">₹{{ row.amount | number:'1.2-2' }}</span>
+                <span class="history-dates">{{ row.method }} • <code>{{ row.transactionId }}</code></span>
+              </div>
+              <span class="status-badge" [ngClass]="row.status === 'SUCCESS' ? 'status-active' : 'status-expired'">
+                {{ row.status }}
+              </span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+  </div><!-- end history-grid -->
+
+</section>
+
+<!-- Stripe Checkout Modal -->
+@if (showCheckout() && selectedPlan()) {
+  <app-stripe-checkout
+    [planId]="selectedPlan()!.id"
+    [planName]="selectedPlan()!.name"
+    [planPrice]="selectedPlan()!.price"
+    (paymentSuccess)="onPaymentSuccess()"
+    (cancelled)="onCheckoutCancelled()"
+  />
+}

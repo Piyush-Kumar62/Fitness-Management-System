@@ -1,0 +1,62 @@
+<section class="dashboard-page space-y-6">
+  <header>
+    <h1 class="text-3xl font-extrabold text-white">Membership Plans</h1>
+    <p class="text-gray-200">Create plans for your gym and publish them to members.</p>
+  </header>
+
+  <article class="glass-card p-5 rounded-2xl border border-white/20">
+    <h2 class="text-xl font-semibold text-white mb-4">Create Plan</h2>
+    <form
+      [formGroup]="form"
+      (ngSubmit)="createPlan()"
+      class="grid grid-cols-1 md:grid-cols-2 gap-3"
+    >
+      <input
+        formControlName="name"
+        placeholder="Plan name"
+        class="px-3 py-2 rounded-lg bg-white/10 text-white border border-white/20"
+      />
+      <input
+        type="number"
+        formControlName="price"
+        placeholder="Price"
+        class="px-3 py-2 rounded-lg bg-white/10 text-white border border-white/20"
+      />
+      <input
+        type="number"
+        formControlName="durationDays"
+        placeholder="Duration days"
+        class="px-3 py-2 rounded-lg bg-white/10 text-white border border-white/20"
+      />
+      <input
+        formControlName="features"
+        placeholder="Features"
+        class="px-3 py-2 rounded-lg bg-white/10 text-white border border-white/20 md:col-span-2"
+      />
+      <button
+        type="submit"
+        [disabled]="form.invalid || !gymId()"
+        class="md:col-span-2 px-4 py-2 rounded-lg bg-pink-500 hover:bg-pink-600 text-white disabled:opacity-60"
+      >
+        Add Plan
+      </button>
+    </form>
+  </article>
+
+  <article class="glass-card p-5 rounded-2xl border border-white/20">
+    <h2 class="text-xl font-semibold text-white mb-4">Existing Plans</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      @for (plan of plans(); track plan.id) {
+        <div class="bg-white/5 rounded-xl border border-white/15 p-4">
+          <h3 class="text-lg font-semibold text-white">{{ plan.name }}</h3>
+          <p class="text-pink-300 text-2xl font-bold mt-2">₹{{ plan.price }}</p>
+          <p class="text-gray-300 text-sm mt-1">{{ plan.durationDays }} days</p>
+          <p class="text-gray-300 text-sm mt-2">{{ plan.features || 'No features listed.' }}</p>
+        </div>
+      }
+      @if (!plans().length) {
+        <p class="text-gray-300 text-sm">No plans created yet.</p>
+      }
+    </div>
+  </article>
+</section>

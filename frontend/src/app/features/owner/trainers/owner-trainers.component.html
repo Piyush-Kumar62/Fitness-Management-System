@@ -1,0 +1,45 @@
+<section class="dashboard-page space-y-6">
+  <article class="glass-card p-6 rounded-2xl border border-white/20">
+    <h1 class="text-2xl font-bold text-white">Owner Trainers</h1>
+    <p class="text-gray-200 mt-2">All trainers mapped to your gyms.</p>
+  </article>
+
+  <article class="glass-card p-6 rounded-2xl border border-white/20">
+    @if (isLoading()) {
+      <p class="text-gray-200">Loading trainers...</p>
+    } @else if (trainers().length === 0) {
+      <p class="text-gray-200">No trainers found for your gyms.</p>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="text-gray-300 uppercase text-xs">
+              <th class="pb-3">Name</th>
+              <th class="pb-3">Email</th>
+              <th class="pb-3">Gym</th>
+              <th class="pb-3">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (trainer of trainers(); track trainer.id) {
+              <tr class="border-t border-white/10">
+                <td class="py-3 text-white font-medium">{{ trainer.firstName }} {{ trainer.lastName }}</td>
+                <td class="py-3 text-gray-200">{{ trainer.email }}</td>
+                <td class="py-3 text-gray-200">{{ trainer.gymId || 'Not assigned' }}</td>
+                <td class="py-3">
+                  <span class="px-2 py-1 rounded-full text-xs font-semibold"
+                    [class.bg-green-500/20]="trainer.active"
+                    [class.text-green-300]="trainer.active"
+                    [class.bg-red-500/20]="trainer.active === false"
+                    [class.text-red-300]="trainer.active === false">
+                    {{ trainer.active === false ? 'Inactive' : 'Active' }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </article>
+</section>

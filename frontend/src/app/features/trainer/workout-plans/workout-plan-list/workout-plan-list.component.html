@@ -1,0 +1,61 @@
+<div class="container mx-auto">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Workout Plans</h1>
+    <a
+      routerLink="/trainer/workout-plans/new"
+      class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
+    >
+      + Create Plan
+    </a>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex justify-center py-12">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+    </div>
+  } @else if (plans().length === 0) {
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-8 text-center">
+      <svg
+        class="mx-auto h-12 w-12 text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+        ></path>
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No workout plans yet</h3>
+      <p class="mt-1 text-sm text-gray-500">Get started by creating a new workout plan.</p>
+      <a
+        routerLink="/trainer/workout-plans/new"
+        class="mt-4 inline-block bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
+      >
+        Create Workout Plan
+      </a>
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (plan of plans(); track plan.id) {
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <h3 class="font-semibold text-gray-900 dark:text-white text-lg mb-2">{{ plan.title }}</h3>
+          <p class="text-gray-500 text-sm mb-3">{{ plan.description }}</p>
+          <div class="flex justify-between items-center">
+            <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded">{{
+              plan.difficulty
+            }}</span>
+            <a
+              [routerLink]="['/trainer/workout-plans', plan.id]"
+              class="text-indigo-600 hover:text-indigo-500 text-sm font-medium"
+            >
+              Edit →
+            </a>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

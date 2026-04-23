@@ -1,0 +1,31 @@
+<section class="dashboard-page space-y-6">
+  <article class="glass-card p-6 rounded-2xl border border-white/20">
+    <h1 class="text-2xl font-bold text-white">Revenue</h1>
+    <p class="text-gray-200 mt-2">Live revenue summary for your gyms.</p>
+  </article>
+
+  @if (isLoading()) {
+    <article class="glass-card p-6 rounded-2xl border border-white/20">
+      <p class="text-gray-200">Loading revenue summary...</p>
+    </article>
+  } @else if (summary()) {
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <article class="glass-card p-5 rounded-2xl border border-white/20">
+        <p class="text-gray-300 text-sm">Monthly Revenue</p>
+        <p class="text-2xl font-bold text-white mt-1">{{ asInr(summary().monthlyRevenue ?? 0) }}</p>
+      </article>
+      <article class="glass-card p-5 rounded-2xl border border-white/20">
+        <p class="text-gray-300 text-sm">Total Members</p>
+        <p class="text-2xl font-bold text-white mt-1">{{ summary().totalMembers ?? 0 }}</p>
+      </article>
+      <article class="glass-card p-5 rounded-2xl border border-white/20">
+        <p class="text-gray-300 text-sm">Active Memberships</p>
+        <p class="text-2xl font-bold text-white mt-1">{{ summary().activeMemberships ?? 0 }}</p>
+      </article>
+      <article class="glass-card p-5 rounded-2xl border border-white/20">
+        <p class="text-gray-300 text-sm">Trainers</p>
+        <p class="text-2xl font-bold text-white mt-1">{{ summary().trainers ?? 0 }}</p>
+      </article>
+    </div>
+  }
+</section>
