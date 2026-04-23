@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { ApiService } from './api.service';
 
 export interface BodyMeasurement {
   id?: string;
@@ -19,37 +18,32 @@ export interface BodyMeasurement {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MeasurementService {
-  private apiUrl = `${environment.apiUrl}/measurements`;
-
-  constructor(private http: HttpClient) {}
+  constructor(private api: ApiService) {}
 
   getAllMeasurements(): Observable<BodyMeasurement[]> {
-    return this.http.get<BodyMeasurement[]>(this.apiUrl);
+    return this.api.get<BodyMeasurement[]>('measurements');
   }
 
   getMeasurementsByDateRange(startDate: string, endDate: string): Observable<BodyMeasurement[]> {
-    const params = new HttpParams()
-      .set('startDate', startDate)
-      .set('endDate', endDate);
-    return this.http.get<BodyMeasurement[]>(this.apiUrl, { params });
+    return this.api.get<BodyMeasurement[]>('measurements', { startDate, endDate });
   }
 
   getMeasurementById(id: string): Observable<BodyMeasurement> {
-    return this.http.get<BodyMeasurement>(`${this.apiUrl}/${id}`);
+    return this.api.get<BodyMeasurement>(`measurements/${id}`);
   }
 
   createMeasurement(measurement: BodyMeasurement): Observable<BodyMeasurement> {
-    return this.http.post<BodyMeasurement>(this.apiUrl, measurement);
+    return this.api.post<BodyMeasurement>('measurements', measurement);
   }
 
   updateMeasurement(id: string, measurement: BodyMeasurement): Observable<BodyMeasurement> {
-    return this.http.put<BodyMeasurement>(`${this.apiUrl}/${id}`, measurement);
+    return this.api.put<BodyMeasurement>(`measurements/${id}`, measurement);
   }
 
   deleteMeasurement(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.api.delete<void>(`measurements/${id}`);
   }
 }

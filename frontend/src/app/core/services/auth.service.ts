@@ -1,20 +1,16 @@
-import { Injectable, inject, signal, computed, effect, PLATFORM_ID } from '@angular/core';
+import { Injectable, inject, signal, computed, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, throwError, BehaviorSubject, timer, of } from 'rxjs';
-import { catchError, tap, switchMap, filter, take } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { User, UserRole } from '../models/user.model';
-import {
-  LoginRequest,
-  RegisterRequest,
-  AuthResponse,
-  TokenRefreshResponse,
-} from '../models/auth.model';
+import { LoginRequest, RegisterRequest, AuthResponse } from '../models/auth.model';
 import { StorageService, StorageKey } from './storage.service';
 import { ToastService } from './toast.service';
 import { JwtUtil } from '../utils/jwt.util';
+import { ApiResponse } from '../models/api-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -26,6 +22,7 @@ export class AuthService {
   private isBrowser = isPlatformBrowser(this.platformId);
 
   private baseUrl = environment.apiUrl + '/auth';
+  private backendBaseUrl = environment.apiUrl.replace(/\/api(?:\/v\d+)?$/, '');
 
   // Reactive state using signals
   private userSignal = signal<User | null>(this.storage.get<User>(StorageKey.USER));
@@ -36,25 +33,21 @@ export class AuthService {
   isAuthenticated = computed(() => this.isAuthenticatedSignal());
   userRole = computed(() => this.userSignal()?.role || null);
   isAdmin = computed(() => this.userRole() === UserRole.ADMIN);
-  isUser = computed(() => this.userRole() === UserRole.USER);
-
-  // Token refresh management
-  private refreshTokenSubject = new BehaviorSubject<string | null>(null);
-  private isRefreshing = false;
+  isTrainer = computed(() => this.userRole() === UserRole.TRAINER);
+  isOwner = computed(() => this.userRole() === UserRole.OWNER);
+  isMember = computed(() => this.userRole() === UserRole.MEMBER);
 
   constructor() {
-    // Auto-refresh token before expiry
-    this.setupTokenRefresh();
-
     // Sync user state across tabs
     this.syncAuthState();
   }
 
-  /**
-   * Login user
-   */
+  // Login user
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/login`, credentials).pipe(
+    return this.http
+      .post<AuthResponse | ApiResponse<AuthResponse>>(`${this.baseUrl}/login`, credentials)
+      .pipe(
+      map((response) => this.unwrapResponse<AuthResponse>(response)),
       tap((response) => {
         this.handleAuthSuccess(response);
         this.toast.success('Login successful!');
@@ -63,11 +56,12 @@ export class AuthService {
     );
   }
 
-  /**
-   * Register new user
-   */
+  // Register new user
   register(userData: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/register`, userData).pipe(
+    return this.http
+      .post<AuthResponse | ApiResponse<AuthResponse>>(`${this.baseUrl}/register`, userData)
+      .pipe(
+      map((response) => this.unwrapResponse<AuthResponse>(response)),
       tap((response) => {
         this.handleAuthSuccess(response);
         this.toast.success('Registration successful!');
@@ -76,25 +70,17 @@ export class AuthService {
     );
   }
 
-  /**
-   * Login with Google OAuth2
-   */
+  // Login with Google OAuth2
   loginWithGoogle(): void {
-    const backendUrl = environment.apiUrl.replace('/api', '');
-    window.location.href = `${backendUrl}/oauth2/authorization/google`;
+    window.location.href = `${this.backendBaseUrl}/oauth2/authorization/google`;
   }
 
-  /**
-   * Login with GitHub OAuth2
-   */
+  // Login with GitHub OAuth2
   loginWithGithub(): void {
-    const backendUrl = environment.apiUrl.replace('/api', '');
-    window.location.href = `${backendUrl}/oauth2/authorization/github`;
+    window.location.href = `${this.backendBaseUrl}/oauth2/authorization/github`;
   }
 
-  /**
-   * Handle OAuth2 token after redirect
-   */
+  // Handle OAuth2 token after redirect
   handleOAuth2Token(token: string): Observable<User> {
     // Store token
     this.storage.setToken(token);
@@ -106,14 +92,17 @@ export class AuthService {
     }
 
     // Fetch full user profile from backend
-    return this.http.get<User>(`${environment.apiUrl}/users/profile`).pipe(
+    return this.http
+      .get<User | ApiResponse<User>>(`${environment.apiUrl}/users/profile`)
+      .pipe(
+      map((response) => this.unwrapResponse<User>(response)),
       tap((user) => {
         this.storage.set(StorageKey.USER, user);
         this.userSignal.set(user);
         this.isAuthenticatedSignal.set(true);
 
         // Navigate based on role
-        const redirectUrl = user.role === UserRole.ADMIN ? '/admin/dashboard' : '/user/dashboard';
+        const redirectUrl = this.getRedirectUrl(user.role);
         this.router.navigate([redirectUrl]);
       }),
       catchError((error) => {
@@ -123,70 +112,24 @@ export class AuthService {
     );
   }
 
-  /**
-   * Logout user
-   */
+  // Logout user
   logout(): void {
     this.clearAuthData();
     this.router.navigate(['/auth/login']);
     this.toast.info('You have been logged out');
   }
 
-  /**
-   * Refresh access token
-   */
-  refreshToken(): Observable<TokenRefreshResponse> {
-    const refreshToken = this.storage.get<string>(StorageKey.REFRESH_TOKEN);
-
-    if (!refreshToken) {
-      return throwError(() => new Error('No refresh token available'));
-    }
-
-    if (this.isRefreshing) {
-      return this.refreshTokenSubject.pipe(
-        filter((token) => token !== null),
-        take(1),
-        switchMap((token) => of({ token: token! })),
-      );
-    }
-
-    this.isRefreshing = true;
-    this.refreshTokenSubject.next(null);
-
-    return this.http.post<TokenRefreshResponse>(`${this.baseUrl}/refresh`, { refreshToken }).pipe(
-      tap((response) => {
-        this.storage.setToken(response.token);
-        if (response.refreshToken) {
-          this.storage.set(StorageKey.REFRESH_TOKEN, response.refreshToken);
-        }
-        this.isRefreshing = false;
-        this.refreshTokenSubject.next(response.token);
-      }),
-      catchError((error) => {
-        this.isRefreshing = false;
-        this.logout();
-        return throwError(() => error);
-      }),
-    );
-  }
-
-  /**
-   * Get current token
-   */
+  // Get current token
   getToken(): string | null {
     return this.storage.getToken();
   }
 
-  /**
-   * Check if user has specific role
-   */
+  // Check if user has specific role
   hasRole(role: UserRole): boolean {
     return this.userRole() === role;
   }
 
-  /**
-   * Check if token is valid
-   */
+  // Check if token is valid
   private hasValidToken(): boolean {
     const token = this.storage.getToken();
     if (!token) return false;
@@ -194,37 +137,41 @@ export class AuthService {
     return !JwtUtil.isExpired(token);
   }
 
-  /**
-   * Handle successful authentication
-   */
+  // Handle successful authentication
   private handleAuthSuccess(response: AuthResponse): void {
     this.storage.setToken(response.token);
-
-    if (response.refreshToken) {
-      this.storage.set(StorageKey.REFRESH_TOKEN, response.refreshToken);
-    }
 
     this.storage.set(StorageKey.USER, response.user);
     this.userSignal.set(response.user);
     this.isAuthenticatedSignal.set(true);
 
     // Navigate based on role
-    const redirectUrl =
-      response.user.role === UserRole.ADMIN ? '/admin/dashboard' : '/user/dashboard';
+    const redirectUrl = this.getRedirectUrl(response.user.role);
     this.router.navigate([redirectUrl]);
   }
 
-  /**
-   * Update user data
-   */
+  // Update user data
   updateUser(user: User): void {
     this.storage.set(StorageKey.USER, user);
     this.userSignal.set(user);
   }
 
-  /**
-   * Clear authentication data
-   */
+  // Get redirect URL based on user role
+  getRedirectUrl(role: UserRole): string {
+    switch (role) {
+      case UserRole.ADMIN:
+        return '/admin/dashboard';
+      case UserRole.TRAINER:
+        return '/trainer/dashboard';
+      case UserRole.OWNER:
+        return '/owner/dashboard';
+      case UserRole.MEMBER:
+      default:
+        return '/member/dashboard';
+    }
+  }
+
+  // Clear authentication data
   private clearAuthData(): void {
     this.storage.removeToken();
     this.storage.remove(StorageKey.USER);
@@ -232,45 +179,36 @@ export class AuthService {
     this.isAuthenticatedSignal.set(false);
   }
 
-  /**
-   * Handle authentication errors
-   */
+  // Handle authentication errors
   private handleAuthError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An error occurred during authentication';
 
-    if (error.error?.message) {
-      errorMessage = error.error.message;
+    if (error.error) {
+      if (typeof error.error === 'string') {
+        try {
+          const parsed = JSON.parse(error.error);
+          errorMessage = parsed.message || parsed.error || error.error;
+        } catch (e) {
+          errorMessage = error.error;
+        }
+      } else if (error.error.message) {
+        errorMessage = error.error.message;
+      } else if (error.error.error) {
+        errorMessage = error.error.error;
+      }
     } else if (error.status === 401) {
-      errorMessage = 'Invalid credentials';
+      errorMessage = 'Invalid credentials provided. Please check your email and password.';
     } else if (error.status === 403) {
-      errorMessage = 'Access forbidden';
+      errorMessage = 'You do not have permission to access this resource.';
     } else if (error.status === 0) {
-      errorMessage = 'Unable to connect to server';
+      errorMessage = 'Unable to connect to the server. Please ensure the backend is running.';
     }
 
-    this.toast.error(errorMessage);
+    this.toast.error(errorMessage, 'Authentication Failed');
     return throwError(() => error);
   }
 
-  /**
-   * Setup automatic token refresh
-   */
-  private setupTokenRefresh(): void {
-    effect(() => {
-      if (this.isAuthenticated()) {
-        const token = this.getToken();
-        if (token && JwtUtil.needsRefresh(token, environment.tokenRefreshThreshold)) {
-          this.refreshToken().subscribe({
-            error: () => console.error('Token refresh failed'),
-          });
-        }
-      }
-    });
-  }
-
-  /**
-   * Sync auth state across browser tabs
-   */
+  // Sync auth state across browser tabs
   private syncAuthState(): void {
     if (!this.isBrowser) return;
 
@@ -288,5 +226,17 @@ export class AuthService {
         }
       }
     });
+  }
+
+  private unwrapResponse<T>(response: T | ApiResponse<T>): T {
+    if (
+      response &&
+      typeof response === 'object' &&
+      'success' in (response as Record<string, unknown>)
+    ) {
+      const envelope = response as ApiResponse<T>;
+      return (envelope.data as T) ?? ({} as T);
+    }
+    return response as T;
   }
 }

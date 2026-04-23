@@ -16,9 +16,7 @@ export class RecommendationService {
   recommendations = signal<Recommendation[]>([]);
   isLoading = signal<boolean>(false);
 
-  /**
-   * Generate AI recommendation for activity
-   */
+  // Generate AI recommendation for activity
   generateRecommendation(request: GenerateRecommendationRequest): Observable<Recommendation> {
     this.isLoading.set(true);
     return this.api.post<Recommendation>('recommendations/generate', request).pipe(
@@ -29,9 +27,7 @@ export class RecommendationService {
     );
   }
 
-  /**
-   * Get recommendations for current user
-   */
+  // Get recommendations for current user
   getUserRecommendations(userId: string): Observable<Recommendation[]> {
     this.isLoading.set(true);
     return this.api.get<Recommendation[]>(`recommendations/user/${userId}`).pipe(
@@ -42,23 +38,17 @@ export class RecommendationService {
     );
   }
 
-  /**
-   * Get recommendations for specific activity
-   */
+  // Get recommendations for specific activity
   getActivityRecommendations(activityId: string): Observable<Recommendation[]> {
     return this.api.get<Recommendation[]>(`recommendations/activity/${activityId}`);
   }
 
-  /**
-   * Get recommendation by ID
-   */
+  // Get recommendation by ID
   getRecommendationById(id: string): Observable<Recommendation> {
     return this.api.get<Recommendation>(`recommendations/${id}`);
   }
 
-  /**
-   * Create recommendation manually
-   */
+  // Create recommendation manually
   createRecommendation(data: CreateRecommendationRequest): Observable<Recommendation> {
     return this.api.post<Recommendation>('recommendations', data).pipe(
       tap((recommendation) => {
@@ -67,9 +57,7 @@ export class RecommendationService {
     );
   }
 
-  /**
-   * Delete recommendation
-   */
+  // Delete recommendation
   deleteRecommendation(id: string): Observable<void> {
     return this.api.delete<void>(`recommendations/${id}`).pipe(
       tap(() => {
@@ -78,9 +66,7 @@ export class RecommendationService {
     );
   }
 
-  /**
-   * Search recommendations
-   */
+  // Search recommendations
   search(query: string): Recommendation[] {
     const lowerQuery = query.toLowerCase();
     return this.recommendations().filter(

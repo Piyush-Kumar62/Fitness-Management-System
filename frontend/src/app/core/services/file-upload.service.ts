@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { ApiService } from './api.service';
 
 export interface FileUploadResponse {
   id: string;
@@ -12,25 +13,25 @@ export interface FileUploadResponse {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FileUploadService {
-  private apiUrl = 'http://localhost:8080/api/files';
+  private apiUrl = `${environment.apiUrl}/files`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private api: ApiService) {}
 
   uploadFile(file: File): Observable<FileUploadResponse> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<FileUploadResponse>(`${this.apiUrl}/upload`, formData);
+    return this.api.post<FileUploadResponse>('files/upload', formData);
   }
 
   getMyFiles(): Observable<FileUploadResponse[]> {
-    return this.http.get<FileUploadResponse[]>(`${this.apiUrl}/user/me`);
+    return this.api.get<FileUploadResponse[]>('files/user/me');
   }
 
   deleteFile(fileId: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${fileId}`);
+    return this.api.delete<void>(`files/${fileId}`);
   }
 
   getFileUrl(fileId: string): string {

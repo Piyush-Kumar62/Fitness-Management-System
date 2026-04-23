@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { ApiService } from './api.service';
 
 export interface Goal {
   id?: string;
@@ -40,49 +39,47 @@ export enum GoalType {
   STRENGTH = 'STRENGTH',
   FLEXIBILITY = 'FLEXIBILITY',
   HABIT_BUILDING = 'HABIT_BUILDING',
-  CUSTOM = 'CUSTOM'
+  CUSTOM = 'CUSTOM',
 }
 
 export enum GoalStatus {
   ACTIVE = 'ACTIVE',
   COMPLETED = 'COMPLETED',
   ABANDONED = 'ABANDONED',
-  PAUSED = 'PAUSED'
+  PAUSED = 'PAUSED',
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GoalService {
-  private apiUrl = `${environment.apiUrl}/goals`;
-
-  constructor(private http: HttpClient) {}
+  constructor(private api: ApiService) {}
 
   getAllGoals(): Observable<Goal[]> {
-    return this.http.get<Goal[]>(this.apiUrl);
+    return this.api.get<Goal[]>('goals');
   }
 
   getGoalById(id: string): Observable<Goal> {
-    return this.http.get<Goal>(`${this.apiUrl}/${id}`);
+    return this.api.get<Goal>(`goals/${id}`);
   }
 
   createGoal(goal: Goal): Observable<Goal> {
-    return this.http.post<Goal>(this.apiUrl, goal);
+    return this.api.post<Goal>('goals', goal);
   }
 
   updateGoal(id: string, goal: Goal): Observable<Goal> {
-    return this.http.put<Goal>(`${this.apiUrl}/${id}`, goal);
+    return this.api.put<Goal>(`goals/${id}`, goal);
   }
 
   deleteGoal(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.api.delete<void>(`goals/${id}`);
   }
 
   addMilestone(goalId: string, milestone: Milestone): Observable<Milestone> {
-    return this.http.post<Milestone>(`${this.apiUrl}/${goalId}/milestones`, milestone);
+    return this.api.post<Milestone>(`goals/${goalId}/milestones`, milestone);
   }
 
   achieveMilestone(milestoneId: string): Observable<Milestone> {
-    return this.http.put<Milestone>(`${this.apiUrl}/milestones/${milestoneId}/achieve`, {});
+    return this.api.put<Milestone>(`goals/milestones/${milestoneId}/achieve`, {});
   }
 }

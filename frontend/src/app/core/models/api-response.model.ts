@@ -1,8 +1,10 @@
+// Standard backend API envelope: { success, message, data, timestamp, correlationId }.
 export interface ApiResponse<T = any> {
   data?: T;
   message?: string;
   success: boolean;
   timestamp?: string;
+  correlationId?: string;
   errors?: Record<string, string[]>;
 }
 

@@ -11,7 +11,11 @@ export const guestGuard: CanActivateFn = () => {
   }
 
   // Redirect to dashboard based on role
-  const redirectUrl = authService.isAdmin() ? '/admin/dashboard' : '/user/dashboard';
-  router.navigate([redirectUrl]);
+  const userRole = authService.userRole();
+  if (userRole) {
+    router.navigate([authService.getRedirectUrl(userRole)]);
+  } else {
+    router.navigate(['/member/dashboard']);
+  }
   return false;
 };

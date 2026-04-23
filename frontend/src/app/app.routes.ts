@@ -35,9 +35,12 @@ export const routes: Routes = [
         (m) => m.OAuth2RedirectComponent,
       ),
   },
+
+  // ===== MEMBER ROUTES =====
   {
-    path: 'user',
-    canActivate: [authGuard],
+    path: 'member',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: [UserRole.MEMBER] },
     loadComponent: () =>
       import('./layouts/user-layout/user-layout.component').then((m) => m.UserLayoutComponent),
     children: [
@@ -142,8 +145,119 @@ export const routes: Routes = [
             (m) => m.BmiCalculatorComponent,
           ),
       },
+      {
+        path: 'plans',
+        loadComponent: () =>
+          import('./features/user/plans/member-plans.component').then(
+            (m) => m.MemberPlansComponent,
+          ),
+      },
+      {
+        path: 'memberships',
+        loadComponent: () =>
+          import('./features/user/memberships/membership-marketplace.component').then(
+            (m) => m.MembershipMarketplaceComponent,
+          ),
+      },
+      {
+        path: 'classes',
+        loadComponent: () =>
+          import('./features/user/classes/member-classes.component').then(
+            (m) => m.MemberClassesComponent,
+          ),
+      },
     ],
   },
+
+  // ===== TRAINER ROUTES =====
+  {
+    path: 'trainer',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: [UserRole.TRAINER] },
+    loadComponent: () =>
+      import('./layouts/trainer-layout/trainer-layout.component').then(
+        (m) => m.TrainerLayoutComponent,
+      ),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/trainer/dashboard/trainer-dashboard.component').then(
+            (m) => m.TrainerDashboardComponent,
+          ),
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./features/user/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
+        path: 'members',
+        loadComponent: () =>
+          import('./features/trainer/members/member-list/member-list.component').then(
+            (m) => m.MemberListComponent,
+          ),
+      },
+      {
+        path: 'members/:id',
+        loadComponent: () =>
+          import('./features/trainer/members/member-progress/member-progress.component').then(
+            (m) => m.MemberProgressComponent,
+          ),
+      },
+      {
+        path: 'workout-plans',
+        loadComponent: () =>
+          import('./features/trainer/workout-plans/workout-plan-list/workout-plan-list.component').then(
+            (m) => m.WorkoutPlanListComponent,
+          ),
+      },
+      {
+        path: 'workout-plans/new',
+        loadComponent: () =>
+          import('./features/trainer/workout-plans/workout-plan-form/workout-plan-form.component').then(
+            (m) => m.WorkoutPlanFormComponent,
+          ),
+      },
+      {
+        path: 'workout-plans/:id',
+        loadComponent: () =>
+          import('./features/trainer/workout-plans/workout-plan-form/workout-plan-form.component').then(
+            (m) => m.WorkoutPlanFormComponent,
+          ),
+      },
+      {
+        path: 'diet-plans',
+        loadComponent: () =>
+          import('./features/trainer/diet-plans/diet-plan-list/diet-plan-list.component').then(
+            (m) => m.DietPlanListComponent,
+          ),
+      },
+      {
+        path: 'diet-plans/new',
+        loadComponent: () =>
+          import('./features/trainer/diet-plans/diet-plan-form/diet-plan-form.component').then(
+            (m) => m.DietPlanFormComponent,
+          ),
+      },
+      {
+        path: 'diet-plans/:id',
+        loadComponent: () =>
+          import('./features/trainer/diet-plans/diet-plan-form/diet-plan-form.component').then(
+            (m) => m.DietPlanFormComponent,
+          ),
+      },
+      {
+        path: 'classes',
+        loadComponent: () =>
+          import('./features/trainer/classes/trainer-classes.component').then(
+            (m) => m.TrainerClassesComponent,
+          ),
+      },
+    ],
+  },
+
+  // ===== ADMIN ROUTES =====
   {
     path: 'admin',
     canActivate: [authGuard, roleGuard],
@@ -159,11 +273,24 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'profile',
+        loadComponent: () =>
+          import('./features/user/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
         path: 'users',
         loadComponent: () =>
           import('./features/admin/users/user-list/user-list.component').then(
             (m) => m.UserListComponent,
           ),
+      },
+      {
+        path: 'trainers',
+        loadComponent: () =>
+          import('./features/admin/users/user-list/user-list.component').then(
+            (m) => m.UserListComponent,
+          ),
+        data: { defaultRole: 'TRAINER', lockRoleFilter: true },
       },
       {
         path: 'users/new',
@@ -195,6 +322,77 @@ export const routes: Routes = [
       },
     ],
   },
+
+  // ===== OWNER ROUTES =====
+  {
+    path: 'owner',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: [UserRole.OWNER] },
+    loadComponent: () =>
+      import('./layouts/owner-layout/owner-layout.component').then((m) => m.OwnerLayoutComponent),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/owner/dashboard/owner-dashboard.component').then(
+            (m) => m.OwnerDashboardComponent,
+          ),
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./features/user/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
+        path: 'gyms',
+        loadComponent: () =>
+          import('./features/owner/gyms/owner-gyms.component').then((m) => m.OwnerGymsComponent),
+      },
+      {
+        path: 'trainers',
+        loadComponent: () =>
+          import('./features/owner/trainers/owner-trainers.component').then(
+            (m) => m.OwnerTrainersComponent,
+          ),
+      },
+      {
+        path: 'members',
+        loadComponent: () =>
+          import('./features/owner/members/owner-members.component').then(
+            (m) => m.OwnerMembersComponent,
+          ),
+      },
+      {
+        path: 'revenue',
+        loadComponent: () =>
+          import('./features/owner/revenue/owner-revenue.component').then(
+            (m) => m.OwnerRevenueComponent,
+          ),
+      },
+      {
+        path: 'membership-plans',
+        loadComponent: () =>
+          import('./features/owner/membership-plans/owner-membership-plans.component').then(
+            (m) => m.OwnerMembershipPlansComponent,
+          ),
+      },
+      {
+        path: 'subscription',
+        loadComponent: () =>
+          import('./features/owner/subscription/owner-subscription.component').then(
+            (m) => m.OwnerSubscriptionComponent,
+          ),
+      },
+    ],
+  },
+
+  // Legacy redirect: /user/* → /member/*
+  {
+    path: 'user',
+    redirectTo: 'member',
+    pathMatch: 'prefix',
+  },
+
   {
     path: '**',
     loadComponent: () =>

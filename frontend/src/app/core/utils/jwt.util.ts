@@ -1,9 +1,7 @@
 import { JwtPayload } from '../models/auth.model';
 
 export class JwtUtil {
-  /**
-   * Decode JWT token (without verification - done by backend)
-   */
+  // Decode JWT token (without verification - done by backend)
   static decode(token: string): JwtPayload | null {
     try {
       const parts = token.split('.');
@@ -20,9 +18,7 @@ export class JwtUtil {
     }
   }
 
-  /**
-   * Check if token is expired
-   */
+  // Check if token is expired
   static isExpired(token: string): boolean {
     const payload = this.decode(token);
     if (!payload || !payload.exp) {
@@ -33,9 +29,7 @@ export class JwtUtil {
     return expirationDate <= new Date();
   }
 
-  /**
-   * Get token expiration date
-   */
+  // Get token expiration date
   static getExpirationDate(token: string): Date | null {
     const payload = this.decode(token);
     if (!payload || !payload.exp) {
@@ -45,9 +39,7 @@ export class JwtUtil {
     return new Date(payload.exp * 1000);
   }
 
-  /**
-   * Get time until token expires (in milliseconds)
-   */
+  // Get time until token expires (in milliseconds)
   static getTimeUntilExpiry(token: string): number {
     const expirationDate = this.getExpirationDate(token);
     if (!expirationDate) {
@@ -57,35 +49,21 @@ export class JwtUtil {
     return Math.max(0, expirationDate.getTime() - Date.now());
   }
 
-  /**
-   * Check if token needs refresh (within 5 minutes of expiry)
-   */
+  // Check if token needs refresh (within 5 minutes of expiry)
   static needsRefresh(token: string, thresholdMs: number = 300000): boolean {
     const timeUntilExpiry = this.getTimeUntilExpiry(token);
     return timeUntilExpiry > 0 && timeUntilExpiry < thresholdMs;
   }
 
-  /**
-   * Extract user role from token
-   */
+  // Extract user role from token
   static getRole(token: string): string | null {
     const payload = this.decode(token);
-    return payload?.role || null;
+    return payload?.roles?.[0] || null;
   }
 
-  /**
-   * Extract user ID from token
-   */
+  // Extract user ID from token
   static getUserId(token: string): string | null {
     const payload = this.decode(token);
     return payload?.sub || null;
-  }
-
-  /**
-   * Extract user email from token
-   */
-  static getEmail(token: string): string | null {
-    const payload = this.decode(token);
-    return payload?.email || null;
   }
 }

@@ -3,7 +3,6 @@ import { isPlatformBrowser } from '@angular/common';
 
 export enum StorageKey {
   ACCESS_TOKEN = 'fitness_access_token',
-  REFRESH_TOKEN = 'fitness_refresh_token',
   USER = 'fitness_user',
   THEME = 'fitness_theme',
   REMEMBER_ME = 'fitness_remember_me',
@@ -16,9 +15,7 @@ export class StorageService {
   private platformId = inject(PLATFORM_ID);
   private isBrowser = isPlatformBrowser(this.platformId);
 
-  /**
-   * Set item in localStorage
-   */
+  // Set item in localStorage
   set<T>(key: StorageKey, value: T): void {
     if (!this.isBrowser) return;
 
@@ -30,9 +27,7 @@ export class StorageService {
     }
   }
 
-  /**
-   * Get item from localStorage
-   */
+  // Get item from localStorage
   get<T>(key: StorageKey): T | null {
     if (!this.isBrowser) return null;
 
@@ -53,9 +48,7 @@ export class StorageService {
     }
   }
 
-  /**
-   * Remove item from localStorage
-   */
+  // Remove item from localStorage
   remove(key: StorageKey): void {
     if (!this.isBrowser) return;
 
@@ -66,9 +59,7 @@ export class StorageService {
     }
   }
 
-  /**
-   * Clear all storage
-   */
+  // Clear all storage
   clear(): void {
     if (!this.isBrowser) return;
 
@@ -79,33 +70,24 @@ export class StorageService {
     }
   }
 
-  /**
-   * Check if key exists
-   */
+  // Check if key exists
   has(key: StorageKey): boolean {
     if (!this.isBrowser) return false;
     return localStorage.getItem(key) !== null;
   }
 
-  /**
-   * Get token
-   */
+  // Get token
   getToken(): string | null {
     return this.get<string>(StorageKey.ACCESS_TOKEN);
   }
 
-  /**
-   * Set token
-   */
+  // Set token
   setToken(token: string): void {
     this.set(StorageKey.ACCESS_TOKEN, token);
   }
 
-  /**
-   * Remove token
-   */
+  // Remove token
   removeToken(): void {
     this.remove(StorageKey.ACCESS_TOKEN);
-    this.remove(StorageKey.REFRESH_TOKEN);
   }
 }

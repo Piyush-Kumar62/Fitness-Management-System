@@ -23,6 +23,6 @@ export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   }
 
   toast.error('You do not have permission to access this page');
-  router.navigate(['/user/dashboard']);
+  router.navigate([authService.getRedirectUrl(userRole as UserRole)]);
   return false;
 };

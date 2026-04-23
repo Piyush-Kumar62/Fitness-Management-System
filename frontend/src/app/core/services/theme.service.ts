@@ -23,23 +23,17 @@ export class ThemeService {
     });
   }
 
-  /**
-   * Toggle between light and dark theme
-   */
+  // Toggle between light and dark theme
   toggleTheme(): void {
     this.theme.update((current) => (current === 'light' ? 'dark' : 'light'));
   }
 
-  /**
-   * Set specific theme
-   */
+  // Set specific theme
   setTheme(theme: Theme): void {
     this.theme.set(theme);
   }
 
-  /**
-   * Get initial theme from localStorage or system preference
-   */
+  // Get initial theme from localStorage or system preference
   private getInitialTheme(): Theme {
     if (!this.isBrowser) {
       return 'light'; // Default for SSR
@@ -58,9 +52,7 @@ export class ThemeService {
     return 'light';
   }
 
-  /**
-   * Apply theme to document
-   */
+  // Apply theme to document
   private applyTheme(theme: Theme): void {
     if (!this.isBrowser) {
       return; // Skip for SSR

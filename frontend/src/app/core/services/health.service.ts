@@ -19,16 +19,12 @@ interface HealthStatus {
 export class HealthService {
   private http = inject(HttpClient);
 
-  /**
-   * Check backend health status
-   */
+  // Check backend health status
   checkHealth(): Observable<HealthStatus> {
     return this.http.get<HealthStatus>(`${environment.apiUrl}/actuator/health`);
   }
 
-  /**
-   * Check if backend is reachable
-   */
+  // Check if backend is reachable
   async isBackendHealthy(): Promise<boolean> {
     try {
       const health = await this.checkHealth().toPromise();
