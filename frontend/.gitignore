@@ -13,4 +13,4 @@ bazel-out/
 
 # Frontend secrets
 .env
-.env.*
+.env.local
