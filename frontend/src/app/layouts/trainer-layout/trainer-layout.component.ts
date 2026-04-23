@@ -6,12 +6,12 @@ import { SidebarComponent } from '../../shared/components/sidebar/sidebar.compon
 import { ModuleHeaderComponent } from '../../shared/components/module-header/module-header.component';
 
 @Component({
-  selector: 'app-admin-layout',
+  selector: 'app-trainer-layout',
   standalone: true,
   imports: [CommonModule, RouterOutlet, NavbarComponent, SidebarComponent, ModuleHeaderComponent],
-  templateUrl: './admin-layout.component.html',
+  templateUrl: './trainer-layout.component.html',
 })
-export class AdminLayoutComponent {
+export class TrainerLayoutComponent {
   isSidebarOpen = signal(true);
 
   onToggleSidebar(): void {

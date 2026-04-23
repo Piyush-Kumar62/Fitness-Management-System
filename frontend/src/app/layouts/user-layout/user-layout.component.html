@@ -1,0 +1,25 @@
+<div class="app-shell h-screen overflow-hidden">
+  <app-navbar [role]="'MEMBER'" [sidebarOpen]="isSidebarOpen()" (toggleSidebar)="onToggleSidebar()"></app-navbar>
+
+  <div class="flex h-[calc(100vh-var(--app-navbar-height))] mt-[var(--app-navbar-height)]">
+    <app-sidebar
+      [role]="'MEMBER'"
+      [isOpen]="isSidebarOpen()"
+      (closeSidebar)="onToggleSidebar()"
+    ></app-sidebar>
+
+    @if (isSidebarOpen()) {
+      <div class="fixed inset-0 bg-black/50 z-20 md:hidden" (click)="onToggleSidebar()"></div>
+    }
+
+    <main
+      class="module-main-content flex-1 h-full w-full min-w-0 p-4 md:p-6 overflow-auto transition-all duration-300 text-white"
+      [class.md:ml-280]="isSidebarOpen()"
+      [class.md:ml-20]="!isSidebarOpen()"
+    >
+      <app-module-header [role]="'MEMBER'"></app-module-header>
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
+

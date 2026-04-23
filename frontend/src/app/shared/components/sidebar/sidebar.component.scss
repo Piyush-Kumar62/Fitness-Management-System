@@ -1,55 +1,89 @@
 .sidebar {
   position: fixed;
   left: 0;
-  top: 64px; /* Height of navbar */
-  height: calc(100vh - 64px);
+  top: var(--app-navbar-height);
+  height: calc(100vh - var(--app-navbar-height));
   z-index: 30;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 
   &.sidebar-open {
-    width: 280px;
+    width: var(--app-sidebar-open-width);
     opacity: 1;
   }
 
   &.sidebar-closed {
-    width: 0;
-    opacity: 0;
+    width: var(--app-sidebar-collapsed-width);
+    opacity: 1;
   }
 
   .menu-item.active {
-    @apply bg-indigo-100 dark:bg-gray-700 text-indigo-600 dark:text-indigo-400 font-semibold;
+    @apply bg-white/25 text-white font-semibold;
+  }
+
+  &.is-collapsed {
+    .sidebar-header {
+      @apply px-2 py-4;
+    }
+
+    .role-badge {
+      @apply mx-auto;
+    }
+
+    .sidebar-title,
+    .sidebar-subtitle,
+    .menu-label,
+    .menu-badge {
+      display: none;
+    }
+
+    .menu-item {
+      @apply justify-center px-2;
+    }
   }
 }
 
-/* Desktop: sidebar collapses smoothly */
+// Desktop: sidebar collapses smoothly
 @media (min-width: 768px) {
   .sidebar {
     &.sidebar-open {
-      width: 280px;
+      width: var(--app-sidebar-open-width);
     }
 
     &.sidebar-closed {
-      width: 0;
-      border-right: none;
+      width: var(--app-sidebar-collapsed-width);
     }
   }
 }
 
-/* Mobile: sidebar overlays content */
+// Mobile: sidebar overlays content
 @media (max-width: 767px) {
   .sidebar {
     z-index: 40;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 
     &.sidebar-open {
-      width: 280px;
+      width: var(--app-sidebar-open-width);
       transform: translateX(0);
     }
 
     &.sidebar-closed {
-      width: 280px;
-      transform: translateX(-280px);
+      width: var(--app-sidebar-open-width);
+      transform: translateX(calc(-1 * var(--app-sidebar-open-width)));
+      opacity: 1;
+    }
+
+    &.is-collapsed {
+      .sidebar-title,
+      .sidebar-subtitle,
+      .menu-label,
+      .menu-badge {
+        display: block;
+      }
+
+      .menu-item {
+        @apply justify-start px-3;
+      }
     }
   }
 }

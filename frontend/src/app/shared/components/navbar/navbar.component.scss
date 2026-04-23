@@ -1,9 +1,45 @@
 .navbar {
   transition: all 0.3s ease;
+  min-height: var(--app-navbar-height);
+  width: 100%;
+
+  .navbar-left,
+  .navbar-right {
+    min-width: 0;
+  }
 
   .profile-dropdown,
   .notifications-dropdown {
     animation: slideDown 0.2s ease;
+  }
+}
+
+@media (max-width: 1023px) {
+  .navbar {
+    .navbar-container {
+      gap: 0.5rem;
+    }
+
+    .back-home-btn {
+      padding-left: 0.7rem;
+      padding-right: 0.7rem;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .navbar {
+    .navbar-container {
+      padding-left: 0.6rem;
+      padding-right: 0.6rem;
+    }
+
+    .back-home-btn {
+      width: 2.5rem;
+      justify-content: center;
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
 }
 

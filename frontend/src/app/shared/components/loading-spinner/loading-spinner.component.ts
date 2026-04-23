@@ -6,18 +6,7 @@ import { LoadingService } from '../../../core/services/loading.service';
   selector: 'app-loading-spinner',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    @if (isLoading()) {
-      <div
-        class="loading-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      >
-        <div class="loading-spinner">
-          <div class="spinner"></div>
-          <p class="text-white mt-4 text-sm font-medium">Loading...</p>
-        </div>
-      </div>
-    }
-  `,
+  templateUrl: './loading-spinner.component.html',
   styles: [
     `
       .loading-overlay {
