@@ -1,10 +1,15 @@
-# OS
+# =============================================================
+#  Fitness Management System — Root .gitignore
+# =============================================================
+
+# ── OS ────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
 Desktop.ini
 
-# IDE
+# ── IDE ───────────────────────────────────────────────────────
 .idea/
+**/.idea/
 .vscode/
 *.iml
 *.ipr
@@ -14,15 +19,33 @@ Desktop.ini
 .settings/
 .sts4-cache
 
-# Logs
+# ── Logs ──────────────────────────────────────────────────────
 *.log
+logs/
 build.log
 
-# Secrets (global)
+# ── Secrets (NEVER commit these) ─────────────────────────────
 .env
-.env.*
+.env.local
+.env.prod
 *.key
 *.pem
+*.p12
+*.jks
 
-# Local scripts
-/cleanup.sh
+# ── Build artifacts ───────────────────────────────────────────
+# Backend
+target/
+
+# Frontend
+node_modules/
+.angular/
+dist/
+out-tsc/
+coverage/
+
+# ── Misc scripts / temp ───────────────────────────────────────
+cleanup.sh
+
+# ── Uploads (runtime-generated) ──────────────────────────────
+uploads/
