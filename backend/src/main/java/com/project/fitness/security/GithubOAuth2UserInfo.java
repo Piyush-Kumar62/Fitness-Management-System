@@ -15,11 +15,18 @@ public class GithubOAuth2UserInfo extends OAuth2UserInfo {
 
   @Override
   public String getName() {
-    return (String) attributes.get("name");
+    String name = (String) attributes.get("name");
+    // Fallback to login username if name is not provided
+    if (name == null || name.trim().isEmpty()) {
+      name = (String) attributes.get("login");
+    }
+    return name;
   }
 
   @Override
   public String getEmail() {
+    // GitHub often omits email on /user when private.
+    // The service layer fetches verified emails from /user/emails using access token.
     return (String) attributes.get("email");
   }
 

@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import javax.crypto.SecretKey;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtils {
-  @Value("${jwt.secret:base64SecretKeyGoesHereMustBeLongEnoughForHS256}")
+  @Value("${jwt.secret}")
   private String jwtSecret;
 
   @Value("${jwt.expiration:86400000}")
@@ -28,6 +29,7 @@ public class JwtUtils {
     return Jwts.builder()
         .subject(userId)
         .claim("roles", List.of(role))
+        .claim("role", role)
         .issuedAt(new Date())
         .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
         .signWith(key())
@@ -52,6 +54,15 @@ public class JwtUtils {
   }
 
   private SecretKey key() {
-    return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+    byte[] keyBytes;
+    try {
+      keyBytes = Decoders.BASE64.decode(jwtSecret);
+    } catch (IllegalArgumentException ex) {
+      keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+    }
+    if (keyBytes.length < 32) {
+      throw new IllegalStateException("JWT secret must be at least 32 bytes");
+    }
+    return Keys.hmacShaKeyFor(keyBytes);
   }
 }

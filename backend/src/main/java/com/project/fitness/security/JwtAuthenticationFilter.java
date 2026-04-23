@@ -1,6 +1,8 @@
 package com.project.fitness.security;
 
-import io.jsonwebtoken.Claims;
+import com.project.fitness.domain.user.model.AccountStatus;
+import com.project.fitness.domain.user.model.User;
+import com.project.fitness.domain.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +23,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtUtils jwtUtils;
+  private final UserRepository userRepository;
 
   @Override
   protected void doFilterInternal(
@@ -33,26 +36,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
 
-      Claims claims = jwtUtils.getAllClaims(jwt);
       String userId = jwtUtils.getUserIdFromToken(jwt);
+      User user = userRepository.findById(userId).orElse(null);
+      AccountStatus status = user == null || user.getStatus() == null ? AccountStatus.APPROVED : user.getStatus();
+      boolean onboardingEndpoint = request.getRequestURI().startsWith("/api/v1/auth/complete-profile");
+      boolean fullyEligible = user != null && user.isActive() && user.isEmailVerified()
+          && status == AccountStatus.APPROVED;
 
-      Object rolesObj = claims.get("roles");
-      List<String> roles = rolesObj instanceof List<?> list
-          ? list.stream().map(String::valueOf).toList()
-          : Collections.emptyList();
+      if (user != null && (fullyEligible || onboardingEndpoint)) {
+        List<SimpleGrantedAuthority> authorities = Collections.singletonList(
+            new SimpleGrantedAuthority("ROLE_" + user.getEffectiveRole().name()));
 
-      List<SimpleGrantedAuthority> authorities = roles.stream()
-          .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-          .toList();
+        UsernamePasswordAuthenticationToken authentication =
+            new UsernamePasswordAuthenticationToken(userId, null, authorities);
 
-      UsernamePasswordAuthenticationToken authentication =
-          new UsernamePasswordAuthenticationToken(userId, null, authorities);
+        authentication.setDetails(
+            new WebAuthenticationDetailsSource().buildDetails(request)
+        );
 
-      authentication.setDetails(
-          new WebAuthenticationDetailsSource().buildDetails(request)
-      );
-
-      SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+      }
     }
 
     filterChain.doFilter(request, response);

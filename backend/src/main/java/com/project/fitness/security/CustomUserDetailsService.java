@@ -1,7 +1,7 @@
 package com.project.fitness.security;
 
-import com.project.fitness.model.User;
-import com.project.fitness.repository.UserRepository;
+import com.project.fitness.domain.user.model.User;
+import com.project.fitness.domain.user.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     return org.springframework.security.core.userdetails.User
         .withUsername(user.getEmail())
         .password(user.getPassword())
-        .roles(user.getRole().name())
+        .roles(user.getEffectiveRole().name())
         .build();
   }
 }
