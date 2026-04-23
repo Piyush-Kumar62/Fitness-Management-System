@@ -1,0 +1,33 @@
+<section id="faq" class="landing-section scroll-mt-24">
+  <div class="landing-container">
+    <div class="landing-head">
+      <span class="landing-chip">Knowledge Base</span>
+      <h2 class="landing-title">Frequently Asked Questions</h2>
+      <p class="landing-subtitle max-w-3xl mx-auto">
+        Quick answers to common platform and rollout questions.
+      </p>
+    </div>
+
+    <div class="space-y-3 max-w-4xl mx-auto">
+      @for (item of faqs; track item.question; let i = $index) {
+        <article class="landing-card rounded-xl p-5 sm:p-6">
+          <button
+            type="button"
+            class="w-full flex items-start sm:items-center justify-between gap-4 text-left"
+            (click)="toggle(i)"
+          >
+            <h3 class="text-white font-semibold text-base sm:text-lg">{{ item.question }}</h3>
+            <span
+              class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-pink-300/50 bg-pink-400/10 text-pink-200 text-xl leading-none"
+            >
+              {{ openIndex() === i ? '−' : '+' }}
+            </span>
+          </button>
+          @if (openIndex() === i) {
+            <p class="text-gray-200 text-sm sm:text-[0.95rem] mt-3 leading-relaxed">{{ item.answer }}</p>
+          }
+        </article>
+      }
+    </div>
+  </div>
+</section>

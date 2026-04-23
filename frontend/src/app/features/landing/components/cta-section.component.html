@@ -1,0 +1,44 @@
+<section id="cta" class="landing-section scroll-mt-24">
+  <div class="landing-container">
+    <div
+      class="text-center bg-gradient-to-br from-indigo-900/45 via-violet-900/35 to-pink-900/35 border border-white/20 rounded-[2rem] p-6 md:p-8 lg:p-10 relative overflow-hidden shadow-2xl"
+    >
+      <div class="absolute inset-0 bg-white/5 backdrop-blur-[3px]"></div>
+      <div class="absolute -top-24 -left-24 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl"></div>
+      <div
+        class="absolute -bottom-24 -right-24 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl"
+      ></div>
+
+      <img
+        src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=1600&q=80"
+        alt="Fitness team collaboration"
+        class="absolute inset-0 w-full h-full object-cover opacity-10 mix-blend-luminosity"
+        loading="lazy"
+      />
+
+      <div class="relative z-10 max-w-3xl mx-auto">
+        <span class="landing-chip">Ready To Start</span>
+        <h2 class="landing-title !text-3xl sm:!text-4xl !font-extrabold !leading-tight">
+          Start Your Member Journey Today
+        </h2>
+        <p class="landing-subtitle text-base sm:text-lg mt-4 max-w-2xl mx-auto">
+          Join, choose your plan, and begin tracking workouts, classes, and progress from one app.
+        </p>
+        <div class="mt-7 flex flex-col sm:flex-row justify-center items-center gap-3">
+          <button
+            (click)="router.navigate(['/auth/register'])"
+            class="landing-btn-primary px-7 py-3 text-base w-full sm:w-auto shadow-lg shadow-pink-500/25"
+          >
+            Create Member Account
+          </button>
+          <button
+            (click)="scrollToContact()"
+            class="landing-btn-secondary px-7 py-3 text-base w-full sm:w-auto bg-white/5 hover:bg-white/10 border-white/20"
+          >
+            Talk To Support
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

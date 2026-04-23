@@ -1,0 +1,40 @@
+<section id="demo" class="landing-section scroll-mt-24">
+  <div class="landing-container">
+    <div class="landing-head">
+      <span class="landing-chip">Role Surfaces</span>
+      <h2 class="landing-title">Role-Based Experience</h2>
+      <p class="landing-subtitle max-w-3xl mx-auto">
+        Preview the dashboards built for owners, trainers, and members.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (item of dashboards; track item.title) {
+        <article
+          class="landing-card landing-card-interactive p-5 rounded-[1.35rem] group border-white/20 hover:border-emerald-300/40"
+        >
+          <div class="relative overflow-hidden rounded-2xl mb-5">
+            <img
+              [src]="item.image"
+              [alt]="item.title"
+              class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+              loading="lazy"
+            />
+            <div
+              class="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.08)_0%,rgba(2,6,23,0.72)_100%)]"
+            ></div>
+            <span
+              class="absolute top-3 left-3 rounded-full border border-emerald-100/30 bg-slate-950/55 px-3 py-1 text-[0.65rem] uppercase tracking-[0.12em] text-emerald-100"
+            >
+              {{ item.audience }}
+            </span>
+          </div>
+          <h3 class="text-xl font-bold text-white group-hover:text-emerald-100 transition-colors">
+            {{ item.title }}
+          </h3>
+          <p class="text-sm text-slate-200 mt-2 leading-relaxed">{{ item.caption }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>

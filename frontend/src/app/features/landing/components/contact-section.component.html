@@ -1,0 +1,81 @@
+<section id="contact" class="landing-section scroll-mt-24">
+  <div class="landing-container">
+    <div class="landing-head">
+      <span class="landing-chip">Member Support</span>
+      <h2 class="landing-title">Need Help?</h2>
+      <p class="landing-subtitle max-w-3xl mx-auto">
+        Questions about plans, classes, or your account? Our team responds within one business day.
+      </p>
+    </div>
+  </div>
+
+  <div class="landing-container grid grid-cols-1 xl:grid-cols-2 gap-6">
+    <article class="landing-card p-6 sm:p-7 text-gray-100 rounded-[1.5rem]">
+      <p class="text-xs uppercase tracking-[0.16em] text-pink-200">Member Care</p>
+      <h3 class="text-2xl font-semibold text-white mt-3">Talk to our support team</h3>
+      <p class="text-gray-300 mt-3 leading-relaxed">
+        Get help with memberships, class booking, workout plans, account access, and billing queries.
+      </p>
+
+      <div class="mt-6 space-y-3 text-sm">
+        <p class="rounded-lg border border-white/20 bg-white/10 px-4 py-2.5">
+          <span class="text-pink-200">Email:</span> {{ content.contact.email }}
+        </p>
+        <p class="rounded-lg border border-white/20 bg-white/10 px-4 py-2.5">
+          <span class="text-pink-200">Phone:</span> {{ content.contact.phone }}
+        </p>
+        <p class="rounded-lg border border-white/20 bg-white/10 px-4 py-2.5">
+          <span class="text-pink-200">Location:</span> {{ content.contact.location }}
+        </p>
+      </div>
+
+      <img
+        src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80"
+        alt="Support team for fitness SaaS"
+        class="mt-6 w-full h-44 object-cover rounded-xl border border-white/20"
+        loading="lazy"
+      />
+    </article>
+
+    <form [formGroup]="form" class="landing-card p-6 sm:p-7 space-y-4 rounded-[1.5rem]">
+      <h3 class="text-xl font-semibold text-white">Book a Demo</h3>
+      <p class="text-sm text-gray-300 -mt-1">Share your issue and we will guide you.</p>
+
+      <div class="space-y-1.5">
+        <label class="text-xs uppercase tracking-[0.12em] text-indigo-100/90">Name</label>
+        <input
+          formControlName="name"
+          placeholder="Your full name"
+          class="w-full px-3.5 py-2.5 rounded-lg bg-white/10 border border-white/25 text-white placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-400/30 focus:border-pink-300/50"
+        />
+      </div>
+
+      <div class="space-y-1.5">
+        <label class="text-xs uppercase tracking-[0.12em] text-indigo-100/90">Email</label>
+        <input
+          formControlName="email"
+          placeholder="name@email.com"
+          class="w-full px-3.5 py-2.5 rounded-lg bg-white/10 border border-white/25 text-white placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-400/30 focus:border-pink-300/50"
+        />
+      </div>
+
+      <div class="space-y-1.5">
+        <label class="text-xs uppercase tracking-[0.12em] text-indigo-100/90">Message</label>
+        <textarea
+          formControlName="message"
+          rows="4"
+          placeholder="Tell us what you need help with"
+          class="w-full px-3.5 py-2.5 rounded-lg bg-white/10 border border-white/25 text-white placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-400/30 focus:border-pink-300/50"
+        ></textarea>
+      </div>
+
+      <button
+        type="button"
+        class="landing-btn-primary w-full sm:w-auto disabled:opacity-60"
+        [disabled]="form.invalid"
+      >
+        Contact Support
+      </button>
+    </form>
+  </div>
+</section>

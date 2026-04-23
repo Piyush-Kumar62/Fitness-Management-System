@@ -1,0 +1,35 @@
+<section id="testimonials" class="landing-section scroll-mt-24">
+  <div class="landing-container">
+    <div class="landing-head">
+      <span class="landing-chip">Customer Voice</span>
+      <h2 class="landing-title">Testimonials</h2>
+      <p class="landing-subtitle max-w-3xl mx-auto">
+        Member feedback from day-to-day use of classes, plans, and progress tracking.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+      @for (item of content.testimonials; track item.author) {
+        <article class="landing-card landing-card-interactive p-6 rounded-[1.35rem]">
+          <p class="text-3xl leading-none text-pink-300/80">"</p>
+          <p class="text-gray-100 -mt-2 leading-relaxed">{{ item.message }}</p>
+          <div class="mt-4 flex items-center gap-1 text-amber-300" aria-label="5 star rating">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <div class="mt-4 flex items-center gap-3">
+            <img
+              [src]="item.image"
+              [alt]="item.author"
+              class="h-10 w-10 rounded-full object-cover border border-white/20"
+              loading="lazy"
+            />
+            <div>
+              <p class="text-pink-200 text-sm font-semibold">{{ item.author }}</p>
+              <p class="text-xs text-gray-300">{{ item.role }}</p>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  </div>
+</section>

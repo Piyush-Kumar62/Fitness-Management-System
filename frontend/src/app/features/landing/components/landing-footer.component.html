@@ -1,0 +1,49 @@
+<footer class="border-t border-white/20 bg-[linear-gradient(180deg,rgba(13,9,38,0.6)_0%,rgba(13,9,38,0.95)_100%)] py-8">
+  <div
+    class="landing-container px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-7 items-start"
+  >
+    <div>
+      <p class="text-white font-semibold text-lg">{{ content.brand.name }}</p>
+      <p class="text-sm text-gray-300 mt-2">
+        Connected fitness platform for members, trainers, and gym owners.
+      </p>
+      <p class="text-xs text-gray-400 mt-3 leading-relaxed">
+        Built for customer journeys from onboarding to long-term progress.
+      </p>
+    </div>
+
+    <div class="text-sm text-gray-300 space-y-2">
+      <p class="text-white font-semibold">Product</p>
+      <a href="#subscription" class="block hover:text-white transition-colors">Subscription</a>
+      <a href="#demo" class="block hover:text-white transition-colors">Demo</a>
+    </div>
+
+    <div class="text-sm text-gray-300 space-y-2">
+      <p class="text-white font-semibold">Company</p>
+      <a href="#about" class="block hover:text-white transition-colors">About</a>
+      <a href="#contact" class="block hover:text-white transition-colors">Contact</a>
+      <a [href]="content.legal.privacyUrl" class="block hover:text-white transition-colors"
+        >Privacy Policy</a
+      >
+      <a [href]="content.legal.termsUrl" class="block hover:text-white transition-colors">Terms</a>
+    </div>
+
+    <div>
+      <p class="text-white font-semibold">{{ content.footer.updatesLabel }}</p>
+      <p class="text-sm text-gray-300 mt-1">{{ content.footer.updatesHelp }}</p>
+      <div class="mt-3 flex gap-2">
+        <input
+          placeholder="Enter email"
+          class="flex-1 min-w-0 rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-300/35 focus:border-emerald-300/55"
+        />
+        <button class="landing-btn-primary !px-4 !py-2 text-sm">Join</button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="landing-container px-4 sm:px-6 lg:px-8 mt-7 pt-4 border-t border-white/15 text-xs text-gray-300 flex flex-col sm:flex-row justify-between gap-2"
+  >
+    <p>© {{ content.legal.copyrightYear }} {{ content.legal.companyName }}. All rights reserved.</p>
+    <p>Designed for scalable fitness operations.</p>
+  </div>
+</footer>

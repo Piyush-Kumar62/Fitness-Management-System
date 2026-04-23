@@ -8,32 +8,7 @@ import { ToastService } from '../../../core/services/toast.service';
   selector: 'app-oauth2-redirect',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div
-      class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800"
-    >
-      <div class="text-center">
-        <div
-          class="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600 mx-auto mb-4"
-        ></div>
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Completing Sign In...</h2>
-        <p class="text-gray-600 dark:text-gray-400">Please wait while we authenticate you</p>
-        @if (errorMessage) {
-          <div
-            class="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg"
-          >
-            <p class="text-red-700 dark:text-red-400">{{ errorMessage }}</p>
-            <button
-              (click)="redirectToLogin()"
-              class="mt-2 text-sm text-red-600 dark:text-red-400 hover:underline"
-            >
-              Return to login
-            </button>
-          </div>
-        }
-      </div>
-    </div>
-  `,
+  templateUrl: './oauth2-redirect.component.html',
 })
 export class OAuth2RedirectComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -44,10 +19,11 @@ export class OAuth2RedirectComponent implements OnInit {
   errorMessage: string = '';
 
   ngOnInit(): void {
-    // Get token from URL query parameters
     this.route.queryParams.subscribe((params) => {
-      const token = params['token'];
-      const error = params['error'];
+      const fragmentParams = this.parseFragment(window.location.hash);
+      const token = fragmentParams.get('token') ?? params['token'];
+      const error = fragmentParams.get('error') ?? params['error'];
+      const status = fragmentParams.get('status') ?? params['status'];
 
       if (error) {
         this.errorMessage = 'OAuth2 authentication failed: ' + error;
@@ -56,7 +32,12 @@ export class OAuth2RedirectComponent implements OnInit {
         return;
       }
 
+      if (status === 'ROLE_SELECTION_REQUIRED') {
+        this.toast.info('Please complete your profile to continue.');
+      }
+
       if (token) {
+        this.clearSensitiveUrlState();
         this.authService.handleOAuth2Token(token).subscribe({
           next: () => {
             this.toast.success('Successfully signed in!');
@@ -75,6 +56,16 @@ export class OAuth2RedirectComponent implements OnInit {
         setTimeout(() => this.redirectToLogin(), 3000);
       }
     });
+  }
+
+  private parseFragment(fragment: string): URLSearchParams {
+    const raw = fragment.startsWith('#') ? fragment.slice(1) : fragment;
+    return new URLSearchParams(raw);
+  }
+
+  private clearSensitiveUrlState(): void {
+    const cleanUrl = window.location.pathname + window.location.search;
+    window.history.replaceState(null, document.title, cleanUrl);
   }
 
   redirectToLogin(): void {

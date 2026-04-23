@@ -1,0 +1,41 @@
+<section id="trust" class="landing-section scroll-mt-24">
+  <div class="landing-container space-y-8">
+    <div class="landing-head">
+      <span class="landing-chip">Real Product Signals</span>
+      <h2 class="landing-title">Trust & Impact</h2>
+      <p class="landing-subtitle max-w-3xl mx-auto">
+        No inflated counters. These signals reflect real member workflows and platform behavior.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      @for (metric of metrics; track metric.label) {
+        <article
+          class="landing-card rounded-2xl p-5 sm:p-6 group transition-all duration-300 hover:-translate-y-1"
+        >
+          <p class="text-[0.68rem] uppercase tracking-[0.18em] text-pink-200/90">Metric</p>
+          <p class="mt-3 text-4xl sm:text-5xl font-extrabold text-white">
+            {{ metric.value }}
+          </p>
+          <p class="mt-2 text-sm font-semibold tracking-wide text-gray-100 uppercase">{{ metric.label }}</p>
+          <p class="mt-2 text-sm text-gray-300 leading-relaxed">{{ metric.note }}</p>
+        </article>
+      }
+    </div>
+
+    <div class="landing-card rounded-[1.5rem] p-6 sm:p-8">
+      <p class="text-center text-xs uppercase tracking-[0.2em] text-gray-300 font-semibold mb-6">
+        Trusted by growing fitness brands
+      </p>
+      <div class="flex flex-wrap justify-center gap-3 sm:gap-4 text-gray-200 text-sm font-medium">
+        @for (brand of brands; track brand) {
+          <div
+            class="rounded-xl border border-white/20 bg-white/10 px-5 py-2.5 hover:bg-white/15 hover:text-white transition-all duration-300"
+          >
+            {{ brand }}
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

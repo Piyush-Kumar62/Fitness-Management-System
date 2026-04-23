@@ -1,0 +1,32 @@
+<section id="how-it-works" class="landing-section scroll-mt-24">
+  <div class="landing-container">
+    <div class="landing-head">
+      <span class="landing-chip">Member Journey</span>
+      <h2 class="landing-title">How It Works</h2>
+      <p class="landing-subtitle max-w-3xl mx-auto">
+        A clear flow from sign-up to measurable progress.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 xl:gap-3">
+      @for (step of steps; track step.title; let i = $index) {
+        <article class="landing-card landing-card-interactive p-5 rounded-2xl relative overflow-hidden">
+          <div
+            class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-pink-400/80 via-fuchsia-400/60 to-indigo-300/60"
+          ></div>
+          <div
+            class="h-9 w-9 rounded-full bg-pink-500/20 border border-pink-300/50 text-pink-100 text-sm font-bold flex items-center justify-center"
+          >
+            {{ i + 1 }}
+          </div>
+          <p class="text-pink-200 font-semibold mt-3 text-[0.68rem] uppercase tracking-[0.14em]">
+            Step {{ i + 1 }}
+          </p>
+          <h3 class="text-white text-lg font-semibold mt-1">{{ step.title }}</h3>
+          <p class="text-gray-200 text-sm mt-2 leading-relaxed">{{ step.description }}</p>
+          <p class="text-xs text-indigo-200/90 mt-4 uppercase tracking-[0.12em]">{{ step.outcome }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>
