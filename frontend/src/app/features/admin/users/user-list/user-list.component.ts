@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../../core/services/toast.service';
 import { UserService } from '../../../../core/services/user.service';
@@ -16,6 +16,7 @@ import { User, UserRole } from '../../../../core/models/user.model';
 export class UserListComponent implements OnInit {
   private toast = inject(ToastService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private userService = inject(UserService);
 
   users = signal<User[]>([]);
@@ -29,13 +30,25 @@ export class UserListComponent implements OnInit {
 
   // Filters
   searchQuery = signal('');
-  selectedRole = signal<'ALL' | 'USER' | 'ADMIN'>('ALL');
+  selectedRole = signal<'ALL' | 'MEMBER' | 'TRAINER' | 'OWNER' | 'ADMIN'>('ALL');
+  lockRoleFilter = signal(false);
   sortBy = signal<'name' | 'email' | 'createdAt'>('createdAt');
   sortOrder = signal<'asc' | 'desc'>('desc');
 
   Math = Math;
 
   ngOnInit(): void {
+    const defaultRole = this.route.snapshot.data['defaultRole'] as
+      | 'MEMBER'
+      | 'TRAINER'
+      | 'OWNER'
+      | 'ADMIN'
+      | undefined;
+    const lockRole = !!this.route.snapshot.data['lockRoleFilter'];
+    if (defaultRole) {
+      this.selectedRole.set(defaultRole);
+    }
+    this.lockRoleFilter.set(lockRole);
     this.loadUsers();
   }
 
@@ -45,43 +58,76 @@ export class UserListComponent implements OnInit {
     const query = this.searchQuery();
     const page = this.currentPage();
     const size = this.pageSize();
+    const selectedRole = this.selectedRole();
 
+    // When role filter is used, fetch larger window and paginate client-side.
+    // This preserves behavior without backend API changes.
+    const useClientRoleFilter = selectedRole !== 'ALL';
     const request$ = query
-      ? this.userService.searchUsers(query, page, size)
-      : this.userService.getAllUsers(page, size);
+      ? this.userService.searchUsers(query, useClientRoleFilter ? 0 : page, useClientRoleFilter ? 1000 : size)
+      : this.userService.getAllUsers(useClientRoleFilter ? 0 : page, useClientRoleFilter ? 1000 : size);
 
-      request$.subscribe({
-        next: (pageData) => {
-          this.users.set(pageData.content);
+    request$.subscribe({
+      next: (pageData) => {
+        let records = [...(pageData.content ?? [])];
+
+        if (selectedRole !== 'ALL') {
+          records = records.filter((user) => user.role === selectedRole);
+        }
+
+        if (this.sortBy() === 'name') {
+          records.sort((a, b) =>
+            `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`),
+          );
+        } else if (this.sortBy() === 'email') {
+          records.sort((a, b) => a.email.localeCompare(b.email));
+        } else {
+          records.sort(
+            (a, b) =>
+              new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime(),
+          );
+        }
+
+        if (this.sortOrder() === 'asc') {
+          records.reverse();
+        }
+
+        if (useClientRoleFilter) {
+          const start = page * size;
+          const end = start + size;
+          this.users.set(records.slice(start, end));
+          this.totalElements.set(records.length);
+          this.totalPages.set(Math.max(1, Math.ceil(records.length / size)));
+        } else {
+          this.users.set(records);
           this.totalElements.set(pageData.totalElements);
           this.totalPages.set(pageData.totalPages);
-          this.isLoading.set(false);
-        },
-        error: (error) => {
-          console.error('Error loading users:', error);
-          this.toast.error('Failed to load users');
-          this.isLoading.set(false);
-        },
-      });
+        }
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Error loading users:', error);
+        this.toast.error('Failed to load users');
+        this.isLoading.set(false);
+      },
+    });
   }
 
   onSearchChange(value: string): void {
     this.searchQuery.set(value);
     this.currentPage.set(0);
-    this.loadUsers(); 
+    this.loadUsers();
   }
 
-  onRoleChange(role: 'ALL' | 'USER' | 'ADMIN'): void {
+  onRoleChange(role: 'ALL' | 'MEMBER' | 'TRAINER' | 'OWNER' | 'ADMIN'): void {
+    if (this.lockRoleFilter()) return;
     this.selectedRole.set(role);
     this.currentPage.set(0);
-    // Note: Role filtering should ideally be done on the backend now. 
-    // For now, we are displaying limits of search/all. 
-    // If backend doesn't support role filtering in search, we might need to add it or note it as a limitation.
-    this.loadUsers(); 
+    this.loadUsers();
   }
 
   onSortChange(sortBy: 'name' | 'email' | 'createdAt'): void {
-    // Note: Backend sort support would be needed here. 
+    // Note: Backend sort support would be needed here.
     // Currently staying with default backend sort (usually ID or created).
     this.sortBy.set(sortBy);
   }
@@ -112,6 +158,10 @@ export class UserListComponent implements OnInit {
   }
 
   navigateToNew(): void {
+    if (this.lockRoleFilter() && this.selectedRole() === 'TRAINER') {
+      this.router.navigate(['/admin/users/new'], { queryParams: { role: 'TRAINER' } });
+      return;
+    }
     this.router.navigate(['/admin/users/new']);
   }
 
@@ -119,21 +169,26 @@ export class UserListComponent implements OnInit {
     this.router.navigate(['/admin/users', userId, 'edit']);
   }
 
-  deleteUser(event: Event, userId: string, userName: string): void {
+  async deleteUser(event: Event, userId: string, userName: string): Promise<void> {
     event.stopPropagation();
 
-    if (confirm(`Are you sure you want to delete user "${userName}"?`)) {
-      this.userService.deleteUser(userId).subscribe({
-        next: () => {
-          this.toast.success('User deleted successfully');
-          this.loadUsers();
-        },
-        error: (error) => {
-          console.error('Error deleting user:', error);
-          this.toast.error('Failed to delete user');
-        },
-      });
-    }
+    const confirmed = await this.toast.confirm(
+      `Delete user "${userName}"?`,
+      'This action cannot be undone.',
+      'Delete user',
+    );
+    if (!confirmed) return;
+
+    this.userService.deleteUser(userId).subscribe({
+      next: () => {
+        this.toast.success('User deleted successfully');
+        this.loadUsers();
+      },
+      error: (error) => {
+        console.error('Error deleting user:', error);
+        this.toast.error('Failed to delete user');
+      },
+    });
   }
 
   formatDate(dateString?: string): string {
@@ -150,9 +205,17 @@ export class UserListComponent implements OnInit {
   }
 
   getRoleColor(role: string): string {
-     return role === 'ADMIN'
-      ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400'
-      : 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
+    switch (role) {
+      case 'ADMIN':
+        return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400';
+      case 'TRAINER':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+      case 'OWNER':
+        return 'bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-400';
+      case 'MEMBER':
+      default:
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
+    }
   }
 
   get visiblePages(): number[] {
@@ -168,5 +231,21 @@ export class UserListComponent implements OnInit {
     }
 
     return pages;
+  }
+
+  pageTitle(): string {
+    return this.lockRoleFilter() && this.selectedRole() === 'TRAINER'
+      ? 'Trainer Management'
+      : 'User Management';
+  }
+
+  pageSubtitle(): string {
+    return this.lockRoleFilter() && this.selectedRole() === 'TRAINER'
+      ? 'Manage trainers and coaching accounts'
+      : 'Manage system users and permissions';
+  }
+
+  addButtonLabel(): string {
+    return this.lockRoleFilter() && this.selectedRole() === 'TRAINER' ? 'Add Trainer' : 'Add User';
   }
 }

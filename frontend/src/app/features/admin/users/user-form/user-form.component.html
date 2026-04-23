@@ -107,16 +107,16 @@
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Role <span class="text-red-500">*</span>
           </label>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <label
               class="role-option relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all"
-              [class.border-indigo-600]="userForm.value.role === 'USER'"
-              [class.bg-indigo-50]="userForm.value.role === 'USER'"
-              [class.dark:bg-indigo-900/20]="userForm.value.role === 'USER'"
-              [class.border-gray-300]="userForm.value.role !== 'USER'"
-              [class.dark:border-gray-600]="userForm.value.role !== 'USER'"
+              [class.border-indigo-600]="userForm.value.role === 'MEMBER'"
+              [class.bg-indigo-50]="userForm.value.role === 'MEMBER'"
+              [class.dark:bg-indigo-900/20]="userForm.value.role === 'MEMBER'"
+              [class.border-gray-300]="userForm.value.role !== 'MEMBER'"
+              [class.dark:border-gray-600]="userForm.value.role !== 'MEMBER'"
             >
-              <input type="radio" formControlName="role" value="USER" class="sr-only" />
+              <input type="radio" formControlName="role" value="MEMBER" class="sr-only" />
               <div class="text-center">
                 <svg
                   class="w-8 h-8 mx-auto mb-2 text-blue-600 dark:text-blue-400"
@@ -131,8 +131,36 @@
                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                   />
                 </svg>
-                <span class="font-semibold text-gray-900 dark:text-white">User</span>
+                <span class="font-semibold text-gray-900 dark:text-white">Member</span>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Standard access</p>
+              </div>
+            </label>
+
+            <label
+              class="role-option relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all"
+              [class.border-green-600]="userForm.value.role === 'TRAINER'"
+              [class.bg-green-50]="userForm.value.role === 'TRAINER'"
+              [class.dark:bg-green-900/20]="userForm.value.role === 'TRAINER'"
+              [class.border-gray-300]="userForm.value.role !== 'TRAINER'"
+              [class.dark:border-gray-600]="userForm.value.role !== 'TRAINER'"
+            >
+              <input type="radio" formControlName="role" value="TRAINER" class="sr-only" />
+              <div class="text-center">
+                <svg
+                  class="w-8 h-8 mx-auto mb-2 text-green-600 dark:text-green-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                  />
+                </svg>
+                <span class="font-semibold text-gray-900 dark:text-white">Trainer</span>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Train members</p>
               </div>
             </label>
 
@@ -163,6 +191,34 @@
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Full system access</p>
               </div>
             </label>
+
+            <label
+              class="role-option relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all"
+              [class.border-amber-600]="userForm.value.role === 'OWNER'"
+              [class.bg-amber-50]="userForm.value.role === 'OWNER'"
+              [class.dark:bg-amber-900/20]="userForm.value.role === 'OWNER'"
+              [class.border-gray-300]="userForm.value.role !== 'OWNER'"
+              [class.dark:border-gray-600]="userForm.value.role !== 'OWNER'"
+            >
+              <input type="radio" formControlName="role" value="OWNER" class="sr-only" />
+              <div class="text-center">
+                <svg
+                  class="w-8 h-8 mx-auto mb-2 text-amber-600 dark:text-amber-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5.121 17.804A9.96 9.96 0 0112 15c2.56 0 4.897.963 6.665 2.546M15 11a3 3 0 11-6 0 3 3 0 016 0zm7 1a10 10 0 11-20 0 10 10 0 0120 0z"
+                  />
+                </svg>
+                <span class="font-semibold text-gray-900 dark:text-white">Owner</span>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Manage gym operations</p>
+              </div>
+            </label>
           </div>
         </div>
       </div>
@@ -189,8 +245,13 @@
             <p class="font-semibold mb-1">Role Permissions:</p>
             <ul class="list-disc list-inside space-y-1">
               <li>
-                <strong>User:</strong> Can track activities, view recommendations, manage own
-                profile
+                <strong>Member:</strong> Track activities, view recommendations, manage own profile
+              </li>
+              <li>
+                <strong>Trainer:</strong> Manage assigned members, create workout & diet plans
+              </li>
+              <li>
+                <strong>Owner:</strong> Manage gyms, trainers, memberships, and revenue
               </li>
               <li>
                 <strong>Admin:</strong> Full system access including user management and analytics

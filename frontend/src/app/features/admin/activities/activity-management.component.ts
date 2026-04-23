@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { map } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { ActivityService } from '../../../core/services/activity.service';
 import { ToastService } from '../../../core/services/toast.service';
@@ -82,9 +83,9 @@ export class ActivityManagementComponent implements OnInit {
   loadActivities(): void {
     this.isLoading.set(true);
 
-    // TODO: Replace with admin API to get all activities
-    this.activityService.getActivities().subscribe({
-      next: (activities: Activity[]) => {
+    this.activityService.getAllSystemActivities(0, 1000).subscribe({
+      next: (response: any) => {
+        const activities: Activity[] = response.content || [];
         this.activities.set(activities);
         this.isLoading.set(false);
       },
@@ -106,15 +107,20 @@ export class ActivityManagementComponent implements OnInit {
     this.dateFilter.set(filter);
   }
 
-  deleteActivity(activityId: string): void {
-    if (confirm('Are you sure you want to delete this activity?')) {
-      this.activityService.deleteActivity(activityId).subscribe({
-        next: () => {
-          this.toast.success('Activity deleted successfully');
-          this.loadActivities();
-        },
-      });
-    }
+  async deleteActivity(activityId: string): Promise<void> {
+    const confirmed = await this.toast.confirm(
+      'Delete this activity?',
+      'This action cannot be undone.',
+      'Delete activity',
+    );
+    if (!confirmed) return;
+
+    this.activityService.deleteActivity(activityId).subscribe({
+      next: () => {
+        this.toast.success('Activity deleted successfully');
+        this.loadActivities();
+      },
+    });
   }
 
   getActivityTypeIcon(type: string): string {
@@ -158,7 +164,49 @@ export class ActivityManagementComponent implements OnInit {
   }
 
   exportActivities(): void {
-    // TODO: Implement export functionality
-    this.toast.info('Export feature coming soon');
+    const data = this.filteredActivities();
+    if (!data || data.length === 0) {
+      this.toast.info('No activities to export.');
+      return;
+    }
+
+    const headers = [
+      'Type',
+      'Date',
+      'Duration (s)',
+      'Calories',
+      'Distance',
+      'Intensity',
+      'Notes',
+      'System Created At',
+    ];
+
+    const csvContent = data.map((row) => {
+      const type = row.type || '';
+      const date = row.date || row.startTime || '';
+      const duration = row.duration || 0;
+      const calories = row.caloriesBurned || 0;
+      const distance = row.distance || '';
+      const intensity = row.intensity || '';
+      const notes = `"${(row.notes || '').replace(/"/g, '""')}"`;
+      const createdAt = row.createdAt || '';
+      return [type, date, duration, calories, distance, intensity, notes, createdAt].join(',');
+    });
+
+    csvContent.unshift(headers.join(','));
+    const csvString = csvContent.join('\n');
+
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'exported_admin_activities.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    this.toast.success('Activities exported successfully.');
   }
 }

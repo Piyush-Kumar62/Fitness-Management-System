@@ -1,5 +1,7 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DashboardService } from '../../../core/services/dashboard.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 interface AnalyticsData {
   label: string;
@@ -16,6 +18,9 @@ interface AnalyticsData {
   styleUrls: ['./analytics.component.scss'],
 })
 export class AnalyticsComponent implements OnInit {
+  private dashboardService = inject(DashboardService);
+  private toastService = inject(ToastService);
+
   metrics = signal<AnalyticsData[]>([]);
   isLoading = signal(true);
 
@@ -25,17 +30,49 @@ export class AnalyticsComponent implements OnInit {
 
   loadAnalytics(): void {
     this.isLoading.set(true);
+    this.dashboardService.getAdminStats().subscribe({
+      next: (stats) => {
+        const totalUsers = Number(stats.totalUsers ?? 0);
+        const activeUsersToday = Number(stats.activeUsersToday ?? 0);
+        const totalActivities = Number(stats.totalActivities ?? 0);
+        const avgActivitiesPerUser = Number(stats.avgActivitiesPerUser ?? 0);
+        const newUsersThisWeek = Number(stats.newUsersThisWeek ?? 0);
+        const activityRate = totalUsers > 0 ? (activeUsersToday / totalUsers) * 100 : 0;
 
-    // Mock data
-    setTimeout(() => {
-      this.metrics.set([
-        { label: 'Active Users', value: 342, change: 12.5, trend: 'up' },
-        { label: 'New Sign-ups', value: 47, change: 8.3, trend: 'up' },
-        { label: 'Total Activities', value: 8567, change: 15.7, trend: 'up' },
-        { label: 'Avg. Session Time', value: 24, change: -3.2, trend: 'down' },
-      ]);
-      this.isLoading.set(false);
-    }, 1000);
+        this.metrics.set([
+          {
+            label: 'Active Users Today',
+            value: activeUsersToday,
+            change: Number(activityRate.toFixed(1)),
+            trend: activityRate >= 0 ? 'up' : 'down',
+          },
+          {
+            label: 'New Sign-ups (7d)',
+            value: newUsersThisWeek,
+            change: Number(((newUsersThisWeek / Math.max(totalUsers, 1)) * 100).toFixed(1)),
+            trend: newUsersThisWeek > 0 ? 'up' : 'down',
+          },
+          {
+            label: 'Total Activities',
+            value: totalActivities,
+            change: Number(avgActivitiesPerUser.toFixed(1)),
+            trend: totalActivities > 0 ? 'up' : 'down',
+          },
+          {
+            label: 'Avg Activities/User',
+            value: Number(avgActivitiesPerUser.toFixed(1)),
+            change: Number(avgActivitiesPerUser.toFixed(1)),
+            trend: avgActivitiesPerUser > 0 ? 'up' : 'down',
+          },
+        ]);
+      },
+      error: () => {
+        this.toastService.error('Failed to load analytics data');
+      },
+      complete: () => {
+        this.isLoading.set(false);
+      },
+    });
   }
 
   formatNumber(num: number): string {

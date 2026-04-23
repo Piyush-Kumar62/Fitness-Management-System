@@ -35,7 +35,7 @@ export class UserFormComponent implements OnInit {
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.minLength(8)]],
-      role: ['USER', Validators.required],
+      role: ['MEMBER', Validators.required],
     });
   }
 
@@ -52,11 +52,16 @@ export class UserFormComponent implements OnInit {
       // Password required in create mode
       this.userForm.get('password')?.setValidators([Validators.required, Validators.minLength(8)]);
       this.userForm.get('password')?.updateValueAndValidity();
+
+      const requestedRole = this.route.snapshot.queryParamMap.get('role');
+      if (requestedRole && ['MEMBER', 'TRAINER', 'OWNER', 'ADMIN'].includes(requestedRole)) {
+        this.userForm.patchValue({ role: requestedRole });
+      }
     }
   }
 
   private loadUser(id: string): void {
-    this.userService.getProfile().subscribe({
+    this.userService.getUserById(id).subscribe({
       next: (user) => {
         this.userForm.patchValue({
           firstName: user.firstName,
@@ -75,7 +80,15 @@ export class UserFormComponent implements OnInit {
   onSubmit(): void {
     if (this.userForm.invalid) {
       this.markFormGroupTouched(this.userForm);
-      this.toast.error('Please fill in all required fields');
+      const errors: string[] = [];
+      const ctrl = (name: string) => this.userForm.get(name);
+      if (ctrl('firstName')?.invalid) errors.push('First name is required.');
+      if (ctrl('lastName')?.invalid) errors.push('Last name is required.');
+      if (ctrl('email')?.hasError('required')) errors.push('Email is required.');
+      if (ctrl('email')?.hasError('email')) errors.push('Please enter a valid email address.');
+      if (ctrl('password')?.hasError('required')) errors.push('Password is required.');
+      if (ctrl('password')?.hasError('minlength')) errors.push('Password must be at least 8 characters.');
+      this.toast.validationError('Please fill in all required fields', errors);
       return;
     }
 
@@ -89,20 +102,35 @@ export class UserFormComponent implements OnInit {
   }
 
   private createUser(): void {
-    // TODO: Implement create user API call
-    setTimeout(() => {
-      this.toast.success('User created successfully');
-      this.router.navigate(['/admin/users']);
-    }, 1000);
+    const userData = {
+      firstName: this.userForm.value.firstName,
+      lastName: this.userForm.value.lastName,
+      email: this.userForm.value.email,
+      password: this.userForm.value.password,
+      role: this.userForm.value.role,
+    };
+
+    this.userService.createUser(userData).subscribe({
+      next: () => {
+        void this.toast.successDialog(
+          'User Created! 🎉',
+          `The account for ${userData.firstName} ${userData.lastName} has been created successfully.`,
+        ).then(() => this.router.navigate(['/admin/users']));
+      },
+      error: () => {
+        this.isSubmitting.set(false);
+      },
+    });
   }
 
   private updateUser(): void {
     const id = this.userId();
     if (!id) return;
 
-    const updateData = {
+    const updateData: any = {
       firstName: this.userForm.value.firstName,
       lastName: this.userForm.value.lastName,
+      email: this.userForm.value.email,
       role: this.userForm.value.role,
     };
 
@@ -111,9 +139,9 @@ export class UserFormComponent implements OnInit {
       Object.assign(updateData, { password: this.userForm.value.password });
     }
 
-    this.userService.updateProfile(updateData).subscribe({
+    this.userService.updateUserById(id, updateData).subscribe({
       next: () => {
-        this.toast.success('User updated successfully');
+        this.toast.success('User updated successfully', 'Changes Saved!');
         this.router.navigate(['/admin/users']);
       },
       error: () => {
