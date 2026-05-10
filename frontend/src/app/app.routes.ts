@@ -28,11 +28,33 @@ export const routes: Routes = [
       },
     ],
   },
+  // reset-password is OUTSIDE guestGuard — authenticated users must access it after first login
+  {
+    path: 'auth/reset-password',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./layouts/auth-layout/auth-layout.component').then((m) => m.AuthLayoutComponent),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/auth/reset-password/reset-password.component').then((m) => m.ResetPasswordComponent),
+      },
+    ],
+  },
   {
     path: 'oauth2/redirect',
     loadComponent: () =>
       import('./features/auth/oauth2-redirect/oauth2-redirect.component').then(
         (m) => m.OAuth2RedirectComponent,
+      ),
+  },
+  {
+    path: 'complete-profile',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/auth/complete-profile/complete-profile.component').then(
+        (m) => m.CompleteProfileComponent,
       ),
   },
 
@@ -164,6 +186,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/user/classes/member-classes.component').then(
             (m) => m.MemberClassesComponent,
+          ),
+      },
+      {
+        path: 'community-feed',
+        loadComponent: () =>
+          import('./features/user/social-feed/social-feed.component').then(
+            (m) => m.SocialFeedComponent,
           ),
       },
     ],
