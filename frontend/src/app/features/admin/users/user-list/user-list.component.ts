@@ -1,10 +1,10 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../../core/services/toast.service';
 import { UserService } from '../../../../core/services/user.service';
-import { User, UserRole } from '../../../../core/models/user.model';
+import { User } from '../../../../core/models/user.model';
 
 @Component({
   selector: 'app-user-list',
@@ -191,6 +191,39 @@ export class UserListComponent implements OnInit {
     });
   }
 
+  approveUser(event: Event, userId: string, userName: string): void {
+    event.stopPropagation();
+    this.userService.approveUser(userId).subscribe({
+      next: () => {
+        this.toast.success(`${userName} approved successfully`);
+        this.loadUsers();
+      },
+      error: () => this.toast.error('Failed to approve user'),
+    });
+  }
+
+  rejectUser(event: Event, userId: string, userName: string): void {
+    event.stopPropagation();
+    this.userService.rejectUser(userId).subscribe({
+      next: () => {
+        this.toast.success(`${userName} rejected successfully`);
+        this.loadUsers();
+      },
+      error: () => this.toast.error('Failed to reject user'),
+    });
+  }
+
+  deactivateUser(event: Event, userId: string, userName: string, currentStatus: boolean): void {
+    event.stopPropagation();
+    this.userService.deactivateUser(userId).subscribe({
+      next: () => {
+        this.toast.success(`${userName} ${currentStatus ? 'deactivated' : 'activated'} successfully`);
+        this.loadUsers();
+      },
+      error: () => this.toast.error(`Failed to ${currentStatus ? 'deactivate' : 'activate'} user`),
+    });
+  }
+
   formatDate(dateString?: string): string {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -204,7 +237,7 @@ export class UserListComponent implements OnInit {
     return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
   }
 
-  getRoleColor(role: string): string {
+  getRoleColor(role?: string | null): string {
     switch (role) {
       case 'ADMIN':
         return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400';
@@ -218,13 +251,25 @@ export class UserListComponent implements OnInit {
     }
   }
 
+  getStatusColor(status?: string): string {
+    switch (status) {
+      case 'APPROVED':
+        return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-400';
+      case 'REJECTED':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+      case 'PENDING':
+      default:
+        return 'bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-400';
+    }
+  }
+
   get visiblePages(): number[] {
     const maxPages = this.totalPages();
     const current = this.currentPage();
     const pages: number[] = [];
 
-    let start = Math.max(0, current - 2);
-    let end = Math.min(maxPages - 1, current + 2);
+    const start = Math.max(0, current - 2);
+    const end = Math.min(maxPages - 1, current + 2);
 
     for (let i = start; i <= end; i++) {
       pages.push(i);

@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { LANDING_CONTENT } from '../landing-content';
+import { ScrollRevealDirective } from '../../../shared/directives/scroll-reveal.directive';
+import { SpotlightDirective } from '../../../shared/directives/spotlight.directive';
 
 @Component({
   selector: 'app-trust-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [ScrollRevealDirective, SpotlightDirective],
   templateUrl: './trust-section.component.html',
 })
 export class TrustSectionComponent {

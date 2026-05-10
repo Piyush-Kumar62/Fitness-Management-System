@@ -1,12 +1,12 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline';
 
 @Component({
   selector: 'app-landing-button',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <button
       [type]="type"
@@ -35,11 +35,11 @@ export class LandingButtonComponent {
         break;
       case 'secondary':
         variantClass =
-          'border border-emerald-100/25 bg-white/10 hover:bg-emerald-300/15 text-white hover:border-emerald-200/50 backdrop-blur-sm hover:-translate-y-0.5';
+          'border border-slate-200 dark:border-emerald-100/25 bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-emerald-300/15 text-slate-800 dark:text-white hover:border-slate-300 dark:hover:border-emerald-200/50 backdrop-blur-sm hover:-translate-y-0.5';
         break;
       case 'outline':
         variantClass =
-          'text-slate-200 hover:text-white bg-transparent hover:bg-emerald-300/10 border border-white/20 hover:border-emerald-200/55 hover:-translate-y-0.5';
+          'text-slate-600 dark:text-slate-200 hover:text-slate-800 dark:hover:text-white bg-transparent hover:bg-slate-100 dark:hover:bg-emerald-300/10 border border-slate-300 dark:border-white/20 hover:border-slate-400 dark:hover:border-emerald-200/55 hover:-translate-y-0.5';
         break;
     }
 

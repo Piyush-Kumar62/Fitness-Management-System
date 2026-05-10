@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../../../../core/services/user.service';
@@ -8,7 +8,7 @@ import { ToastService } from '../../../../core/services/toast.service';
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './user-form.component.html',
   styleUrls: ['./user-form.component.scss'],
 })
@@ -36,6 +36,8 @@ export class UserFormComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.minLength(8)]],
       role: ['MEMBER', Validators.required],
+      active: [true],
+      status: ['PENDING'],
     });
   }
 
@@ -68,6 +70,8 @@ export class UserFormComponent implements OnInit {
           lastName: user.lastName,
           email: user.email,
           role: user.role,
+          active: user.active !== undefined ? user.active : true,
+          status: user.status || 'PENDING',
         });
       },
       error: () => {
@@ -132,6 +136,8 @@ export class UserFormComponent implements OnInit {
       lastName: this.userForm.value.lastName,
       email: this.userForm.value.email,
       role: this.userForm.value.role,
+      active: this.userForm.value.active,
+      status: this.userForm.value.status,
     };
 
     // If password is provided, include it

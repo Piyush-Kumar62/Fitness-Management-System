@@ -1,10 +1,10 @@
 import { Component, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-faq-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './faq-section.component.html',
 })
 export class FaqSectionComponent {

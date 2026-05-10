@@ -1,6 +1,6 @@
 <section id="subscription" class="landing-section scroll-mt-24">
   <div class="landing-container">
-    <div class="landing-head">
+    <div class="landing-head" appScrollReveal>
       <span class="landing-chip">Membership Pricing</span>
       <h2 class="landing-title">Member Plans</h2>
       <p class="landing-subtitle max-w-3xl mx-auto">
@@ -11,7 +11,12 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
       @for (plan of content.pricing.plans; track plan.name; let i = $index) {
         <article
+          appScrollReveal
+          appTilt
+          [maxTilt]="8"
+          appSpotlight
           class="relative landing-card rounded-[1.75rem] p-7 transition-transform duration-300 hover:-translate-y-2 group flex flex-col h-full"
+          [style.transition-delay]="(i * 100) + 'ms'"
           [class.bg-gradient-to-b]="i === 1"
           [class.from-indigo-900/40]="i === 1"
           [class.to-fuchsia-900/20]="i === 1"
@@ -22,28 +27,28 @@
         >
           @if (i === 1) {
             <div
-              class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-pink-500 to-purple-500 text-white text-[0.68rem] font-bold px-4 py-1.5 rounded-full uppercase tracking-[0.12em] shadow-lg"
+              class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-pink-500 to-purple-500 text-slate-900 dark:text-white text-[0.68rem] font-bold px-4 py-1.5 rounded-full uppercase tracking-[0.12em] shadow-lg"
             >
               Most Popular
             </div>
           }
 
           <div class="mb-6">
-            <p class="text-xs uppercase tracking-[0.16em] text-indigo-200/90">Membership Tier</p>
-            <h3 class="text-2xl font-bold text-white mt-2">{{ plan.name }}</h3>
-            <div class="mt-4 flex items-baseline tracking-tight text-white">
+            <p class="text-xs uppercase tracking-[0.16em] text-indigo-600 dark:text-indigo-200/90">Membership Tier</p>
+            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-2">{{ plan.name }}</h3>
+            <div class="mt-4 flex items-baseline tracking-tight text-slate-900 dark:text-white">
               <span
-                class="text-4xl sm:text-[2.8rem] font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-300 group-hover:from-pink-300 group-hover:to-purple-300 transition-colors"
+                class="text-4xl sm:text-[2.8rem] font-extrabold tracking-tight text-slate-900 dark:text-white"
                 >{{ plan.price }}</span
               >
             </div>
-            <p class="text-sm text-gray-300 mt-2 leading-relaxed">{{ plan.note }}</p>
+            <p class="text-sm text-slate-600 dark:text-gray-300 mt-2 leading-relaxed">{{ plan.note }}</p>
           </div>
 
           <div class="flex-grow">
-            <ul class="space-y-3 text-sm text-gray-200">
+            <ul class="space-y-3 text-sm text-slate-600 dark:text-gray-200">
               @for (feature of plan.features; track feature) {
-                <li class="flex items-start gap-3 rounded-lg bg-white/5 border border-white/10 px-3 py-2.5">
+                <li class="flex items-start gap-3 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 px-3 py-2.5">
                   <svg
                     class="h-5 w-5 text-pink-400 shrink-0"
                     fill="none"
@@ -65,7 +70,7 @@
             [ngClass]="
               i === 1
                 ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:shadow-lg hover:shadow-pink-500/30'
-                : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                : 'bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-white hover:bg-slate-200 dark:hover:bg-white/20 border border-slate-300 dark:border-white/20'
             "
           >
             Choose {{ plan.name }}
@@ -73,6 +78,6 @@
         </article>
       }
     </div>
-    <p class="text-center text-xs text-gray-300 mt-6">{{ content.pricing.onboardingNote }}</p>
+    <p class="text-center text-xs text-slate-600 dark:text-gray-300 mt-6">{{ content.pricing.onboardingNote }}</p>
   </div>
 </section>

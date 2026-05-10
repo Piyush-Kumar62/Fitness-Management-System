@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { DashboardService } from '../../../core/services/dashboard.service';
 import { ToastService } from '../../../core/services/toast.service';
 
@@ -13,7 +13,7 @@ interface AnalyticsData {
 @Component({
   selector: 'app-analytics',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './analytics.component.html',
   styleUrls: ['./analytics.component.scss'],
 })
@@ -77,5 +77,15 @@ export class AnalyticsComponent implements OnInit {
 
   formatNumber(num: number): string {
     return num.toLocaleString();
+  }
+
+  metricShare(value: number): number {
+    const maxValue = Math.max(...this.metrics().map((metric) => metric.value), 1);
+    return Math.round((value / maxValue) * 100);
+  }
+
+  metricChangeShare(change: number): number {
+    const maxChange = Math.max(...this.metrics().map((metric) => Math.abs(metric.change)), 1);
+    return Math.round((Math.abs(change) / maxChange) * 100);
   }
 }

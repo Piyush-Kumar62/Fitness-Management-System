@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { map } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { ActivityService } from '../../../core/services/activity.service';
@@ -9,7 +9,7 @@ import { Activity, ActivityType } from '../../../core/models/activity.model';
 @Component({
   selector: 'app-activity-management',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './activity-management.component.html',
   styleUrls: ['./activity-management.component.scss'],
 })

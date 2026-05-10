@@ -1,27 +1,22 @@
 <section id="cta" class="landing-section scroll-mt-24">
   <div class="landing-container">
     <div
-      class="text-center bg-gradient-to-br from-indigo-900/45 via-violet-900/35 to-pink-900/35 border border-white/20 rounded-[2rem] p-6 md:p-8 lg:p-10 relative overflow-hidden shadow-2xl"
+      class="text-center bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200/50 dark:from-indigo-950/30 dark:via-violet-950/25 dark:to-pink-950/25 border border-slate-200 dark:border-white/10 rounded-[2rem] p-8 md:p-12 lg:p-14 relative overflow-hidden shadow-xl"
     >
-      <div class="absolute inset-0 bg-white/5 backdrop-blur-[3px]"></div>
-      <div class="absolute -top-24 -left-24 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl"></div>
+      <div class="absolute inset-0 bg-white/5 backdrop-blur-[2px]"></div>
+      <div class="absolute -top-24 -left-24 w-96 h-96 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl"></div>
       <div
-        class="absolute -bottom-24 -right-24 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl"
+        class="absolute -bottom-24 -right-24 w-96 h-96 bg-pink-500/5 dark:bg-pink-500/10 rounded-full blur-3xl"
       ></div>
 
-      <img
-        src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=1600&q=80"
-        alt="Fitness team collaboration"
-        class="absolute inset-0 w-full h-full object-cover opacity-10 mix-blend-luminosity"
-        loading="lazy"
-      />
+      
 
       <div class="relative z-10 max-w-3xl mx-auto">
         <span class="landing-chip">Ready To Start</span>
-        <h2 class="landing-title !text-3xl sm:!text-4xl !font-extrabold !leading-tight">
+        <h2 class="landing-title !text-3xl sm:!text-4xl !font-extrabold !leading-tight !text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-cyan-600 to-lime-600 dark:from-emerald-300 dark:via-cyan-300 dark:to-lime-300 pb-1">
           Start Your Member Journey Today
         </h2>
-        <p class="landing-subtitle text-base sm:text-lg mt-4 max-w-2xl mx-auto">
+        <p class="landing-subtitle text-base sm:text-lg mt-4 max-w-2xl mx-auto !text-slate-600 dark:!text-slate-200">
           Join, choose your plan, and begin tracking workouts, classes, and progress from one app.
         </p>
         <div class="mt-7 flex flex-col sm:flex-row justify-center items-center gap-3">
@@ -33,7 +28,7 @@
           </button>
           <button
             (click)="scrollToContact()"
-            class="landing-btn-secondary px-7 py-3 text-base w-full sm:w-auto bg-white/5 hover:bg-white/10 border-white/20"
+            class="landing-btn-secondary px-7 py-3 text-base w-full sm:w-auto border border-slate-300 dark:border-white/20 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-800 dark:text-white"
           >
             Talk To Support
           </button>

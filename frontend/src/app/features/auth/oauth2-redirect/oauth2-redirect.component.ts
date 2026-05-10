@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
@@ -7,7 +7,7 @@ import { ToastService } from '../../../core/services/toast.service';
 @Component({
   selector: 'app-oauth2-redirect',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './oauth2-redirect.component.html',
 })
 export class OAuth2RedirectComponent implements OnInit {
@@ -16,7 +16,7 @@ export class OAuth2RedirectComponent implements OnInit {
   private authService = inject(AuthService);
   private toast = inject(ToastService);
 
-  errorMessage: string = '';
+  errorMessage = '';
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
@@ -38,7 +38,7 @@ export class OAuth2RedirectComponent implements OnInit {
 
       if (token) {
         this.clearSensitiveUrlState();
-        this.authService.handleOAuth2Token(token).subscribe({
+        this.authService.handleOAuth2Token(token, status === 'ROLE_SELECTION_REQUIRED').subscribe({
           next: () => {
             this.toast.success('Successfully signed in!');
             // Navigation is handled in auth service

@@ -64,5 +64,26 @@ export const LANDING_CONTENT = {
       image:
         'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=256&q=80',
     },
+    {
+      author: 'Kabir Dev',
+      role: 'Member, IronWorks Gym',
+      message: 'The trainer integrations and customized goals completely transformed my fitness routine.',
+      image:
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80',
+    },
+    {
+      author: 'Priya Nair',
+      role: 'Member, FitSphere',
+      message: 'Cleanest interface I have ever used. Upgrading memberships and tracking diet is incredibly seamless.',
+      image:
+        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80',
+    },
+    {
+      author: 'Vikram Rao',
+      role: 'Member, Peak Gym',
+      message: 'Finally, a platform that doesn\'t overcomplicate things. Simple class bookings and precise statistics.',
+      image:
+        'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=256&q=80',
+    }
   ],
 } as const;

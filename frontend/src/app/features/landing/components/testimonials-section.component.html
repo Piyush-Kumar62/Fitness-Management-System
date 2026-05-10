@@ -8,28 +8,54 @@
       </p>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-      @for (item of content.testimonials; track item.author) {
-        <article class="landing-card landing-card-interactive p-6 rounded-[1.35rem]">
-          <p class="text-3xl leading-none text-pink-300/80">"</p>
-          <p class="text-gray-100 -mt-2 leading-relaxed">{{ item.message }}</p>
-          <div class="mt-4 flex items-center gap-1 text-amber-300" aria-label="5 star rating">
-            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-          </div>
-          <div class="mt-4 flex items-center gap-3">
-            <img
-              [src]="item.image"
-              [alt]="item.author"
-              class="h-10 w-10 rounded-full object-cover border border-white/20"
-              loading="lazy"
-            />
-            <div>
-              <p class="text-pink-200 text-sm font-semibold">{{ item.author }}</p>
-              <p class="text-xs text-gray-300">{{ item.role }}</p>
+    <div class="marquee-container mt-10">
+      <div class="marquee-content">
+        @for (item of content.testimonials; track item.author + '-1') {
+          <article class="landing-card landing-card-interactive p-6 rounded-[1.35rem] min-w-[310px] sm:min-w-[360px] max-w-[360px] flex-shrink-0">
+            <p class="text-3xl leading-none text-pink-300/80">"</p>
+            <p class="text-slate-800 dark:text-gray-100 -mt-2 leading-relaxed whitespace-normal">{{ item.message }}</p>
+            <div class="mt-4 flex items-center gap-1 text-amber-500 dark:text-amber-300" aria-label="5 star rating">
+              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
             </div>
-          </div>
-        </article>
-      }
+            <div class="mt-4 flex items-center gap-3">
+              <img
+                [src]="item.image"
+                [alt]="item.author"
+                class="h-10 w-10 rounded-full object-cover border border-slate-200 dark:border-white/20"
+                loading="lazy"
+              />
+              <div>
+                <p class="text-pink-600 dark:text-pink-200 text-sm font-semibold whitespace-normal">{{ item.author }}</p>
+                <p class="text-xs text-slate-600 dark:text-gray-300 whitespace-normal">{{ item.role }}</p>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+      <!-- Duplicate the track for seamless, infinite looping -->
+      <div class="marquee-content" aria-hidden="true">
+        @for (item of content.testimonials; track item.author + '-2') {
+          <article class="landing-card landing-card-interactive p-6 rounded-[1.35rem] min-w-[310px] sm:min-w-[360px] max-w-[360px] flex-shrink-0">
+            <p class="text-3xl leading-none text-pink-300/80">"</p>
+            <p class="text-slate-800 dark:text-gray-100 -mt-2 leading-relaxed whitespace-normal">{{ item.message }}</p>
+            <div class="mt-4 flex items-center gap-1 text-amber-500 dark:text-amber-300" aria-label="5 star rating">
+              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+            </div>
+            <div class="mt-4 flex items-center gap-3">
+              <img
+                [src]="item.image"
+                [alt]="item.author"
+                class="h-10 w-10 rounded-full object-cover border border-slate-200 dark:border-white/20"
+                loading="lazy"
+              />
+              <div>
+                <p class="text-pink-600 dark:text-pink-200 text-sm font-semibold whitespace-normal">{{ item.author }}</p>
+                <p class="text-xs text-slate-600 dark:text-gray-300 whitespace-normal">{{ item.role }}</p>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
     </div>
   </div>
 </section>

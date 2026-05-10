@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ScrollRevealDirective } from '../../../shared/directives/scroll-reveal.directive';
+import { SpotlightDirective } from '../../../shared/directives/spotlight.directive';
+import { TiltDirective } from '../../../shared/directives/tilt.directive';
 
 @Component({
   selector: 'app-how-it-works-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [ScrollRevealDirective, SpotlightDirective, TiltDirective],
   templateUrl: './how-it-works-section.component.html',
 })
 export class HowItWorksSectionComponent {

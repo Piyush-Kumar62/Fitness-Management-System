@@ -1,18 +1,29 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { LANDING_CONTENT } from '../landing-content';
+
+import { ThemeService } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-landing-navbar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './landing-navbar.component.html',
 })
 export class LandingNavbarComponent {
   router = inject(Router);
+  themeService = inject(ThemeService);
   mobileMenuOpen = false;
   readonly content = LANDING_CONTENT;
+
+  isDarkMode() {
+    return this.themeService.theme() === 'dark';
+  }
+
+  onToggleTheme() {
+    this.themeService.toggleTheme();
+  }
 
   scrollTo(id: string): void {
     this.mobileMenuOpen = false;

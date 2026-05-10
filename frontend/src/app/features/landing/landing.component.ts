@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { LandingNavbarComponent } from './components/landing-navbar.component';
 import { HeroSectionComponent } from './components/hero-section.component';
 import { AboutSectionComponent } from './components/about-section.component';
@@ -12,18 +12,19 @@ import { TestimonialsSectionComponent } from './components/testimonials-section.
 import { CtaSectionComponent } from './components/cta-section.component';
 import { FaqSectionComponent } from './components/faq-section.component';
 import { ContactSectionComponent } from './components/contact-section.component';
+import { FeaturedGymsSectionComponent } from './components/featured-gyms-section.component';
 import { LandingFooterComponent } from './components/landing-footer.component';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
   imports: [
-    CommonModule,
     LandingNavbarComponent,
     HeroSectionComponent,
     AboutSectionComponent,
     TrustSectionComponent,
     HowItWorksSectionComponent,
+    FeaturedGymsSectionComponent,
     RolesSectionComponent,
     DemoSectionComponent,
     PricingSectionComponent,
@@ -31,8 +32,8 @@ import { LandingFooterComponent } from './components/landing-footer.component';
     CtaSectionComponent,
     FaqSectionComponent,
     ContactSectionComponent,
-    LandingFooterComponent,
-  ],
+    LandingFooterComponent
+],
   templateUrl: './landing.component.html',
 })
 export class LandingComponent {}

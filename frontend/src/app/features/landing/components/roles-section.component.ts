@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ScrollRevealDirective } from '../../../shared/directives/scroll-reveal.directive';
+import { SpotlightDirective } from '../../../shared/directives/spotlight.directive';
 
 @Component({
   selector: 'app-roles-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [ScrollRevealDirective, SpotlightDirective],
   templateUrl: './roles-section.component.html',
 })
 export class RolesSectionComponent {

@@ -1,14 +1,16 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 
 import { LandingButtonComponent } from './ui/landing-button.component';
 import { StatsCardComponent } from './ui/stats-card.component';
+import { ScrollRevealDirective } from '../../../shared/directives/scroll-reveal.directive';
+import { TiltDirective } from '../../../shared/directives/tilt.directive';
 
 @Component({
   selector: 'app-hero-section',
   standalone: true,
-  imports: [CommonModule, LandingButtonComponent, StatsCardComponent],
+  imports: [LandingButtonComponent, StatsCardComponent, ScrollRevealDirective, TiltDirective],
   templateUrl: './hero-section.component.html',
 })
 export class HeroSectionComponent {
