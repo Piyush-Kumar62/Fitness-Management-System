@@ -43,10 +43,12 @@
           type="text"
           placeholder="Full name on card"
           autocomplete="cc-name"
-        />
-        <div class="field-error" *ngIf="form.get('cardHolderName')?.invalid && form.get('cardHolderName')?.touched">
-          Please enter the name as it appears on your card.
-        </div>
+          />
+        @if (form.get('cardHolderName')?.invalid && form.get('cardHolderName')?.touched) {
+          <div class="field-error">
+            Please enter the name as it appears on your card.
+          </div>
+        }
       </div>
 
       <!-- Stripe Card Element -->
@@ -55,7 +57,9 @@
         <div class="card-element-wrapper" [class.has-error]="cardError">
           <div #cardElementRef id="stripe-card-element"></div>
         </div>
-        <div class="field-error" *ngIf="cardError">{{ cardError }}</div>
+        @if (cardError) {
+          <div class="field-error">{{ cardError }}</div>
+        }
       </div>
 
       <!-- Action Buttons -->
@@ -67,13 +71,12 @@
           type="submit"
           class="btn-pay"
           [disabled]="isLoading || !intentReady"
-        >
-          <ng-container *ngIf="isLoading; else payLabel">
+          >
+          @if (isLoading) {
             <span class="spinner"></span> Processing...
-          </ng-container>
-          <ng-template #payLabel>
+          } @else {
             Pay ₹{{ planPrice | number:'1.2-2' }}
-          </ng-template>
+          }
         </button>
       </div>
 

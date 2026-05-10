@@ -4,6 +4,7 @@ export interface Activity {
   type: ActivityType;
   duration: number; // minutes
   caloriesBurned: number;
+  userName?: string;
   date?: string;
   startTime?: string;
   distance?: number;

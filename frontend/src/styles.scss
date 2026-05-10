@@ -4,8 +4,44 @@
 
 body {
   margin: 0;
-  font-family: 'Poppins', 'Segoe UI', sans-serif;
-  color: #fff;
+  font-family: 'Outfit', 'Segoe UI', sans-serif;
+  cursor: none; /* We will use a custom cursor globally */
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="date"],
+  input[type="tel"],
+  input[type="url"],
+  textarea,
+  select {
+    @apply bg-white border border-slate-300 text-slate-900 
+           dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100 
+           focus:ring-emerald-500 focus:border-emerald-500
+           placeholder-slate-400 dark:placeholder-slate-500;
+  }
+}
+
+/* Base styles for scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
 
 :root {
@@ -103,6 +139,18 @@ body {
 
 .app-shell {
   min-height: 100vh;
+}
+
+html:not(.dark) .app-shell {
+  background:
+    radial-gradient(circle at 18% 8%, rgba(16, 185, 129, 0.1), transparent 36%),
+    radial-gradient(circle at 82% 18%, rgba(34, 211, 238, 0.1), transparent 34%),
+    radial-gradient(circle at 52% 86%, rgba(132, 204, 22, 0.08), transparent 38%),
+    linear-gradient(135deg, #f8fafc 0%, #f1f5f9 48%, #e2e8f0 100%);
+  background-attachment: fixed;
+}
+
+.dark .app-shell {
   background:
     radial-gradient(circle at 18% 8%, rgba(16, 185, 129, 0.24), transparent 36%),
     radial-gradient(circle at 82% 18%, rgba(34, 211, 238, 0.22), transparent 34%),
@@ -131,8 +179,7 @@ body {
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
+  @apply bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-slate-200 dark:border-white/10;
 }
 
 .landing-section {
@@ -168,7 +215,7 @@ body {
 }
 
 .landing-subtitle {
-  color: rgb(229 231 235);
+  @apply text-slate-600 dark:text-slate-200;
   text-align: center;
   margin-top: 0.75rem;
 }
@@ -188,7 +235,7 @@ body {
 }
 
 .landing-subtitle-left {
-  color: rgb(229 231 235);
+  @apply text-slate-600 dark:text-slate-200;
   margin-top: 0.75rem;
 }
 
@@ -205,17 +252,12 @@ body {
 }
 
 .landing-card {
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  transition: background-color 180ms ease;
+  @apply border border-slate-200 dark:border-white/20 bg-white/80 dark:bg-white/10 backdrop-blur-xl transition-colors duration-200;
   height: 100%;
 }
 
 .landing-card:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(236, 72, 153, 0.3);
+  @apply bg-white dark:bg-white/20 border-pink-500/30 dark:border-pink-500/30;
 }
 
 .landing-card-interactive {
@@ -233,20 +275,17 @@ body {
 .landing-chip {
   display: inline-flex;
   align-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.1);
+  @apply border border-emerald-500/30 dark:border-white/20 bg-emerald-50 dark:bg-white/10 text-emerald-700 dark:text-emerald-100;
   border-radius: 999px;
   padding: 0.3rem 0.75rem;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: rgb(209 250 229);
 }
 
 .landing-kpi {
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.1);
+  @apply border border-slate-200 dark:border-white/20 bg-white/60 dark:bg-white/10;
   border-radius: 0.8rem;
   padding: 0.6rem 0.75rem;
   text-align: center;
@@ -255,12 +294,12 @@ body {
 .landing-kpi-value {
   font-size: 1.05rem;
   font-weight: 700;
-  color: #fff;
+  @apply text-slate-900 dark:text-white;
 }
 
 .landing-kpi-label {
   font-size: 0.68rem;
-  color: rgb(209 213 219);
+  @apply text-slate-500 dark:text-slate-300;
 }
 
 .floating-soft {
@@ -305,13 +344,7 @@ body {
 .landing-btn-secondary {
   border-radius: 0.75rem;
   padding: 0.75rem 1.5rem;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.landing-btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.14);
+  @apply text-slate-800 dark:text-white border border-slate-300 dark:border-white/40 bg-white/60 dark:bg-white/10 hover:bg-slate-100 dark:hover:bg-white/20;
 }
 
 @media (max-width: 639px) {
@@ -330,12 +363,10 @@ body {
 }
 
 .auth-shell-card {
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  @apply border border-slate-200 dark:border-white/20 bg-white dark:bg-white/10 shadow-2xl;
   border-radius: 1.5rem;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(12px);
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.28);
 }
 
 @media (min-width: 1024px) {
@@ -355,3 +386,104 @@ body {
     border-radius: 1rem;
   }
 }
+
+/* ==========================================================================
+   Advanced UI Overhaul Styles
+   ========================================================================== */
+
+/* --- Scroll Reveal Animations --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 100ms; }
+.reveal-delay-2 { transition-delay: 200ms; }
+.reveal-delay-3 { transition-delay: 300ms; }
+.reveal-delay-4 { transition-delay: 400ms; }
+.reveal-delay-5 { transition-delay: 500ms; }
+
+/* --- Spotlight Card Effect --- */
+.spotlight-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.spotlight-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    800px circle at var(--mouse-x, 0) var(--mouse-y, 0),
+    rgba(255, 255, 255, 0.06),
+    transparent 40%
+  );
+  z-index: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  opacity: 0;
+}
+
+.spotlight-card:hover::before {
+  opacity: 1;
+}
+
+.spotlight-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Magnetic Element Wrapper --- */
+.magnetic-wrap {
+  display: inline-block;
+  transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* --- Ensure Custom Cursor isn't hidden by normal elements --- */
+* {
+  cursor: none !important;
+}
+
+/* --- Testimonial Infinite Marquee --- */
+.marquee-container {
+  display: flex;
+  overflow: hidden;
+  user-select: none;
+  position: relative;
+  width: 100%;
+}
+
+.marquee-content {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-around;
+  min-width: 100%;
+  gap: 1.5rem;
+  padding-right: 1.5rem;
+  animation: scrollMarquee 40s linear infinite;
+}
+
+.marquee-container:hover .marquee-content {
+  animation-play-state: paused;
+}
+
+@keyframes scrollMarquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+

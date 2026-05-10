@@ -1,8 +1,12 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable, finalize, map, tap } from 'rxjs';
 import { ApiService } from './api.service';
-import { Activity, CreateActivityRequest, ActivityType } from '../models/activity.model';
-import { AuthService } from './auth.service';
+import {
+  Activity,
+  ActivityStats,
+  CreateActivityRequest,
+  ActivityType,
+} from '../models/activity.model';
 import { PaginatedResponse } from '../models/api-response.model';
 
 @Injectable({
@@ -10,10 +14,9 @@ import { PaginatedResponse } from '../models/api-response.model';
 })
 export class ActivityService {
   private api = inject(ApiService);
-  private auth = inject(AuthService);
 
   activities = signal<Activity[]>([]);
-  isLoading = signal<boolean>(false);
+  isLoading = signal(false);
 
   // Get all activities for current user
   getActivities(): Observable<Activity[]> {
@@ -28,10 +31,10 @@ export class ActivityService {
   }
 
   // Get all activities in the system (Admin only)
-  getAllSystemActivities(page: number = 0, size: number = 20): Observable<any> {
+  getAllSystemActivities(page = 0, size = 20): Observable<PaginatedResponse<Activity>> {
     this.isLoading.set(true);
     const params = { page: page.toString(), size: size.toString() };
-    return this.api.get<any>('activities/all', params).pipe(
+    return this.api.get<PaginatedResponse<Activity>>('activities/all', params).pipe(
       tap(() => {
         this.isLoading.set(false);
       }),
@@ -73,8 +76,18 @@ export class ActivityService {
   }
 
   // Get activity statistics
-  getStatistics(): Observable<any> {
-    return this.api.get<any>('activities/statistics');
+  getStatistics(): Observable<ActivityStats> {
+    return this.api.get<ActivityStats>('activities/statistics');
+  }
+
+  // Export activities as CSV
+  exportActivities(): Observable<Blob> {
+    return this.api.getBlob('activities/export');
+  }
+
+  // Export all activities as CSV (Admin only)
+  exportAllActivities(): Observable<Blob> {
+    return this.api.getBlob('activities/export/all');
   }
 
   // Filter activities by type

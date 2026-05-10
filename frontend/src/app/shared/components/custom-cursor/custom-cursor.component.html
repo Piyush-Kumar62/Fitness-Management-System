@@ -1,0 +1,11 @@
+<div 
+  class="cursor-dot" 
+  [class.clicking]="isClicking()"
+  [style.transform]="'translate3d(calc(' + mouseX() + 'px - 50%), calc(' + mouseY() + 'px - 50%), 0)'">
+</div>
+<div 
+  class="cursor-outline" 
+  [class.hovering]="isHovering()"
+  [class.clicking]="isClicking()"
+  [style.transform]="'translate3d(calc(' + trailingX() + 'px - 50%), calc(' + trailingY() + 'px - 50%), 0)'">
+</div>

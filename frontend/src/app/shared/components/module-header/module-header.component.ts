@@ -1,5 +1,5 @@
 import { Component, DestroyRef, Input, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -15,7 +15,7 @@ import {
 @Component({
   selector: 'app-module-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <section
       class="mb-5 rounded-2xl border border-white/20 bg-[linear-gradient(120deg,rgba(15,23,42,0.68),rgba(30,41,59,0.52))] backdrop-blur-md p-4 md:p-5"

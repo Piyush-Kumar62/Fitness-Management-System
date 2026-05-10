@@ -39,13 +39,13 @@ export class UserService {
   }
 
   // Get all users (admin only)
-  getAllUsers(page: number = 0, size: number = 10): Observable<Page<User>> {
+  getAllUsers(page = 0, size = 10): Observable<Page<User>> {
     const params = { page: page.toString(), size: size.toString() };
     return this.api.get<Page<User>>('users', params);
   }
 
   // Search users by name or email
-  searchUsers(query: string, page: number = 0, size: number = 10): Observable<Page<User>> {
+  searchUsers(query: string, page = 0, size = 10): Observable<Page<User>> {
     const params = { query, page: page.toString(), size: size.toString() };
     return this.api.get<Page<User>>('users/search', params);
   }
@@ -56,8 +56,26 @@ export class UserService {
   }
 
   // Update user by ID (admin only)
-  updateUserById(userId: string, userData: Partial<User> & { password?: string; active?: boolean }): Observable<User> {
+  updateUserById(
+    userId: string,
+    userData: Partial<User> & { password?: string; active?: boolean; emailVerified?: boolean },
+  ): Observable<User> {
     return this.api.put<User>(`users/${userId}`, userData);
+  }
+
+  // Approve user (admin only)
+  approveUser(userId: string): Observable<User> {
+    return this.api.post<User>(`users/${userId}/approve`, {});
+  }
+
+  // Reject user (admin only)
+  rejectUser(userId: string): Observable<User> {
+    return this.api.post<User>(`users/${userId}/reject`, {});
+  }
+
+  // Deactivate/Activate user (admin only)
+  deactivateUser(userId: string): Observable<User> {
+    return this.api.post<User>(`users/${userId}/deactivate`, {});
   }
 
   // Delete user (admin only)

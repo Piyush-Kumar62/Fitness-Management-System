@@ -27,6 +27,12 @@ export const MEMBER_MENU: MenuItem[] = [
     roles: ['MEMBER'],
   },
   {
+    label: 'Community Feed',
+    icon: 'users',
+    route: '/member/community-feed',
+    roles: ['MEMBER'],
+  },
+  {
     label: 'Measurements',
     icon: 'ruler',
     route: '/member/measurements',

@@ -5,12 +5,10 @@ import { environment } from '../../../environments/environment';
 
 interface HealthStatus {
   status: 'UP' | 'DOWN';
-  components?: {
-    [key: string]: {
+  components?: Record<string, {
       status: string;
       details?: any;
-    };
-  };
+    }>;
 }
 
 @Injectable({

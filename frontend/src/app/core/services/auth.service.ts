@@ -2,11 +2,17 @@ import { Injectable, inject, signal, computed, PLATFORM_ID } from '@angular/core
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { environment } from '../../../environments/environment';
 import { User, UserRole } from '../models/user.model';
-import { LoginRequest, RegisterRequest, AuthResponse } from '../models/auth.model';
+import {
+  LoginRequest,
+  RegisterRequest,
+  AuthResponse,
+  CompleteProfileRequest,
+} from '../models/auth.model';
 import { StorageService, StorageKey } from './storage.service';
 import { ToastService } from './toast.service';
 import { JwtUtil } from '../utils/jwt.util';
@@ -36,6 +42,7 @@ export class AuthService {
   isTrainer = computed(() => this.userRole() === UserRole.TRAINER);
   isOwner = computed(() => this.userRole() === UserRole.OWNER);
   isMember = computed(() => this.userRole() === UserRole.MEMBER);
+  currentUser$ = toObservable(this.userSignal);
 
   constructor() {
     // Sync user state across tabs
@@ -56,16 +63,11 @@ export class AuthService {
     );
   }
 
-  // Register new user
-  register(userData: RegisterRequest): Observable<AuthResponse> {
+  // Register new user (returns UserResponse — no token since account is PENDING until admin approves)
+  register(userData: RegisterRequest): Observable<any> {
     return this.http
-      .post<AuthResponse | ApiResponse<AuthResponse>>(`${this.baseUrl}/register`, userData)
+      .post<any>(`${this.baseUrl}/register`, userData)
       .pipe(
-      map((response) => this.unwrapResponse<AuthResponse>(response)),
-      tap((response) => {
-        this.handleAuthSuccess(response);
-        this.toast.success('Registration successful!');
-      }),
       catchError(this.handleAuthError.bind(this)),
     );
   }
@@ -75,13 +77,8 @@ export class AuthService {
     window.location.href = `${this.backendBaseUrl}/oauth2/authorization/google`;
   }
 
-  // Login with GitHub OAuth2
-  loginWithGithub(): void {
-    window.location.href = `${this.backendBaseUrl}/oauth2/authorization/github`;
-  }
-
   // Handle OAuth2 token after redirect
-  handleOAuth2Token(token: string): Observable<User> {
+  handleOAuth2Token(token: string, requireProfileCompletion = false): Observable<User> {
     // Store token
     this.storage.setToken(token);
 
@@ -101,7 +98,11 @@ export class AuthService {
         this.userSignal.set(user);
         this.isAuthenticatedSignal.set(true);
 
-        // Navigate based on role
+        if (requireProfileCompletion || !user.role) {
+          this.router.navigate(['/complete-profile']);
+          return;
+        }
+
         const redirectUrl = this.getRedirectUrl(user.role);
         this.router.navigate([redirectUrl]);
       }),
@@ -145,6 +146,11 @@ export class AuthService {
     this.userSignal.set(response.user);
     this.isAuthenticatedSignal.set(true);
 
+    if (response.passwordResetRequired || response.user.passwordResetRequired) {
+      this.router.navigate(['/auth/reset-password']);
+      return;
+    }
+
     // Navigate based on role
     const redirectUrl = this.getRedirectUrl(response.user.role);
     this.router.navigate([redirectUrl]);
@@ -157,7 +163,10 @@ export class AuthService {
   }
 
   // Get redirect URL based on user role
-  getRedirectUrl(role: UserRole): string {
+  getRedirectUrl(role: UserRole | null | undefined): string {
+    if (!role) {
+      return '/complete-profile';
+    }
     switch (role) {
       case UserRole.ADMIN:
         return '/admin/dashboard';
@@ -169,6 +178,24 @@ export class AuthService {
       default:
         return '/member/dashboard';
     }
+  }
+
+  completeProfile(role: UserRole): Observable<User> {
+    const payload: CompleteProfileRequest = { role };
+    return this.http
+      .post<User | ApiResponse<User>>(`${this.baseUrl}/complete-profile`, payload)
+      .pipe(
+        map((response) => this.unwrapResponse<User>(response)),
+        tap((user) => {
+          this.storage.set(StorageKey.USER, user);
+          this.userSignal.set(user);
+        }),
+      );
+  }
+
+  finishOnboarding(): void {
+    this.clearAuthData();
+    this.router.navigate(['/auth/login']);
   }
 
   // Clear authentication data

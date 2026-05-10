@@ -1,12 +1,12 @@
-import { Component, EventEmitter, Output, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Output, Input, inject } from '@angular/core';
+
 import { FileUploadService, FileUploadResponse } from '../../../core/services/file-upload.service';
 import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-file-upload',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './file-upload.component.html',
   styles: [
     `
@@ -18,17 +18,15 @@ import { ToastService } from '../../../core/services/toast.service';
   ],
 })
 export class FileUploadComponent {
-  @Input() acceptedTypes: string = 'image/*';
-  @Input() placeholder: string = '';
+  private fileUploadService = inject(FileUploadService);
+  private toastService = inject(ToastService);
+
+  @Input() acceptedTypes = 'image/*';
+  @Input() placeholder = '';
   @Output() fileUploaded = new EventEmitter<FileUploadResponse>();
 
   uploading = false;
   isDragging = false;
-
-  constructor(
-    private fileUploadService: FileUploadService,
-    private toastService: ToastService,
-  ) {}
 
   onDragOver(event: DragEvent): void {
     event.preventDefault();

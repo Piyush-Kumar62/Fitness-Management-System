@@ -23,4 +23,7 @@ export interface GymSubscription {
 export interface GymInfo {
   id: string;
   name: string;
+  address?: string;
+  contact?: string;
+  status?: 'PENDING' | 'ACTIVE' | 'SUSPENDED' | 'INACTIVE';
 }

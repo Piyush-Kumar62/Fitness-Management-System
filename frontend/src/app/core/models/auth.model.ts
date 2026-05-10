@@ -7,17 +7,28 @@ export interface LoginRequest {
 }
 
 export interface RegisterRequest {
-  email: string;
-  password: string;
   firstName: string;
   lastName: string;
-  role?: UserRole;
-  gymId?: string;
+  email: string;
+  password?: string;
+  role: 'MEMBER' | 'OWNER';
+  phone?: string;
+  dob?: string;
+  gender?: string;
+  gymId?: string; // For MEMBER joining
+  gymName?: string; // For OWNER creation
+  gymAddress?: string; // For OWNER creation
+  gymContact?: string; // For OWNER creation
+}
+
+export interface CompleteProfileRequest {
+  role: UserRole;
 }
 
 export interface AuthResponse {
   token: string;
   user: User;
+  passwordResetRequired?: boolean;
 }
 
 export interface JwtPayload {

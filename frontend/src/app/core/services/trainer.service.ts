@@ -43,6 +43,10 @@ export class TrainerService {
     return this.api.put<WorkoutPlan>(`trainer/workout-plans/${planId}`, payload);
   }
 
+  deleteWorkoutPlan(planId: string): Observable<void> {
+    return this.api.delete<void>(`trainer/workout-plans/${planId}`);
+  }
+
   getDietPlans(): Observable<DietPlan[]> {
     return this.api.get<Page<DietPlan>>('trainer/diet-plans').pipe(map((res) => res.content ?? []));
   }
@@ -57,6 +61,10 @@ export class TrainerService {
 
   updateDietPlan(planId: string, payload: any): Observable<DietPlan> {
     return this.api.put<DietPlan>(`trainer/diet-plans/${planId}`, payload);
+  }
+
+  deleteDietPlan(planId: string): Observable<void> {
+    return this.api.delete<void>(`trainer/diet-plans/${planId}`);
   }
 
   assignPlan(payload: AssignPlanRequest): Observable<MemberPlanResponse> {

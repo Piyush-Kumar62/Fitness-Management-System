@@ -1,7 +1,4 @@
-import {
-  Component, OnInit, OnDestroy, Input, Output, EventEmitter,
-  ElementRef, ViewChild, AfterViewInit
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ElementRef, ViewChild, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { StripeService, CreatePaymentIntentResponse } from '../../core/services/stripe.service';
@@ -16,6 +13,10 @@ import { StripeElements, StripeCardElement } from '@stripe/stripe-js';
   styleUrls: ['./stripe-checkout.component.scss'],
 })
 export class StripeCheckoutComponent implements OnInit, AfterViewInit, OnDestroy {
+  private fb = inject(FormBuilder);
+  private stripeService = inject(StripeService);
+  private toast = inject(ToastService);
+
 
   // The membership plan ID to purchase
   @Input() planId!: string;
@@ -39,12 +40,6 @@ export class StripeCheckoutComponent implements OnInit, AfterViewInit, OnDestroy
   private cardElement: StripeCardElement | null = null;
   private stripeElements: StripeElements | null = null;
   private paymentIntentData: CreatePaymentIntentResponse | null = null;
-
-  constructor(
-    private fb: FormBuilder,
-    private stripeService: StripeService,
-    private toast: ToastService,
-  ) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({

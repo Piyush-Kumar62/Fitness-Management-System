@@ -21,6 +21,15 @@ export class ToastService {
     heightAuto: false,
   };
 
+  show(message: string, type: 'success' | 'error' | 'warning' | 'info' = 'success'): void {
+    switch (type) {
+      case 'success': this.success(message); break;
+      case 'error': this.error(message); break;
+      case 'warning': this.warning(message); break;
+      case 'info': this.info(message); break;
+    }
+  }
+
   success(message: string, title = 'Success!'): void {
     if (this.shouldSuppress('modal:success-inline', title, message)) return;
     void Swal.fire({

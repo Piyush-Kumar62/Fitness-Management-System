@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { loadStripe, Stripe, StripeCardElement } from '@stripe/stripe-js';
@@ -20,10 +20,12 @@ export interface CreatePaymentIntentResponse {
 
 @Injectable({ providedIn: 'root' })
 export class StripeService {
+  private http = inject(HttpClient);
+
   private stripePromise: Promise<Stripe | null>;
   private readonly apiBase = `${environment.apiUrl}/payments`;
 
-  constructor(private http: HttpClient) {
+  constructor() {
     this.stripePromise = loadStripe(environment.stripePublishableKey);
   }
 

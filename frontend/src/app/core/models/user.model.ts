@@ -3,7 +3,8 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: UserRole;
+  role?: UserRole | null;
+  status?: AccountStatus;
   trainerId?: string;
   gymId?: string;
   active?: boolean;
@@ -12,6 +13,10 @@ export interface User {
   createdAt?: string;
   updatedAt?: string;
   profileImageUrl?: string;
+  passwordResetRequired?: boolean;
+  phone?: string;
+  dob?: string;
+  gender?: string;
 }
 
 export enum UserRole {
@@ -20,6 +25,8 @@ export enum UserRole {
   OWNER = 'OWNER',
   ADMIN = 'ADMIN',
 }
+
+export type AccountStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export interface UserProfile extends User {
   phoneNumber?: string;

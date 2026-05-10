@@ -15,7 +15,7 @@ export const guestGuard: CanActivateFn = () => {
   if (userRole) {
     router.navigate([authService.getRedirectUrl(userRole)]);
   } else {
-    router.navigate(['/member/dashboard']);
+    router.navigate(['/complete-profile']);
   }
   return false;
 };

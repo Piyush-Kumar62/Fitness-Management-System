@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiService } from './api.service';
@@ -16,9 +16,9 @@ export interface FileUploadResponse {
   providedIn: 'root',
 })
 export class FileUploadService {
-  private apiUrl = `${environment.apiUrl}/files`;
+  private api = inject(ApiService);
 
-  constructor(private api: ApiService) {}
+  private apiUrl = `${environment.apiUrl}/files`;
 
   uploadFile(file: File): Observable<FileUploadResponse> {
     const formData = new FormData();

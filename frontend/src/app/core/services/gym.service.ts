@@ -11,6 +11,18 @@ export class GymService {
     return this.api.get<GymInfo[]>('gyms/my');
   }
 
+  getAllGyms(): Observable<GymInfo[]> {
+    return this.api.get<GymInfo[]>('gyms');
+  }
+
+  getPublicGyms(): Observable<GymInfo[]> {
+    return this.api.get<GymInfo[]>('gyms/public');
+  }
+
+  joinGym(gymId: string): Observable<void> {
+    return this.api.post<void>(`gyms/${gymId}/join`, {});
+  }
+
   createGym(payload: { name: string; address: string; contact: string }): Observable<GymInfo> {
     return this.api.post<GymInfo>('gyms', payload);
   }

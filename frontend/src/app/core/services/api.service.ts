@@ -19,6 +19,15 @@ export class ApiService {
       .pipe(map((response) => this.unwrapResponse<T>(response)));
   }
 
+  // GET blob request
+  getBlob(endpoint: string, params?: HttpParams | Record<string, any>): Observable<Blob> {
+    const httpParams = params instanceof HttpParams ? params : this.createHttpParams(params);
+    return this.http.get(`${this.baseUrl}/${endpoint}`, {
+      params: httpParams,
+      responseType: 'blob',
+    });
+  }
+
   // POST request
   post<T>(endpoint: string, body: any, options?: { headers?: HttpHeaders }): Observable<T> {
     return this.http

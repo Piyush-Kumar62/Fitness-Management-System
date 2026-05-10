@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
 
@@ -53,7 +53,8 @@ export enum GoalStatus {
   providedIn: 'root',
 })
 export class GoalService {
-  constructor(private api: ApiService) {}
+  private api = inject(ApiService);
+
 
   getAllGoals(): Observable<Goal[]> {
     return this.api.get<Goal[]>('goals');

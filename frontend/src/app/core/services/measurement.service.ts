@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
 
@@ -11,7 +11,7 @@ export interface BodyMeasurement {
   bodyFat?: number;
   muscleMass?: number;
   bmi?: number;
-  measurements?: { [key: string]: number };
+  measurements?: Record<string, number>;
   photoUrl?: string;
   notes?: string;
   createdAt?: string;
@@ -21,7 +21,8 @@ export interface BodyMeasurement {
   providedIn: 'root',
 })
 export class MeasurementService {
-  constructor(private api: ApiService) {}
+  private api = inject(ApiService);
+
 
   getAllMeasurements(): Observable<BodyMeasurement[]> {
     return this.api.get<BodyMeasurement[]>('measurements');

@@ -50,7 +50,7 @@ export class JwtUtil {
   }
 
   // Check if token needs refresh (within 5 minutes of expiry)
-  static needsRefresh(token: string, thresholdMs: number = 300000): boolean {
+  static needsRefresh(token: string, thresholdMs = 300000): boolean {
     const timeUntilExpiry = this.getTimeUntilExpiry(token);
     return timeUntilExpiry > 0 && timeUntilExpiry < thresholdMs;
   }

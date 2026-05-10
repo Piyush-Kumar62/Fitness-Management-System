@@ -1,43 +1,47 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 // Reusable pagination component. Emits (pageChange) with the zero-based page index when the user clicks a page button.
 @Component({
   selector: 'app-paginator',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <nav class="flex items-center justify-between px-2 py-3" *ngIf="totalPages > 1">
-      <span class="text-sm text-slate-400">
-        Page {{ currentPage + 1 }} of {{ totalPages }}
-        &nbsp;·&nbsp;
-        <span class="font-medium text-white">{{ totalElements }}</span> results
-      </span>
-      <div class="flex gap-1">
-        <button
-          class="paginator-btn"
-          [disabled]="isFirst"
-          (click)="changePage(currentPage - 1)"
-          aria-label="Previous page">
-          ‹
-        </button>
-        <button *ngFor="let p of visiblePages()"
-          class="paginator-btn"
-          [class.active]="p === currentPage"
-          (click)="changePage(p)">
-          {{ p + 1 }}
-        </button>
-        <button
-          class="paginator-btn"
-          [disabled]="isLast"
-          (click)="changePage(currentPage + 1)"
-          aria-label="Next page">
-          ›
-        </button>
-      </div>
-    </nav>
-  `,
+    @if (totalPages > 1) {
+      <nav class="flex items-center justify-between px-2 py-3">
+        <span class="text-sm text-slate-400">
+          Page {{ currentPage + 1 }} of {{ totalPages }}
+          &nbsp;·&nbsp;
+          <span class="font-medium text-white">{{ totalElements }}</span> results
+        </span>
+        <div class="flex gap-1">
+          <button
+            class="paginator-btn"
+            [disabled]="isFirst"
+            (click)="changePage(currentPage - 1)"
+            aria-label="Previous page">
+            ‹
+          </button>
+          @for (p of visiblePages(); track p) {
+            <button
+              class="paginator-btn"
+              [class.active]="p === currentPage"
+              (click)="changePage(p)">
+              {{ p + 1 }}
+            </button>
+          }
+          <button
+            class="paginator-btn"
+            [disabled]="isLast"
+            (click)="changePage(currentPage + 1)"
+            aria-label="Next page">
+            ›
+          </button>
+        </div>
+      </nav>
+    }
+    `,
   styles: [`
     .paginator-btn {
       @apply min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium
