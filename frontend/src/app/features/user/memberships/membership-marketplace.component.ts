@@ -1,9 +1,11 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MembershipService } from '../../../core/services/membership.service';
+import { GymService } from '../../../core/services/gym.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { Membership, MembershipPlan, Payment } from '../../../core/models/membership.model';
+import { GymInfo } from '../../../core/models/subscription.model';
 import { StripeCheckoutComponent } from '../../../shared/stripe-checkout/stripe-checkout.component';
 
 @Component({
@@ -15,13 +17,18 @@ import { StripeCheckoutComponent } from '../../../shared/stripe-checkout/stripe-
 })
 export class MembershipMarketplaceComponent implements OnInit {
   private membershipService = inject(MembershipService);
+  private gymService = inject(GymService);
   private authService = inject(AuthService);
   private toast = inject(ToastService);
 
   plans = signal<MembershipPlan[]>([]);
   memberships = signal<Membership[]>([]);
   payments = signal<Payment[]>([]);
+  availableGyms = signal<GymInfo[]>([]);
+  
   isLoadingPlans = signal(false);
+  isLoadingGyms = signal(false);
+  isJoiningGym = signal(false);
 
   gymId = computed(() => this.authService.user()?.gymId || '');
 
@@ -41,9 +48,39 @@ export class MembershipMarketplaceComponent implements OnInit {
         next: (plans) => this.plans.set(plans),
         complete: () => this.isLoadingPlans.set(false),
       });
+      this.membershipService.getMembershipHistory().subscribe((rows) => this.memberships.set(rows));
+      this.membershipService.getPaymentHistory().subscribe((rows) => this.payments.set(rows));
+    } else {
+      this.loadAvailableGyms();
     }
-    this.membershipService.getMembershipHistory().subscribe((rows) => this.memberships.set(rows));
-    this.membershipService.getPaymentHistory().subscribe((rows) => this.payments.set(rows));
+  }
+
+  loadAvailableGyms(): void {
+    this.isLoadingGyms.set(true);
+    this.gymService.getAllGyms().subscribe({
+      next: (gyms) => this.availableGyms.set(gyms),
+      complete: () => this.isLoadingGyms.set(false),
+    });
+  }
+
+  joinGym(gymId: string): void {
+    this.isJoiningGym.set(true);
+    this.gymService.joinGym(gymId).subscribe({
+      next: () => {
+        this.toast.success('Successfully joined the gym!');
+        // Update local user state
+        const currentUser = this.authService.user();
+        if (currentUser) {
+          this.authService.updateUser({ ...currentUser, gymId });
+        }
+        this.isJoiningGym.set(false);
+        this.loadData();
+      },
+      error: () => {
+        this.toast.error('Failed to join the gym. Please try again.');
+        this.isJoiningGym.set(false);
+      }
+    });
   }
 
   // Check if the member already has an active membership

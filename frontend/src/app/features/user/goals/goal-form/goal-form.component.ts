@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { GoalService, Goal, GoalType, GoalStatus } from '../../../../core/services/goal.service';
@@ -8,11 +8,17 @@ import { ToastService } from '../../../../core/services/toast.service';
 @Component({
   selector: 'app-goal-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './goal-form.component.html',
   styles: [],
 })
 export class GoalFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private goalService = inject(GoalService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private toast = inject(ToastService);
+
   goalForm: FormGroup;
   isEditMode = false;
   goalId?: string;
@@ -36,13 +42,7 @@ export class GoalFormComponent implements OnInit {
     { value: GoalStatus.ABANDONED, label: 'Abandoned' },
   ];
 
-  constructor(
-    private fb: FormBuilder,
-    private goalService: GoalService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private toast: ToastService,
-  ) {
+  constructor() {
     this.goalForm = this.fb.group({
       title: ['', Validators.required],
       description: [''],

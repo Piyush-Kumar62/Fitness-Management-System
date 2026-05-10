@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TrainerService } from '../../../../core/services/trainer.service';
@@ -7,7 +7,7 @@ import { TrainerService } from '../../../../core/services/trainer.service';
 @Component({
   selector: 'app-diet-plan-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './diet-plan-form.component.html',
 })
 export class DietPlanFormComponent implements OnInit {

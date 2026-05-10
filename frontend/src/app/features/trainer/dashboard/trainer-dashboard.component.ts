@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { DashboardService } from '../../../core/services/dashboard.service';
@@ -7,7 +7,7 @@ import { DashboardService } from '../../../core/services/dashboard.service';
 @Component({
   selector: 'app-trainer-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './trainer-dashboard.component.html',
 })
 export class TrainerDashboardComponent implements OnInit {

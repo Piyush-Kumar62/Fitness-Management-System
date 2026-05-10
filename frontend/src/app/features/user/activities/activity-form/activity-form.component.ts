@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ActivityService } from '../../../../core/services/activity.service';
@@ -9,7 +9,7 @@ import { ActivityType } from '../../../../core/models/activity.model';
 @Component({
   selector: 'app-activity-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './activity-form.component.html',
 })
 export class ActivityFormComponent implements OnInit {

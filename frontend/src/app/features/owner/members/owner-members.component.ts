@@ -1,12 +1,12 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { OwnerService } from '../../../core/services/owner.service';
 import { User } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-owner-members',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './owner-members.component.html',
 })
 export class OwnerMembersComponent implements OnInit {

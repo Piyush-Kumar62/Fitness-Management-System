@@ -1,8 +1,77 @@
 <section class="dashboard-page space-y-6">
-  <article class="glass-card p-6 rounded-2xl border border-white/20">
-    <h1 class="text-2xl font-bold text-white">Owner Trainers</h1>
-    <p class="text-gray-200 mt-2">All trainers mapped to your gyms.</p>
+  <article class="glass-card p-6 rounded-2xl border border-white/20 flex justify-between items-center">
+    <div>
+      <h1 class="text-2xl font-bold text-white">Owner Trainers</h1>
+      <p class="text-gray-200 mt-2">All trainers mapped to your gyms.</p>
+    </div>
+    <button (click)="toggleCreateForm()" 
+      class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold transition-all shadow-lg shadow-indigo-500/30">
+      {{ showCreateForm() ? 'Cancel' : '+ Create Trainer' }}
+    </button>
   </article>
+
+  @if (showCreateForm()) {
+    <article class="glass-card p-6 rounded-2xl border border-white/20 animate-in fade-in slide-in-from-top-4 duration-300">
+      <h2 class="text-xl font-bold text-white mb-4">Create New Trainer</h2>
+      <form [formGroup]="trainerForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="space-y-1">
+          <label class="text-sm font-medium text-gray-300">First Name</label>
+          <input type="text" formControlName="firstName" 
+            class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+            placeholder="John">
+          @if (trainerForm.get('firstName')?.touched && trainerForm.get('firstName')?.invalid) {
+            <p class="text-red-400 text-xs mt-1">First name is required</p>
+          }
+        </div>
+        <div class="space-y-1">
+          <label class="text-sm font-medium text-gray-300">Last Name</label>
+          <input type="text" formControlName="lastName" 
+            class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+            placeholder="Doe">
+          @if (trainerForm.get('lastName')?.touched && trainerForm.get('lastName')?.invalid) {
+            <p class="text-red-400 text-xs mt-1">Last name is required</p>
+          }
+        </div>
+        <div class="space-y-1">
+          <label class="text-sm font-medium text-gray-300">Email Address</label>
+          <input type="email" formControlName="email" 
+            class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+            placeholder="trainer@example.com">
+          @if (trainerForm.get('email')?.touched && trainerForm.get('email')?.invalid) {
+            <p class="text-red-400 text-xs mt-1">Valid email is required</p>
+          }
+        </div>
+        <div class="space-y-1">
+          <label class="text-sm font-medium text-gray-300">Phone (Optional)</label>
+          <input type="tel" formControlName="phone" 
+            class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+            placeholder="+1 234 567 8900">
+        </div>
+        <div class="space-y-1">
+          <label class="text-sm font-medium text-gray-300">Assign to Gym</label>
+          <select formControlName="gymId" 
+            class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all appearance-none">
+            @for (gym of gyms(); track gym.id) {
+              <option [value]="gym.id" class="bg-gray-800 text-white">{{ gym.name }}</option>
+            }
+          </select>
+          @if (trainerForm.get('gymId')?.touched && trainerForm.get('gymId')?.invalid) {
+            <p class="text-red-400 text-xs mt-1">Gym selection is required</p>
+          }
+        </div>
+        <div class="md:col-span-2 flex justify-end gap-3 mt-4">
+          <button type="button" (click)="toggleCreateForm()" 
+            class="px-6 py-2 border border-white/20 text-white rounded-xl font-semibold hover:bg-white/10 transition-all">
+            Cancel
+          </button>
+          <button type="submit" [disabled]="isSubmitting()"
+            class="px-8 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl font-semibold transition-all shadow-lg shadow-indigo-500/30">
+            {{ isSubmitting() ? 'Creating...' : 'Create Trainer' }}
+          </button>
+        </div>
+      </form>
+    </article>
+  }
 
   <article class="glass-card p-6 rounded-2xl border border-white/20">
     @if (isLoading()) {
@@ -18,14 +87,25 @@
               <th class="pb-3">Email</th>
               <th class="pb-3">Gym</th>
               <th class="pb-3">Status</th>
+              <th class="pb-3 text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             @for (trainer of trainers(); track trainer.id) {
-              <tr class="border-t border-white/10">
+              <tr class="border-t border-white/10 group">
                 <td class="py-3 text-white font-medium">{{ trainer.firstName }} {{ trainer.lastName }}</td>
                 <td class="py-3 text-gray-200">{{ trainer.email }}</td>
-                <td class="py-3 text-gray-200">{{ trainer.gymId || 'Not assigned' }}</td>
+                <td class="py-3">
+                  <select (change)="assignTrainer(trainer.id, $event)"
+                    class="bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-xs text-gray-200 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                    <option value="" disabled [selected]="!trainer.gymId">Select Gym</option>
+                    @for (gym of gyms(); track gym.id) {
+                      <option [value]="gym.id" [selected]="trainer.gymId === gym.id" class="bg-gray-800 text-white">
+                        {{ gym.name }}
+                      </option>
+                    }
+                  </select>
+                </td>
                 <td class="py-3">
                   <span class="px-2 py-1 rounded-full text-xs font-semibold"
                     [class.bg-green-500/20]="trainer.active"
@@ -34,6 +114,15 @@
                     [class.text-red-300]="trainer.active === false">
                     {{ trainer.active === false ? 'Inactive' : 'Active' }}
                   </span>
+                </td>
+                <td class="py-3 text-right">
+                  <button (click)="deleteTrainer(trainer.id)"
+                    class="p-2 text-red-400 hover:text-red-300 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                    title="Remove Trainer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
                 </td>
               </tr>
             }

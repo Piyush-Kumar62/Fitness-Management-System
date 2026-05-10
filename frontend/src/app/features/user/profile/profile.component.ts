@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { UserService } from '../../../core/services/user.service';
@@ -10,7 +10,7 @@ import { User } from '../../../core/models/user.model';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent implements OnInit, OnDestroy {
@@ -32,6 +32,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   editForm = {
     firstName: '',
     lastName: '',
+    phone: '',
+    dob: '',
+    gender: '',
   };
 
   passwordForm = {
@@ -72,6 +75,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.editForm = {
         firstName: p.firstName,
         lastName: p.lastName,
+        phone: p.phone || '',
+        dob: p.dob || '',
+        gender: p.gender || '',
       };
       this.isEditing.set(true);
     }

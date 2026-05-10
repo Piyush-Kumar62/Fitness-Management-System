@@ -1,11 +1,11 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { TrainerService } from '../../../core/services/trainer.service';
 
 @Component({
   selector: 'app-member-plans',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './member-plans.component.html',
 })
 export class MemberPlansComponent implements OnInit {

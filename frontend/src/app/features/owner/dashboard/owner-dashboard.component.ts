@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, inject, signal, ViewChild, ElementRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { DashboardService } from '../../../core/services/dashboard.service';
 import { ChartService } from '../../../core/services/chart.service';
@@ -8,7 +8,7 @@ import type { Chart } from 'chart.js';
 @Component({
   selector: 'app-owner-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './owner-dashboard.component.html',
 })
 export class OwnerDashboardComponent implements OnInit, OnDestroy {

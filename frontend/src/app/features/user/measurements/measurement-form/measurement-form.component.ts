@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MeasurementService, BodyMeasurement } from '../../../../core/services/measurement.service';
@@ -8,23 +8,23 @@ import { ToastService } from '../../../../core/services/toast.service';
 @Component({
   selector: 'app-measurement-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './measurement-form.component.html',
   styles: [],
 })
 export class MeasurementFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private measurementService = inject(MeasurementService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private toast = inject(ToastService);
+
   measurementForm: FormGroup;
   isEditMode = false;
   measurementId?: string;
   loading = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private measurementService: MeasurementService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private toast: ToastService,
-  ) {
+  constructor() {
     this.measurementForm = this.fb.group({
       measurementDate: [new Date().toISOString().split('T')[0], Validators.required],
       weight: [null],

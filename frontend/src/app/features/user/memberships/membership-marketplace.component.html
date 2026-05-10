@@ -10,14 +10,54 @@
     }
   </header>
 
-  <!-- No gym linked -->
+  <!-- No gym linked: Show Gym Marketplace -->
   @if (!gymId()) {
-    <div class="info-card warn-card">
+    <div class="info-card warn-card mb-6">
       <span class="info-icon">⚠️</span>
       <div>
         <strong>No Gym Linked</strong>
-        <p>Your profile is not linked to a gym yet. Please contact your administrator.</p>
+        <p>Your profile is not linked to a gym yet. Choose a gym below to get started.</p>
       </div>
+    </div>
+
+    <div class="section-card">
+      <h2 class="section-title">
+        <span class="section-icon">🏢</span> Available Gyms
+      </h2>
+
+      @if (isLoadingGyms()) {
+        <div class="loading-row">
+          <span class="spinner"></span> Loading gyms...
+        </div>
+      } @else if (!availableGyms().length) {
+        <p class="empty-state">No gyms available to join at this moment.</p>
+      } @else {
+        <div class="plans-grid">
+          @for (gym of availableGyms(); track gym.id) {
+            <div class="plan-card">
+              <div class="plan-header">
+                <h3 class="plan-name">{{ gym.name }}</h3>
+              </div>
+              <div class="text-sm text-gray-600 mb-2">
+                <p>📍 {{ gym.address || 'Address not provided' }}</p>
+                <p>📞 {{ gym.contact || 'Contact not provided' }}</p>
+              </div>
+              <p class="plan-features text-xs text-gray-500 mb-4">Join this gym to access their membership plans and classes.</p>
+              <button
+                class="btn-buy mt-auto"
+                [disabled]="isJoiningGym()"
+                (click)="joinGym(gym.id)"
+              >
+                @if (isJoiningGym()) {
+                  <span>Joining...</span>
+                } @else {
+                  <span>Join Gym</span>
+                }
+              </button>
+            </div>
+          }
+        </div>
+      }
     </div>
   }
 
@@ -69,58 +109,59 @@
     </div>
   }
 
-  <!-- History Grid -->
-  <div class="history-grid">
+  @if (gymId()) {
+    <div class="history-grid">
 
-    <!-- Membership History -->
-    <div class="section-card">
-      <h2 class="section-title">
-        <span class="section-icon">📋</span> Membership History
-      </h2>
-      @if (!memberships().length) {
-        <p class="empty-state">No memberships yet.</p>
-      } @else {
-        <div class="history-list">
-          @for (row of memberships(); track row.id) {
-            <div class="history-item">
-              <div class="history-item-left">
-                <span class="history-plan">{{ row.planName }}</span>
-                <span class="history-dates">{{ row.startDate }} → {{ row.endDate }}</span>
+      <!-- Membership History -->
+      <div class="section-card">
+        <h2 class="section-title">
+          <span class="section-icon">📋</span> Membership History
+        </h2>
+        @if (!memberships().length) {
+          <p class="empty-state">No memberships yet.</p>
+        } @else {
+          <div class="history-list">
+            @for (row of memberships(); track row.id) {
+              <div class="history-item">
+                <div class="history-item-left">
+                  <span class="history-plan">{{ row.planName }}</span>
+                  <span class="history-dates">{{ row.startDate }} → {{ row.endDate }}</span>
+                </div>
+                <span class="status-badge" [ngClass]="getStatusBadgeClass(row.status)">
+                  {{ row.status }}
+                </span>
               </div>
-              <span class="status-badge" [ngClass]="getStatusBadgeClass(row.status)">
-                {{ row.status }}
-              </span>
-            </div>
-          }
-        </div>
-      }
-    </div>
+            }
+          </div>
+        }
+      </div>
 
-    <!-- Payment History -->
-    <div class="section-card">
-      <h2 class="section-title">
-        <span class="section-icon">💳</span> Payment History
-      </h2>
-      @if (!payments().length) {
-        <p class="empty-state">No payments yet.</p>
-      } @else {
-        <div class="history-list">
-          @for (row of payments(); track row.id) {
-            <div class="history-item">
-              <div class="history-item-left">
-                <span class="history-plan">₹{{ row.amount | number:'1.2-2' }}</span>
-                <span class="history-dates">{{ row.method }} • <code>{{ row.transactionId }}</code></span>
+      <!-- Payment History -->
+      <div class="section-card">
+        <h2 class="section-title">
+          <span class="section-icon">💳</span> Payment History
+        </h2>
+        @if (!payments().length) {
+          <p class="empty-state">No payments yet.</p>
+        } @else {
+          <div class="history-list">
+            @for (row of payments(); track row.id) {
+              <div class="history-item">
+                <div class="history-item-left">
+                  <span class="history-plan">₹{{ row.amount | number:'1.2-2' }}</span>
+                  <span class="history-dates">{{ row.method }} • <code>{{ row.transactionId }}</code></span>
+                </div>
+                <span class="status-badge" [ngClass]="row.status === 'SUCCESS' ? 'status-active' : 'status-expired'">
+                  {{ row.status }}
+                </span>
               </div>
-              <span class="status-badge" [ngClass]="row.status === 'SUCCESS' ? 'status-active' : 'status-expired'">
-                {{ row.status }}
-              </span>
-            </div>
-          }
-        </div>
-      }
-    </div>
+            }
+          </div>
+        }
+      </div>
 
-  </div><!-- end history-grid -->
+    </div><!-- end history-grid -->
+  }
 
 </section>
 

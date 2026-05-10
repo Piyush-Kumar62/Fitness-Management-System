@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MeasurementService, BodyMeasurement } from '../../../../core/services/measurement.service';
@@ -12,12 +12,10 @@ import { ToastService } from '../../../../core/services/toast.service';
   styles: [],
 })
 export class MeasurementListComponent implements OnInit {
-  measurements: BodyMeasurement[] = [];
+  private measurementService = inject(MeasurementService);
+  private toastService = inject(ToastService);
 
-  constructor(
-    private measurementService: MeasurementService,
-    private toastService: ToastService,
-  ) {}
+  measurements: BodyMeasurement[] = [];
 
   ngOnInit() {
     this.loadMeasurements();

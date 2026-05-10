@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { ActivityService } from '../../../../core/services/activity.service';
 import { ToastService } from '../../../../core/services/toast.service';
@@ -8,7 +8,7 @@ import { Activity } from '../../../../core/models/activity.model';
 @Component({
   selector: 'app-activity-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './activity-list.component.html',
 })
 export class ActivityListComponent implements OnInit {
@@ -45,6 +45,24 @@ export class ActivityListComponent implements OnInit {
       error: (error) => {
         console.error('Failed to delete activity:', error);
         this.toastService.error('Failed to delete activity');
+      },
+    });
+  }
+
+  exportActivities() {
+    this.activityService.exportActivities().subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `activities_${new Date().toISOString().split('T')[0]}.csv`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        this.toastService.success('Export successful');
+      },
+      error: (error) => {
+        console.error('Export failed:', error);
+        this.toastService.error('Export failed');
       },
     });
   }

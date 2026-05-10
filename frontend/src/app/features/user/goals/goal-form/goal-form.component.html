@@ -10,13 +10,14 @@
         formControlName="title"
         class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         placeholder="e.g., Lose 10kg"
-      />
-      <div
-        *ngIf="goalForm.get('title')?.invalid && goalForm.get('title')?.touched"
-        class="text-red-500 text-sm mt-1"
-      >
-        Title is required
-      </div>
+        />
+      @if (goalForm.get('title')?.invalid && goalForm.get('title')?.touched) {
+        <div
+          class="text-red-500 text-sm mt-1"
+          >
+          Title is required
+        </div>
+      }
     </div>
 
     <!-- Description -->
@@ -36,9 +37,11 @@
       <select
         formControlName="type"
         class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
+        >
         <option value="">Select type...</option>
-        <option *ngFor="let type of goalTypes" [value]="type.value">{{ type.label }}</option>
+        @for (type of goalTypes; track type) {
+          <option [value]="type.value">{{ type.label }}</option>
+        }
       </select>
     </div>
 
@@ -51,7 +54,7 @@
           formControlName="targetValue"
           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="80"
-        />
+          />
       </div>
       <div>
         <label class="block text-gray-700 font-semibold mb-2">Current Value</label>
@@ -60,7 +63,7 @@
           formControlName="currentValue"
           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="90"
-        />
+          />
       </div>
     </div>
 
@@ -72,7 +75,7 @@
         formControlName="unit"
         class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         placeholder="e.g., kg, hours, count"
-      />
+        />
     </div>
 
     <!-- Dates -->
@@ -83,7 +86,7 @@
           type="date"
           formControlName="startDate"
           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+          />
       </div>
       <div>
         <label class="block text-gray-700 font-semibold mb-2">Deadline</label>
@@ -91,22 +94,26 @@
           type="date"
           formControlName="deadline"
           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+          />
       </div>
     </div>
 
     <!-- Status (edit mode only) -->
-    <div *ngIf="isEditMode" class="mb-6">
-      <label class="block text-gray-700 font-semibold mb-2">Status</label>
-      <select
-        formControlName="status"
-        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        <option *ngFor="let status of goalStatuses" [value]="status.value">
-          {{ status.label }}
-        </option>
-      </select>
-    </div>
+    @if (isEditMode) {
+      <div class="mb-6">
+        <label class="block text-gray-700 font-semibold mb-2">Status</label>
+        <select
+          formControlName="status"
+          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+          @for (status of goalStatuses; track status) {
+            <option [value]="status.value">
+              {{ status.label }}
+            </option>
+          }
+        </select>
+      </div>
+    }
 
     <!-- Buttons -->
     <div class="flex gap-4">
@@ -114,14 +121,14 @@
         type="submit"
         [disabled]="goalForm.invalid || loading"
         class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
-      >
+        >
         {{ loading ? 'Saving...' : isEditMode ? 'Update Goal' : 'Create Goal' }}
       </button>
       <button
         type="button"
         (click)="goBack()"
         class="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300"
-      >
+        >
         Cancel
       </button>
     </div>

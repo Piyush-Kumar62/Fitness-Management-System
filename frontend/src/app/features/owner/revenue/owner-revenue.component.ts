@@ -1,11 +1,11 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { OwnerService } from '../../../core/services/owner.service';
 
 @Component({
   selector: 'app-owner-revenue',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './owner-revenue.component.html',
 })
 export class OwnerRevenueComponent implements OnInit {

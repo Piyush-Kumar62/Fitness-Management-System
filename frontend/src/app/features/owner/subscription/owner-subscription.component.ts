@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   GymInfo,
@@ -12,7 +12,7 @@ import { SubscriptionService } from '../../../core/services/subscription.service
 @Component({
   selector: 'app-owner-subscription',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './owner-subscription.component.html',
 })
 export class OwnerSubscriptionComponent implements OnInit {

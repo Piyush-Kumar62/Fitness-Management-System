@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
@@ -13,17 +13,17 @@ import { ToastService } from '../../../../core/services/toast.service';
   styles: [],
 })
 export class GoalDetailComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private goalService = inject(GoalService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private toastService = inject(ToastService);
+
   goal?: Goal;
   showMilestoneForm = false;
   milestoneForm: FormGroup;
 
-  constructor(
-    private fb: FormBuilder,
-    private goalService: GoalService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private toastService: ToastService,
-  ) {
+  constructor() {
     this.milestoneForm = this.fb.group({
       title: ['', Validators.required],
       description: [''],

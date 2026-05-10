@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-activity-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './activity-detail.component.html',
 })
 export class ActivityDetailComponent {}

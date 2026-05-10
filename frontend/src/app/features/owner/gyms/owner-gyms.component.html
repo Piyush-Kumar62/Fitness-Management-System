@@ -44,15 +44,62 @@
           <div class="flex items-center justify-between rounded-xl border border-white/15 p-4">
             <div>
               <p class="text-white font-semibold">{{ gym.name }}</p>
-              <p class="text-gray-300 text-sm">Gym ID: {{ gym.id }}</p>
+              <p class="text-gray-300 text-sm">{{ gym.address || 'No address set' }}</p>
+              <p class="text-gray-300 text-sm">Contact: {{ gym.contact || 'Not set' }}</p>
+              <p class="text-gray-400 text-xs mt-1">Gym ID: {{ gym.id }}</p>
             </div>
-            <button
-              (click)="deleteGym(gym.id)"
-              class="px-3 py-1.5 rounded-lg bg-red-500/80 hover:bg-red-600 text-white text-sm"
-            >
-              Delete
-            </button>
+            <div class="flex items-center gap-2">
+              <button
+                (click)="startEdit(gym)"
+                class="px-3 py-1.5 rounded-lg bg-indigo-500/80 hover:bg-indigo-600 text-white text-sm"
+              >
+                Update
+              </button>
+              <button
+                (click)="deleteGym(gym.id)"
+                class="px-3 py-1.5 rounded-lg bg-red-500/80 hover:bg-red-600 text-white text-sm"
+              >
+                Delete
+              </button>
+            </div>
           </div>
+
+          @if (editingGymId() === gym.id) {
+            <div class="mt-2 rounded-xl border border-white/15 p-4 bg-white/5 space-y-3">
+              <h3 class="text-white font-semibold">Update Gym</h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <input
+                  [(ngModel)]="editForm.name"
+                  placeholder="Gym name"
+                  class="rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-gray-300 px-3 py-2"
+                />
+                <input
+                  [(ngModel)]="editForm.address"
+                  placeholder="Address"
+                  class="rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-gray-300 px-3 py-2"
+                />
+                <input
+                  [(ngModel)]="editForm.contact"
+                  placeholder="Contact"
+                  class="rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-gray-300 px-3 py-2"
+                />
+              </div>
+              <div class="flex items-center gap-2">
+                <button
+                  (click)="saveEdit(gym.id)"
+                  class="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm"
+                >
+                  Save
+                </button>
+                <button
+                  (click)="cancelEdit()"
+                  class="px-3 py-1.5 rounded-lg bg-gray-500/70 hover:bg-gray-600 text-white text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          }
         }
       </div>
     }

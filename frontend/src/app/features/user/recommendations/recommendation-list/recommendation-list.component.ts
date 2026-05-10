@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { RecommendationService } from '../../../../core/services/recommendation.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -9,7 +9,7 @@ import { Recommendation } from '../../../../core/models/recommendation.model';
 @Component({
   selector: 'app-recommendation-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './recommendation-list.component.html',
 })
 export class RecommendationListComponent implements OnInit {

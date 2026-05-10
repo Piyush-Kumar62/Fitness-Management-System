@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TrainerService } from '../../../../core/services/trainer.service';
 import { MemberProgress, DietPlan, WorkoutPlan } from '../../../../core/models/trainer.model';
@@ -7,7 +7,7 @@ import { MemberProgress, DietPlan, WorkoutPlan } from '../../../../core/models/t
 @Component({
   selector: 'app-member-progress',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './member-progress.component.html',
 })
 export class MemberProgressComponent implements OnInit {

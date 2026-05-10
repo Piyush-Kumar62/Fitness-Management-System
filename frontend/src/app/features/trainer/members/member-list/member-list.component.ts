@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { TrainerService } from '../../../../core/services/trainer.service';
 import { User } from '../../../../core/models/user.model';
@@ -7,7 +7,7 @@ import { User } from '../../../../core/models/user.model';
 @Component({
   selector: 'app-member-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './member-list.component.html',
 })
 export class MemberListComponent implements OnInit {

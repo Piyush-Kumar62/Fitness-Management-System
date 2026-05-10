@@ -1,5 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MembershipPlan } from '../../../core/models/membership.model';
 import { MembershipService } from '../../../core/services/membership.service';
@@ -8,7 +8,7 @@ import { AuthService } from '../../../core/services/auth.service';
 @Component({
   selector: 'app-owner-membership-plans',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './owner-membership-plans.component.html',
 })
 export class OwnerMembershipPlansComponent implements OnInit {

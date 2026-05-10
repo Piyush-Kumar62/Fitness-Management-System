@@ -1,10 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-owner-module-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './owner-module-page.component.html',
 })
 export class OwnerModulePageComponent {

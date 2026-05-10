@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { GoalService, Goal, GoalStatus, GoalType } from '../../../../core/services/goal.service';
@@ -12,6 +12,10 @@ import { ToastService } from '../../../../core/services/toast.service';
   styles: [],
 })
 export class GoalListComponent implements OnInit {
+  private goalService = inject(GoalService);
+  private toast = inject(ToastService);
+  private router = inject(Router);
+
   goals: Goal[] = [];
   filteredGoals: Goal[] = [];
   selectedStatus: string | null = null;
@@ -22,12 +26,6 @@ export class GoalListComponent implements OnInit {
     { value: GoalStatus.COMPLETED, label: 'Completed' },
     { value: GoalStatus.PAUSED, label: 'Paused' },
   ];
-
-  constructor(
-    private goalService: GoalService,
-    private toast: ToastService,
-    private router: Router,
-  ) {}
 
   ngOnInit() {
     this.loadGoals();
