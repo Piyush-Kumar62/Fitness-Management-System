@@ -86,28 +86,25 @@ public class MembershipService {
         .transactionId("TXN-" + UUID.randomUUID()).build());
     notificationService.notifyUser(memberId, "MEMBERSHIP", "Membership Activated",
         "Your " + plan.getName() + " plan is active until " + membership.getEndDate() + ".");
+    sendMembershipEmails(member, plan, membership, payment, request);
+    return buildPurchaseResponse(membership, member, plan, payment);
+  }
 
-    // --- Send transactional emails (async, non-blocking) ---
-    String memberEmail = member.getEmail();
-    String memberName  = member.getFirstName();
-    String formattedAmount  = String.format("%.2f", plan.getPrice());
-    String startDateStr     = membership.getStartDate().toString();
-    String endDateStr       = membership.getEndDate().toString();
+  private void sendMembershipEmails(User member, MembershipPlan plan, Membership membership,
+      Payment payment, BuyMembershipRequest request) {
+    String method = request.getPaymentMethod() != null ? request.getPaymentMethod().name() : "UNKNOWN";
+    emailService.sendPaymentConfirmation(member.getEmail(), member.getFirstName(),
+        plan.getName(), String.format("%.2f", plan.getPrice()),
+        payment.getTransactionId(), membership.getEndDate().toString(), method);
+    emailService.sendMembershipActivated(member.getEmail(), member.getFirstName(),
+        plan.getName(), membership.getStartDate().toString(), membership.getEndDate().toString());
+  }
 
-    emailService.sendPaymentConfirmation(
-        memberEmail, memberName,
-        plan.getName(), formattedAmount,
-        payment.getTransactionId(), endDateStr,
-        request.getPaymentMethod() != null ? request.getPaymentMethod().name() : "UNKNOWN");
-
-    emailService.sendMembershipActivated(
-        memberEmail, memberName,
-        plan.getName(), startDateStr, endDateStr);
-
+  private MembershipPurchaseResponse buildPurchaseResponse(Membership membership, User member,
+      MembershipPlan plan, Payment payment) {
     return MembershipPurchaseResponse.builder()
         .membership(toMembershipResponse(membership, member, plan))
-        .payment(toPaymentResponse(payment))
-        .build();
+        .payment(toPaymentResponse(payment)).build();
   }
 
   @Transactional(readOnly = true)

@@ -151,36 +151,32 @@ public class StripePaymentService implements IStripePaymentService {
     private void handlePaymentSucceeded(Event event) {
         PaymentIntent intent = (PaymentIntent) event.getDataObjectDeserializer()
                 .getObject().orElseThrow(() -> new BadRequestException("Missing PaymentIntent object"));
-
         Map<String, String> meta = intent.getMetadata();
         String userId = meta.get("userId");
         String planId = meta.get("planId");
-
-        log.info("Payment succeeded: paymentIntentId={} userId={} planId={}", intent.getId(), userId, planId);
-
-        // Activate the membership via existing service (handles DB + notification)
+        log.info("Payment succeeded: intentId={} userId={} planId={}", intent.getId(), userId, planId);
         try {
-            BuyMembershipRequest req = BuyMembershipRequest.builder()
-                    .planId(planId)
-                    .paymentMethod(PaymentMethod.CARD)
-                    .build();
-
-            MembershipPurchaseResponse result = membershipService.buyMembership(userId, true, req);
-
-            // Update the payment record to store Stripe's IDs
-            Payment payment = paymentRepository.findById(result.getPayment().getId()).orElse(null);
-            if (payment != null) {
-                payment.setTransactionId(intent.getId());
-                payment.setGateway("STRIPE");
-                payment.setStatus(PaymentStatus.SUCCESS);
-                paymentRepository.save(payment);
-            }
-
+            MembershipPurchaseResponse result = activateMembership(userId, planId);
+            patchPaymentWithStripeIds(result.getPayment().getId(), intent.getId());
             log.info("Membership activated for userId={} planId={}", userId, planId);
         } catch (BadRequestException e) {
-            // e.g. "already has an active membership" — log and skip
             log.warn("Membership activation skipped for userId={}: {}", userId, e.getMessage());
         }
+    }
+
+    private MembershipPurchaseResponse activateMembership(String userId, String planId) {
+        BuyMembershipRequest req = BuyMembershipRequest.builder()
+                .planId(planId).paymentMethod(PaymentMethod.CARD).build();
+        return membershipService.buyMembership(userId, true, req);
+    }
+
+    private void patchPaymentWithStripeIds(String paymentId, String stripeIntentId) {
+        Payment payment = paymentRepository.findById(paymentId).orElse(null);
+        if (payment == null) return;
+        payment.setTransactionId(stripeIntentId);
+        payment.setGateway("STRIPE");
+        payment.setStatus(PaymentStatus.SUCCESS);
+        paymentRepository.save(payment);
     }
 
     private void handlePaymentFailed(Event event) {

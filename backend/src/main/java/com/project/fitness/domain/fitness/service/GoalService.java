@@ -145,19 +145,6 @@ public class GoalService {
   }
 
   private GoalResponse mapToResponse(Goal goal) {
-    // Calculate progress percentage
-    Double progress = 0.0;
-    if (goal.getTargetValue() != null && goal.getTargetValue() > 0) {
-      progress = (goal.getCurrentValue() / goal.getTargetValue()) * 100;
-      progress = Math.min(progress, 100.0);
-    }
-
-    // Get milestones
-    List<MilestoneResponse> milestones = milestoneRepository.findByGoal_IdOrderByTargetValueAsc(goal.getId())
-        .stream()
-        .map(this::mapMilestoneToResponse)
-        .collect(Collectors.toList());
-
     return new GoalResponse(
         goal.getId(),
         goal.getUser().getId(),
@@ -170,11 +157,26 @@ public class GoalService {
         goal.getStartDate(),
         goal.getDeadline(),
         goal.getStatus(),
-        progress,
-        milestones,
+        calculateProgress(goal),
+        getMilestoneResponses(goal.getId()),
         goal.getCreatedAt(),
         goal.getUpdatedAt()
     );
+  }
+
+  private Double calculateProgress(Goal goal) {
+    if (goal.getTargetValue() == null || goal.getTargetValue() <= 0) {
+      return 0.0;
+    }
+    double progress = (goal.getCurrentValue() / goal.getTargetValue()) * 100;
+    return Math.min(progress, 100.0);
+  }
+
+  private List<MilestoneResponse> getMilestoneResponses(String goalId) {
+    return milestoneRepository.findByGoal_IdOrderByTargetValueAsc(goalId)
+        .stream()
+        .map(this::mapMilestoneToResponse)
+        .collect(Collectors.toList());
   }
 
   private MilestoneResponse mapMilestoneToResponse(Milestone milestone) {

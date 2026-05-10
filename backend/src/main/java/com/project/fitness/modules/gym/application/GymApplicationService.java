@@ -20,6 +20,7 @@ public class GymApplicationService {
 
   private final GymService gymService;
   private final GymSubscriptionService gymSubscriptionService;
+  private final com.project.fitness.domain.user.repository.UserRepository userRepository;
 
   public GymResponse createGym(String ownerId, GymRequest request) {
     return gymService.createGym(ownerId, request);
@@ -65,5 +66,15 @@ public class GymApplicationService {
   @Transactional(readOnly = true)
   public GymSubscriptionResponse getGymSubscription(String actorId, boolean isAdmin, String gymId) {
     return gymSubscriptionService.getGymSubscription(actorId, isAdmin, gymId);
+  }
+
+  public void joinGym(String userId, String gymId) {
+    com.project.fitness.domain.user.model.User user = userRepository.findById(userId)
+        .orElseThrow(() -> new com.project.fitness.common.exception.ResourceNotFoundException("User", "id", userId));
+    // Verify gym exists
+    gymService.getGymById(gymId);
+    
+    user.setGymId(gymId);
+    userRepository.save(user);
   }
 }

@@ -13,6 +13,7 @@ public interface ActivityMapper {
 
   // Map entity to response DTO, derive userId from user.id.
   @Mapping(target = "userId", source = "user.id")
+  @Mapping(target = "userName", expression = "java(activity.getUser() != null ? activity.getUser().getFirstName() + \" \" + activity.getUser().getLastName() : \"Member\")")
   ActivityResponse toResponse(Activity activity);
 
   // Map request to entity; id and timestamps are ignored (generated).

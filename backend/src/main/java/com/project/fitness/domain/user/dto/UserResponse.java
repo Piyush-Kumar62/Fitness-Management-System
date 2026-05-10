@@ -33,6 +33,7 @@ public class UserResponse {
   private boolean emailVerified;
   private boolean profileComplete;
   private boolean active;
+  private boolean passwordResetRequired;
   private LocalDate dob;
   private String gender;
   private String phone;

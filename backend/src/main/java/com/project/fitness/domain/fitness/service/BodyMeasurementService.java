@@ -29,70 +29,47 @@ public class BodyMeasurementService {
   public BodyMeasurementResponse createMeasurement(BodyMeasurementRequest request, String userId) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-    // Calculate BMI if weight and height are provided
-    Double bmi = null;
-    if (request.getWeight() != null && request.getHeight() != null && request.getHeight() > 0) {
-      double heightInMeters = request.getHeight() / 100.0;
-      bmi = request.getWeight() / (heightInMeters * heightInMeters);
-      bmi = Math.round(bmi * 10.0) / 10.0; // Round to 1 decimal place
-    }
-
-    FileUpload photo = null;
-    if (request.getPhotoId() != null) {
-      photo = fileUploadRepository.findById(request.getPhotoId()).orElse(null);
-    }
-
     BodyMeasurement measurement = BodyMeasurement.builder()
         .user(user)
         .measurementDate(request.getMeasurementDate())
-        .weight(request.getWeight())
-        .height(request.getHeight())
-        .bodyFat(request.getBodyFat())
-        .muscleMass(request.getMuscleMass())
-        .bmi(bmi)
+        .weight(request.getWeight()).height(request.getHeight())
+        .bodyFat(request.getBodyFat()).muscleMass(request.getMuscleMass())
+        .bmi(calculateBmi(request.getWeight(), request.getHeight()))
         .measurements(request.getMeasurements())
-        .progressPhoto(photo)
-        .notes(request.getNotes())
-        .build();
-
-    BodyMeasurement saved = measurementRepository.save(measurement);
-    return mapToResponse(saved);
+        .progressPhoto(resolvePhoto(request.getPhotoId()))
+        .notes(request.getNotes()).build();
+    return mapToResponse(measurementRepository.save(measurement));
   }
 
   public BodyMeasurementResponse updateMeasurement(String id, BodyMeasurementRequest request, String userId) {
     BodyMeasurement measurement = measurementRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Measurement not found"));
+    if (!measurement.getUser().getId().equals(userId)) throw new BadRequestException("Unauthorized");
+    applyMeasurementUpdates(measurement, request);
+    return mapToResponse(measurementRepository.save(measurement));
+  }
 
-    if (!measurement.getUser().getId().equals(userId)) {
-      throw new BadRequestException("Unauthorized");
-    }
-
-    // Recalculate BMI
-    Double bmi = null;
-    if (request.getWeight() != null && request.getHeight() != null && request.getHeight() > 0) {
-      double heightInMeters = request.getHeight() / 100.0;
-      bmi = request.getWeight() / (heightInMeters * heightInMeters);
-      bmi = Math.round(bmi * 10.0) / 10.0;
-    }
-
-    FileUpload photo = null;
-    if (request.getPhotoId() != null) {
-      photo = fileUploadRepository.findById(request.getPhotoId()).orElse(null);
-    }
-
+  private void applyMeasurementUpdates(BodyMeasurement measurement, BodyMeasurementRequest request) {
     measurement.setMeasurementDate(request.getMeasurementDate());
     measurement.setWeight(request.getWeight());
     measurement.setHeight(request.getHeight());
     measurement.setBodyFat(request.getBodyFat());
     measurement.setMuscleMass(request.getMuscleMass());
-    measurement.setBmi(bmi);
+    measurement.setBmi(calculateBmi(request.getWeight(), request.getHeight()));
     measurement.setMeasurements(request.getMeasurements());
-    measurement.setProgressPhoto(photo);
+    measurement.setProgressPhoto(resolvePhoto(request.getPhotoId()));
     measurement.setNotes(request.getNotes());
+  }
 
-    BodyMeasurement updated = measurementRepository.save(measurement);
-    return mapToResponse(updated);
+  private Double calculateBmi(Double weight, Double height) {
+    if (weight == null || height == null || height <= 0) return null;
+    double hm = height / 100.0;
+    return Math.round(weight / (hm * hm) * 10.0) / 10.0;
+  }
+
+  private FileUpload resolvePhoto(String photoId) {
+    if (photoId == null) return null;
+    return fileUploadRepository.findById(photoId).orElse(null);
   }
 
   @Transactional(readOnly = true)

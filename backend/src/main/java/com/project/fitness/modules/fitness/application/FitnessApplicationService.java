@@ -3,6 +3,7 @@ package com.project.fitness.modules.fitness.application;
 import com.project.fitness.common.response.PagedResponse;
 import com.project.fitness.domain.fitness.dto.ActivityRequest;
 import com.project.fitness.domain.fitness.dto.ActivityResponse;
+import com.project.fitness.domain.fitness.dto.ActivityStatisticsResponse;
 import com.project.fitness.domain.fitness.dto.BodyMeasurementRequest;
 import com.project.fitness.domain.fitness.dto.BodyMeasurementResponse;
 import com.project.fitness.domain.fitness.dto.GoalRequest;
@@ -41,6 +42,14 @@ public class FitnessApplicationService {
     return activityService.getActivityById(id);
   }
 
+  public com.project.fitness.domain.fitness.dto.ActivityResponse updateActivity(String id, String userId, com.project.fitness.domain.fitness.dto.ActivityUpdateRequest request) {
+    return activityService.updateActivity(id, userId, request);
+  }
+
+  public void deleteActivity(String id, String userId) {
+    activityService.deleteActivity(id, userId);
+  }
+
   @Transactional(readOnly = true)
   public PagedResponse<ActivityResponse> getUserActivities(String userId, Pageable pageable) {
     return activityService.getUserActivities(userId, pageable);
@@ -55,6 +64,11 @@ public class FitnessApplicationService {
   public PagedResponse<ActivityResponse> searchActivities(
       String userId, String type, String dateFrom, String dateTo, Pageable pageable) {
     return activityService.searchActivities(userId, type, dateFrom, dateTo, pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public ActivityStatisticsResponse getActivityStatistics(String userId) {
+    return activityService.getActivityStatistics(userId);
   }
 
   public GoalResponse createGoal(GoalRequest request, String userId) {

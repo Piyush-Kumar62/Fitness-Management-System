@@ -29,7 +29,7 @@ public class GymService {
         .ownerId(ownerId)
         .address(request.getAddress().trim())
         .contact(request.getContact().trim())
-        .status(GymStatus.PENDING)
+        .status(GymStatus.ACTIVE)
         .build();
     return toResponse(gymRepository.save(gym));
   }

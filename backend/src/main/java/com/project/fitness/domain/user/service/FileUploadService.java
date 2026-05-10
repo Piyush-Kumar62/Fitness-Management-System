@@ -35,46 +35,37 @@ public class FileUploadService {
   }
 
   public FileUploadResponse uploadFile(MultipartFile file, String userId) {
-    if (file.isEmpty()) {
-      throw new BadRequestException("File is empty");
-    }
-
+    if (file.isEmpty()) throw new BadRequestException("File is empty");
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
     try {
-      // Create upload directory if it doesn't exist
-      Path uploadPath = Paths.get(uploadDir);
-      if (!Files.exists(uploadPath)) {
-        Files.createDirectories(uploadPath);
-      }
-
-      // Generate unique filename
-      String originalFilename = file.getOriginalFilename();
-      String extension = originalFilename != null && originalFilename.contains(".")
-          ? originalFilename.substring(originalFilename.lastIndexOf("."))
-          : "";
-      String uniqueFilename = UUID.randomUUID() + extension;
-
-      // Save file
-      Path filePath = uploadPath.resolve(uniqueFilename);
+      Path uploadPath = ensureUploadDirExists();
+      Path filePath = generateUniquePath(uploadPath, file.getOriginalFilename());
       Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-      // Save metadata to database
-      FileUpload fileUpload = FileUpload.builder()
-          .user(user)
-          .fileName(originalFilename)
-          .filePath(filePath.toString())
-          .fileType(file.getContentType())
-          .fileSize(file.getSize())
-          .build();
-
-      FileUpload saved = fileUploadRepository.save(fileUpload);
+      FileUpload saved = fileUploadRepository.save(buildFileEntity(user, file, filePath));
       return mapToResponse(saved);
-
     } catch (IOException e) {
       throw new RuntimeException("Failed to store file: " + e.getMessage());
     }
+  }
+
+  private Path ensureUploadDirExists() throws IOException {
+    Path path = Paths.get(uploadDir);
+    if (!Files.exists(path)) Files.createDirectories(path);
+    return path;
+  }
+
+  private Path generateUniquePath(Path uploadPath, String originalFilename) {
+    String ext = (originalFilename != null && originalFilename.contains("."))
+        ? originalFilename.substring(originalFilename.lastIndexOf(".")) : "";
+    return uploadPath.resolve(UUID.randomUUID() + ext);
+  }
+
+  private FileUpload buildFileEntity(User user, MultipartFile file, Path filePath) {
+    return FileUpload.builder()
+        .user(user).fileName(file.getOriginalFilename())
+        .filePath(filePath.toString()).fileType(file.getContentType()).fileSize(file.getSize())
+        .build();
   }
 
   public FileUploadResponse getFileById(String fileId) {

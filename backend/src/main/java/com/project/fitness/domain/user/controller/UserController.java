@@ -95,6 +95,33 @@ public class UserController {
     return ResponseEntity.ok(userApplicationService.updateUserById(userId, request));
   }
 
+  // Approve user by ID (Admin only)
+  @PostMapping("/{userId}/approve")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<UserResponse> approveUser(
+      Authentication authentication,
+      @PathVariable String userId) {
+    return ResponseEntity.ok(userApplicationService.approveUser((String) authentication.getPrincipal(), userId));
+  }
+
+  // Reject user by ID (Admin only)
+  @PostMapping("/{userId}/reject")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<UserResponse> rejectUser(
+      Authentication authentication,
+      @PathVariable String userId) {
+    return ResponseEntity.ok(userApplicationService.rejectUser((String) authentication.getPrincipal(), userId));
+  }
+
+  // Deactivate/Activate user by ID (Admin only)
+  @PostMapping("/{userId}/deactivate")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<UserResponse> deactivateUser(
+      Authentication authentication,
+      @PathVariable String userId) {
+    return ResponseEntity.ok(userApplicationService.deactivateUser((String) authentication.getPrincipal(), userId));
+  }
+
   // Search users (Admin only)
   @GetMapping("/search")
   @PreAuthorize("hasRole('ADMIN')")

@@ -33,8 +33,13 @@ public class GymController {
   }
 
   @GetMapping
-  @PreAuthorize("hasAnyRole('ADMIN','OWNER')")
+  @PreAuthorize("hasAnyRole('ADMIN','OWNER','MEMBER')")
   public ResponseEntity<List<GymResponse>> getAllGyms() {
+    return ResponseEntity.ok(gymApplicationService.getAllGyms());
+  }
+
+  @GetMapping("/public")
+  public ResponseEntity<List<GymResponse>> getPublicGyms() {
     return ResponseEntity.ok(gymApplicationService.getAllGyms());
   }
 
@@ -63,5 +68,13 @@ public class GymController {
   public ResponseEntity<Void> deleteGym(@PathVariable String gymId) {
     gymApplicationService.deleteGym(gymId);
     return ResponseEntity.noContent().build();
+  }
+  @PostMapping("/{gymId}/join")
+  @PreAuthorize("hasRole('MEMBER')")
+  public ResponseEntity<Void> joinGym(
+      @PathVariable String gymId,
+      Authentication authentication) {
+    gymApplicationService.joinGym((String) authentication.getPrincipal(), gymId);
+    return ResponseEntity.ok().build();
   }
 }

@@ -16,4 +16,7 @@ public interface ActivityRepository extends JpaRepository<Activity, String> {
 
   // Paginated version
   Page<Activity> findByUser_Id(String userId, Pageable pageable);
+
+  // Social Feed version
+  Page<Activity> findByUser_IdIn(List<String> userIds, Pageable pageable);
 }

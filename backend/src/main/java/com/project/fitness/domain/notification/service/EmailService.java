@@ -124,6 +124,24 @@ public class EmailService implements IEmailService {
     sendHtml(toEmail, "Your Fitness Management System Account is Ready 🚀", "email/account-created", ctx);
   }
 
+  @Override
+  @Async
+  public void sendRegistrationPending(String toEmail, String firstName,
+      String temporaryPassword, String role) {
+    Context ctx = buildBase(firstName);
+    ctx.setVariable("temporaryPassword", temporaryPassword);
+    ctx.setVariable("role", role);
+    sendHtml(toEmail, "Registration Pending Approval ⏳", "email/registration-pending", ctx);
+  }
+
+  @Override
+  @Async
+  public void sendAccountApproved(String toEmail, String firstName, String role) {
+    Context ctx = buildBase(firstName);
+    ctx.setVariable("role", role);
+    sendHtml(toEmail, "Account Approved! 🎉", "email/account-approved", ctx);
+  }
+
   // ── Internals ──────────────────────────────────────────────
 
   private void sendHtml(String to, String subject, String template, Context ctx) {

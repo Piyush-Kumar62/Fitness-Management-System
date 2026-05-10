@@ -42,4 +42,8 @@ public interface UserRepository extends JpaRepository<User, String> {
 
   @Query("SELECT COUNT(u) FROM User u WHERE u.role = :role AND u.active = true")
   long countByRoleAndActiveTrue(@Param("role") UserRole role);
+
+  Page<User> findByStatus(com.project.fitness.domain.user.model.AccountStatus status, Pageable pageable);
+
+  long countByStatus(com.project.fitness.domain.user.model.AccountStatus status);
 }

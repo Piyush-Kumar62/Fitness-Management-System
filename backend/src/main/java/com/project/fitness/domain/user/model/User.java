@@ -67,6 +67,8 @@ public class User {
   private boolean profileComplete = false;
   @Builder.Default
   private boolean active = true;
+  @Builder.Default
+  private boolean passwordResetRequired = false;
 
   // Extended profile fields
   private LocalDate dob;

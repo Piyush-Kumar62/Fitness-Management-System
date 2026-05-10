@@ -36,6 +36,18 @@ public class AuthController {
     return ResponseEntity.ok(userApplicationService.login(loginRequest));
   }
 
+  @PostMapping("/reset-password")
+  public ResponseEntity<Void> resetFirstPassword(
+      Authentication authentication,
+      @Valid @RequestBody com.project.fitness.domain.user.dto.ResetPasswordRequest request) {
+    if (authentication == null || authentication.getPrincipal() == null) {
+      throw new UnauthorizedException("Authentication is required");
+    }
+    String userId = (String) authentication.getPrincipal();
+    userApplicationService.resetFirstPassword(userId, request);
+    return ResponseEntity.ok().build();
+  }
+
   @PostMapping("/complete-profile")
   public ResponseEntity<UserResponse> completeProfile(
       Authentication authentication,

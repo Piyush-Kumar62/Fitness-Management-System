@@ -188,10 +188,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     if ("google".equalsIgnoreCase(provider)) {
       return asString(attributes.get("sub"));
     }
-    if ("github".equalsIgnoreCase(provider)) {
-      return asString(attributes.get("id"));
-    }
-    return firstNonBlank(asString(attributes.get("sub")), asString(attributes.get("id")));
+    return asString(attributes.get("sub"));
   }
 
   private String asString(Object value) {

@@ -30,4 +30,11 @@ public interface IEmailService {
 
   void sendAccountCreated(String toEmail, String firstName,
       String temporaryPassword, String role);
+
+  /** Sent immediately on registration: tells user to wait for admin approval. */
+  void sendRegistrationPending(String toEmail, String firstName,
+      String temporaryPassword, String role);
+
+  /** Sent when admin approves the account – user can now log in. */
+  void sendAccountApproved(String toEmail, String firstName, String role);
 }

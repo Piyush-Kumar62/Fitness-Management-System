@@ -53,7 +53,7 @@ public class UserApplicationService {
   public LoginResponse login(LoginRequest request) {
     User user = userService.authenticate(request);
     String token = jwtUtils.generateToken(user.getId(), user.getEffectiveRole().name());
-    return new LoginResponse(token, userService.mapToResponse(user));
+    return new LoginResponse(token, userService.mapToResponse(user), user.isPasswordResetRequired());
   }
 
   public UserResponse completeProfile(String userId, UserRole selectedRole) {
@@ -103,6 +103,15 @@ public class UserApplicationService {
       }
       user.setEmail(normalizedEmail);
     }
+    if (request.getPhone() != null) {
+      user.setPhone(request.getPhone().trim());
+    }
+    if (request.getDob() != null) {
+      user.setDob(request.getDob());
+    }
+    if (request.getGender() != null) {
+      user.setGender(request.getGender());
+    }
 
     return userService.mapToResponse(userRepository.save(user));
   }
@@ -143,6 +152,49 @@ public class UserApplicationService {
     emailService.sendPasswordChangedNotification(user.getEmail(), user.getFirstName());
   }
 
+  public void resetFirstPassword(String userId, com.project.fitness.domain.user.dto.ResetPasswordRequest request) {
+    User user = userService.getUserById(userId);
+    if (!user.isPasswordResetRequired()) {
+      throw new BadRequestException("Password reset is not required for this account");
+    }
+    if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+      throw new UnauthorizedException("Current password is incorrect");
+    }
+    user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+    user.setPasswordResetRequired(false);
+    userRepository.save(user);
+    emailService.sendPasswordChangedNotification(user.getEmail(), user.getFirstName());
+  }
+
+  public UserResponse approveUser(String adminId, String userId) {
+    User user = userService.getUserById(userId);
+    if (user.getStatus() == AccountStatus.APPROVED) {
+      throw new BadRequestException("User is already approved");
+    }
+    user.setStatus(AccountStatus.APPROVED);
+    user.setEmailVerified(true);
+    user.setActive(true);
+    User saved = userRepository.save(user);
+    emailService.sendAccountApproved(saved.getEmail(), saved.getFirstName(), saved.getEffectiveRole().name());
+    return userService.mapToResponse(saved);
+  }
+
+  public UserResponse rejectUser(String adminId, String userId) {
+    User user = userService.getUserById(userId);
+    if (user.getStatus() == AccountStatus.REJECTED) {
+      throw new BadRequestException("User is already rejected");
+    }
+    user.setStatus(AccountStatus.REJECTED);
+    user.setActive(false);
+    return userService.mapToResponse(userRepository.save(user));
+  }
+
+  public UserResponse deactivateUser(String adminId, String userId) {
+    User user = userService.getUserById(userId);
+    user.setActive(!user.isActive());
+    return userService.mapToResponse(userRepository.save(user));
+  }
+
   @Transactional(readOnly = true)
   public UserResponse getUserById(String userId) {
     return userService.mapToResponse(userService.getUserById(userId));
@@ -154,32 +206,35 @@ public class UserApplicationService {
 
   public UserResponse updateUserById(String userId, UpdateUserRequest request) {
     User user = userService.getUserById(userId);
+    applyBasicUserUpdates(user, request);
+    applyEmailUpdate(user, userId, request.getEmail());
+    if (request.getPassword() != null && !request.getPassword().isBlank()) {
+      user.setPassword(passwordEncoder.encode(request.getPassword()));
+    }
+    if (request.getRole() != null)         user.setRole(request.getRole());
+    if (request.getActive() != null)       user.setActive(request.getActive());
+    if (request.getStatus() != null)       user.setStatus(request.getStatus());
+    if (request.getEmailVerified() != null) user.setEmailVerified(request.getEmailVerified());
+    return userService.mapToResponse(userRepository.save(user));
+  }
 
+  private void applyBasicUserUpdates(User user, UpdateUserRequest request) {
     if (request.getFirstName() != null && !request.getFirstName().trim().isEmpty()) {
       user.setFirstName(request.getFirstName().trim());
     }
     if (request.getLastName() != null && !request.getLastName().trim().isEmpty()) {
       user.setLastName(request.getLastName().trim());
     }
-    if (request.getEmail() != null && !request.getEmail().trim().isEmpty()) {
-      String normalizedEmail = request.getEmail().trim().toLowerCase();
-      User existingUser = userRepository.findByEmail(normalizedEmail);
-      if (existingUser != null && !existingUser.getId().equals(userId)) {
-        throw new BadRequestException("Email already in use");
-      }
-      user.setEmail(normalizedEmail);
-    }
-    if (request.getPassword() != null && !request.getPassword().isBlank()) {
-      user.setPassword(passwordEncoder.encode(request.getPassword()));
-    }
-    if (request.getRole() != null) {
-      user.setRole(request.getRole());
-    }
-    if (request.getActive() != null) {
-      user.setActive(request.getActive());
-    }
+  }
 
-    return userService.mapToResponse(userRepository.save(user));
+  private void applyEmailUpdate(User user, String userId, String newEmail) {
+    if (newEmail == null || newEmail.trim().isEmpty()) return;
+    String normalized = newEmail.trim().toLowerCase();
+    User existing = userRepository.findByEmail(normalized);
+    if (existing != null && !existing.getId().equals(userId)) {
+      throw new BadRequestException("Email already in use");
+    }
+    user.setEmail(normalized);
   }
 
   @Transactional(readOnly = true)

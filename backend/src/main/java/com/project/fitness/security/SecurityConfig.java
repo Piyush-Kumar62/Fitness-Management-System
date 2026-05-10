@@ -79,85 +79,57 @@ public class SecurityConfig {
   @Bean
   @Order(2)
   public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
-
     http
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .csrf(AbstractHttpConfigurer::disable)
-        .headers(headers -> headers
-            .frameOptions(frameOptions -> frameOptions.deny())
-            .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; script-src 'self' https://js.stripe.com; frame-src 'self' https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com ws: wss:;"))
-            .contentTypeOptions(contentTypeOptions -> {})
-            .xssProtection(xss -> xss.disable())
-            .httpStrictTransportSecurity(hsts -> hsts
-                .includeSubDomains(true)
-                .maxAgeInSeconds(31536000))
-            .referrerPolicy(referrer -> referrer.policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
-            .permissionsPolicy(permissions -> permissions.policy(
-                "camera=(), microphone=(), geolocation=(), payment=(self)"))
-        )
-        .sessionManagement(session ->
-            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        )
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers(
-                "/swagger-ui/**",
-                "/swagger-ui.html",
-                "/v3/api-docs/**"
-            ).permitAll()
-            .requestMatchers("/actuator/health").permitAll()
-            .requestMatchers("/actuator/**").hasRole("ADMIN")
-            .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll()
-            .requestMatchers("/api/v1/auth/complete-profile").authenticated()
-            .requestMatchers("/api/v1/auth/**").permitAll()
-            .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
-            .requestMatchers("/ws/**").permitAll()
-            .requestMatchers("/api/v1/stripe/webhook").permitAll()
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-            .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-            .requestMatchers("/api/v1/trainer/**").hasRole("TRAINER")
-            .requestMatchers("/api/v1/owner/**").hasRole("OWNER")
-            .requestMatchers("/api/v1/gyms/**").hasAnyRole("ADMIN", "OWNER")
-
-            // Versioned + legacy compatibility endpoints
-            .requestMatchers(
-                "/api/v1/membership-plans/**", "/api/v1/memberships/**", "/api/v1/payments/**", "/api/v1/stripe/**",
-                "/api/membership-plans/**", "/api/memberships/**", "/api/payments/**"
-            ).hasAnyRole("MEMBER", "TRAINER", "OWNER", "ADMIN")
-
-            .requestMatchers("/api/v1/member/**").hasRole("MEMBER")
-
-            .requestMatchers(
-                "/api/v1/activities/**",
-                "/api/v1/goals/**",
-                "/api/v1/measurements/**",
-                "/api/v1/files/**",
-                "/api/v1/users/search",
-                "/api/v1/users/profile",
-                "/api/v1/users/profile/**",
-                "/api/v1/users/change-password",
-                "/api/v1/recommendations/**"
-            ).hasAnyRole("MEMBER", "TRAINER", "OWNER", "ADMIN")
-
-            .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
-            .anyRequest().authenticated()
-        );
-
-    http.addFilterBefore(
-        rateLimitFilter,
-        UsernamePasswordAuthenticationFilter.class
-    );
-
-    http.addFilterBefore(
-        jwtAuthenticationFilter,
-        UsernamePasswordAuthenticationFilter.class
-    );
-
-    http.addFilterAfter(
-        xssFilter,
-        JwtAuthenticationFilter.class
-    );
+    configureHeaders(http);
+    configureAuthorization(http);
+    addFilters(http);
 
     return http.build();
+  }
+
+  private void configureHeaders(HttpSecurity http) throws Exception {
+    http.headers(headers -> headers
+        .frameOptions(frameOptions -> frameOptions.deny())
+        .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; script-src 'self' https://js.stripe.com; frame-src 'self' https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com ws: wss:;"))
+        .contentTypeOptions(contentTypeOptions -> {})
+        .xssProtection(xss -> xss.disable())
+        .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000))
+        .referrerPolicy(referrer -> referrer.policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+        .permissionsPolicy(permissions -> permissions.policy("camera=(), microphone=(), geolocation=(), payment=(self)"))
+    );
+  }
+
+  private void configureAuthorization(HttpSecurity http) throws Exception {
+    http.authorizeHttpRequests(auth -> auth
+        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+        .requestMatchers("/actuator/health").permitAll()
+        .requestMatchers("/actuator/**").hasRole("ADMIN")
+        .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/gyms/public").permitAll()
+        .requestMatchers("/api/v1/auth/complete-profile").authenticated()
+        .requestMatchers("/api/v1/auth/**", "/oauth2/**", "/login/oauth2/**", "/ws/**", "/api/v1/stripe/webhook").permitAll()
+        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+        .requestMatchers("/api/v1/trainer/**").hasRole("TRAINER")
+        .requestMatchers("/api/v1/owner/**").hasRole("OWNER")
+        .requestMatchers("/api/v1/gyms/**").hasAnyRole("ADMIN", "OWNER", "MEMBER")
+        .requestMatchers("/api/v1/membership-plans/**", "/api/v1/memberships/**", "/api/v1/payments/**", "/api/v1/stripe/**",
+            "/api/membership-plans/**", "/api/memberships/**", "/api/payments/**").hasAnyRole("MEMBER", "TRAINER", "OWNER", "ADMIN")
+        .requestMatchers("/api/v1/member/**").hasRole("MEMBER")
+        .requestMatchers("/api/v1/activities/**", "/api/v1/goals/**", "/api/v1/measurements/**", "/api/v1/files/**",
+            "/api/v1/users/search", "/api/v1/users/profile", "/api/v1/users/profile/**", "/api/v1/users/change-password",
+            "/api/v1/recommendations/**").hasAnyRole("MEMBER", "TRAINER", "OWNER", "ADMIN")
+        .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
+        .anyRequest().authenticated()
+    );
+  }
+
+  private void addFilters(HttpSecurity http) {
+    http.addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    http.addFilterAfter(xssFilter, JwtAuthenticationFilter.class);
   }
 
   @Bean

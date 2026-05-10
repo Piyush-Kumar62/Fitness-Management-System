@@ -1,6 +1,7 @@
 package com.project.fitness.domain.user.dto;
 
 import com.project.fitness.domain.user.model.UserRole;
+import com.project.fitness.domain.user.model.AccountStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -29,4 +30,8 @@ public class UpdateUserRequest {
   private UserRole role;
 
   private Boolean active;
+
+  private AccountStatus status;
+
+  private Boolean emailVerified;
 }
