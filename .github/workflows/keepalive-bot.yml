@@ -1,0 +1,19 @@
+name: Keepalive Bot
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping-services:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping Render backend
+        if: vars.KEEPALIVE_BACKEND_URL != ''
+        run: curl -fsSL --max-time 20 "${{ vars.KEEPALIVE_BACKEND_URL }}"
+
+      - name: Ping Vercel frontend
+        if: vars.KEEPALIVE_FRONTEND_URL != ''
+        run: curl -fsSL --max-time 20 "${{ vars.KEEPALIVE_FRONTEND_URL }}"
