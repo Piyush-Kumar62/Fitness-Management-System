@@ -47,5 +47,17 @@ coverage/
 # ── Misc scripts / temp ───────────────────────────────────────
 cleanup.sh
 
+# ── Local docs & one-off runbooks ─────────────────────────────
+DEPLOYMENT.md
+DEPLOYMENT_RENDER_VERCEL_GITHUB.md
+RUNBOOK_AI_PHASE1.md
+docs/
+scripts/
+
+# ── Backend local docs/resources ──────────────────────────────
+backend/docs/
+backend/src/main/resources/application-ai.yml
+backend/src/main/resources/db/
+
 # ── Uploads (runtime-generated) ──────────────────────────────
 uploads/

@@ -12,6 +12,7 @@ A comprehensive full-stack fitness tracking application with AI-powered recommen
 - [Project Structure](#-project-structure)
 - [Configuration](#-configuration)
 - [Docker Deployment](#-docker-deployment)
+- [Deployment Guide](#-deployment-guide)
 - [Security](#-security)
 - [API Documentation](#-api-documentation)
 - [Troubleshooting](#-troubleshooting)
@@ -399,6 +400,12 @@ cd frontend
 docker build -t fitness-frontend .
 docker run -p 80:80 fitness-frontend
 ```
+
+## 🚀 Deployment Guide
+
+For production-style setup with **Render + Neon + Vercel**, CI-gated auto-deploy, and keepalive bot:
+
+- See [DEPLOYMENT.md](DEPLOYMENT.md)
 
 ## 🛡️ Security
 
