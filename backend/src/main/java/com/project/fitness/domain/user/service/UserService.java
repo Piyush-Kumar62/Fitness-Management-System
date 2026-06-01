@@ -150,6 +150,19 @@ public class UserService {
         .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
   }
 
+  @Transactional(readOnly = true)
+  public UserResponse getTrainerForMember(String memberId) {
+    User member = getUserById(memberId);
+    if (member.getRole() != UserRole.MEMBER) {
+      throw new UnauthorizedException("Only members can access trainer details");
+    }
+    if (member.getTrainerId() == null || member.getTrainerId().isBlank()) {
+      return null;
+    }
+    User trainer = getUserById(member.getTrainerId());
+    return mapToResponse(trainer);
+  }
+
   public UserResponse mapToResponse(User user) {
     return UserResponse.builder()
         .id(user.getId())

@@ -15,6 +15,8 @@ public interface MembershipRepository extends JpaRepository<Membership, String> 
   
   Page<Membership> findByMemberIdOrderByCreatedAtDesc(String memberId, Pageable pageable);
 
+  Membership findFirstByMemberIdAndStatusOrderByEndDateDesc(String memberId, MembershipStatus status);
+
   List<Membership> findByMemberIdInAndStatus(List<String> memberIds, MembershipStatus status);
 
   List<Membership> findByStatusAndEndDate(MembershipStatus status, java.time.LocalDate endDate);

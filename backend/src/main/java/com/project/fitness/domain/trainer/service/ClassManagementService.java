@@ -104,6 +104,14 @@ public class ClassManagementService {
         .toList();
   }
 
+  @Transactional(readOnly = true)
+  public List<AttendanceResponse> getMemberAttendance(String memberId, LocalDate startDate, LocalDate endDate) {
+    getUser(memberId, UserRole.MEMBER);
+    return attendanceRepository.findByMemberIdAndDateBetween(memberId, startDate, endDate).stream()
+        .map(this::toAttendanceResponse)
+        .toList();
+  }
+
   public AttendanceResponse markAttendance(String trainerId, MarkAttendanceRequest request) {
     User trainer = getUser(trainerId, UserRole.TRAINER);
     ClassSchedule schedule = getSchedule(request.getClassId());

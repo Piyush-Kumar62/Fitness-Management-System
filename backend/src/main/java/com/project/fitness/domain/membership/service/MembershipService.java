@@ -123,6 +123,16 @@ public class MembershipService {
     );
   }
 
+  @Transactional(readOnly = true)
+  public MembershipResponse getActiveMembership(String memberId) {
+    Membership membership = membershipRepository
+        .findFirstByMemberIdAndStatusOrderByEndDateDesc(memberId, MembershipStatus.ACTIVE);
+    if (membership == null) {
+      return null;
+    }
+    return toMembershipResponse(membership);
+  }
+
   private String resolveMemberId(String actorId, boolean memberActor, String requestedMemberId) {
     if (!memberActor && requestedMemberId != null && !requestedMemberId.isBlank()) {
       return requestedMemberId;
