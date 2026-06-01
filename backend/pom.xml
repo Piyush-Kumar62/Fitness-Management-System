@@ -204,6 +204,16 @@
       <groupId>org.springframework.boot</groupId>
     </dependency>
 
+    <!-- Spring AI + WebFlux (AI provider integration) -->
+    <dependency>
+      <groupId>org.springframework.ai</groupId>
+      <artifactId>spring-ai-spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
+
     <!-- Redis Cache -->
     <dependency>
       <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -212,6 +222,12 @@
     <dependency>
       <artifactId>spring-boot-starter-cache</artifactId>
       <groupId>org.springframework.boot</groupId>
+    </dependency>
+
+    <!-- Flyway Migrations -->
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
     </dependency>
 
     <!-- Audit Logging -->
@@ -315,7 +331,20 @@
     <lombok.version>1.18.34</lombok.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <springdoc.version>2.6.0</springdoc.version>
+    <spring-ai.version>1.0.0</spring-ai.version>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.ai</groupId>
+        <artifactId>spring-ai-bom</artifactId>
+        <version>${spring-ai.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <version>0.0.1-SNAPSHOT</version>
 

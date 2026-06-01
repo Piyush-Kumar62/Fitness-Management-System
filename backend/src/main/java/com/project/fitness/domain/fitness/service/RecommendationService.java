@@ -98,7 +98,7 @@ public class RecommendationService {
     return RecommendationResponse.builder()
         .id(rec.getId())
         .userId(rec.getUser().getId())
-        .activityId(rec.getActivity().getId())
+        .activityId(rec.getActivity() != null ? rec.getActivity().getId() : null)
         .type(rec.getType())
         .recommendation(rec.getRecommendation())
         .improvements(rec.getImprovements())

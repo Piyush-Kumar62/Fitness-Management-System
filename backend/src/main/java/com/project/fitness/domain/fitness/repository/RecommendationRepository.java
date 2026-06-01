@@ -4,8 +4,10 @@ import com.project.fitness.domain.user.model.User;
 
 import com.project.fitness.domain.fitness.model.Recommendation;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import java.util.List;
 
+@Repository
 public interface RecommendationRepository extends JpaRepository<Recommendation, String> {
   // Property traversal: Recommendation.user.id / Recommendation.activity.id
   List<Recommendation> findByUser_IdOrderByCreatedAtDesc(String userId);

@@ -1,6 +1,7 @@
 package com.project.fitness.common.exception;
 
 import com.project.fitness.common.response.ApiResponse;
+import com.project.fitness.ai.exception.AiProviderException;
 import com.project.fitness.common.util.CorrelationIdUtil;
 import java.util.HashMap;
 import java.util.Map;
@@ -80,6 +81,13 @@ public class GlobalExceptionHandler {
     log.warn("[{}] Illegal argument: {}", correlationId(), ex.getMessage());
     return ResponseEntity.badRequest()
         .body(ApiResponse.error(ex.getMessage(), correlationId()));
+  }
+
+  @ExceptionHandler(AiProviderException.class)
+  public ResponseEntity<ApiResponse<Void>> handleAiProvider(AiProviderException ex) {
+    log.error("[{}] AI provider error: {}", correlationId(), ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+        .body(ApiResponse.error("AI provider unavailable", correlationId()));
   }
 
   // 8. Generic runtime

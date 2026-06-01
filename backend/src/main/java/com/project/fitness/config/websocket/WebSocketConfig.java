@@ -29,9 +29,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
         .addInterceptors(userHandshakeInterceptor)
         .setAllowedOrigins(origins);
 
-    // SockJS compatibility endpoint to prevent /ws/info 404 noise
-    // from clients/proxies that probe SockJS transport.
-    registry.addHandler(notificationWebSocketHandler, "/ws")
+    registry.addHandler(notificationWebSocketHandler, "/ws/notifications/sockjs")
         .addInterceptors(userHandshakeInterceptor)
         .setAllowedOrigins(origins)
         .withSockJS();
