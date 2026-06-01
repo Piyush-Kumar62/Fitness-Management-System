@@ -1,16 +1,16 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { OwnerService } from '../../../core/services/owner.service';
 import { GymService } from '../../../core/services/gym.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { User } from '../../../core/models/user.model';
 import { GymInfo } from '../../../core/models/subscription.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-owner-trainers',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './owner-trainers.component.html',
 })
 export class OwnerTrainersComponent implements OnInit {
@@ -28,6 +28,8 @@ export class OwnerTrainersComponent implements OnInit {
   page = signal(0);
   size = signal(10);
   totalElements = signal(0);
+
+  totalPages = computed(() => Math.ceil(this.totalElements() / this.size()));
 
   trainerForm: FormGroup = this.fb.group({
     firstName: ['', [Validators.required]],
@@ -52,6 +54,20 @@ export class OwnerTrainersComponent implements OnInit {
       complete: () => this.isLoading.set(false),
       error: () => this.isLoading.set(false),
     });
+  }
+
+  nextPage(): void {
+    if ((this.page() + 1) * this.size() < this.totalElements()) {
+      this.page.update((p) => p + 1);
+      this.load();
+    }
+  }
+
+  prevPage(): void {
+    if (this.page() > 0) {
+      this.page.update((p) => p - 1);
+      this.load();
+    }
   }
 
   loadGyms(): void {

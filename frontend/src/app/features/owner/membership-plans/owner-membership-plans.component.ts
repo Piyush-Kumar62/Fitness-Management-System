@@ -1,23 +1,28 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MembershipPlan } from '../../../core/models/membership.model';
 import { MembershipService } from '../../../core/services/membership.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { GymService } from '../../../core/services/gym.service';
+import { GymInfo } from '../../../core/models/subscription.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-owner-membership-plans',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './owner-membership-plans.component.html',
 })
 export class OwnerMembershipPlansComponent implements OnInit {
   private fb = inject(FormBuilder);
   private membershipService = inject(MembershipService);
   private authService = inject(AuthService);
+  private gymService = inject(GymService);
 
+  gyms = signal<GymInfo[]>([]);
+  selectedGymId = signal<string>('');
   plans = signal<MembershipPlan[]>([]);
-  gymId = computed(() => this.authService.user()?.gymId || '');
+  gymId = computed(() => this.selectedGymId());
 
   form = this.fb.group({
     name: ['', [Validators.required]],
@@ -27,6 +32,25 @@ export class OwnerMembershipPlansComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.loadGyms();
+  }
+
+  loadGyms(): void {
+    this.gymService.getMyGyms().subscribe({
+      next: (rows) => {
+        this.gyms.set(rows);
+        if (rows.length > 0) {
+          this.selectedGymId.set(rows[0].id);
+          this.loadPlans();
+        }
+      },
+      error: (err) => console.error('Failed to load gyms:', err)
+    });
+  }
+
+  onGymChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    this.selectedGymId.set(target.value);
     this.loadPlans();
   }
 

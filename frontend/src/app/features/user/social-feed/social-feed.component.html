@@ -15,11 +15,11 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
           <div class="p-4 border-b dark:border-gray-700 flex items-center space-x-3">
             <div class="h-10 w-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold">
-              {{ activity.userName?.substring(0, 1) || 'U' }}
+              {{ activity.user ? activity.user.firstName?.substring(0, 1) : (activity.userName?.substring(0, 1) || 'M') }}
             </div>
             <div>
-              <p class="font-bold text-gray-900 dark:text-white">{{ activity.userName }}</p>
-              <p class="text-xs text-gray-500">{{ formatDate(activity.startTime) }}</p>
+              <p class="font-bold text-gray-900 dark:text-white">{{ activity.user ? (activity.user.firstName + ' ' + activity.user.lastName) : (activity.userName || 'Member') }}</p>
+              <p class="text-xs text-gray-500">{{ formatDate(activity.date || activity.startTime || activity.createdAt) }}</p>
             </div>
           </div>
           <div class="p-6">
