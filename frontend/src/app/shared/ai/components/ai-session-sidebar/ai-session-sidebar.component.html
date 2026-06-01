@@ -1,0 +1,71 @@
+<aside class="ai-sidebar" aria-label="AI sessions">
+  <div class="ai-sidebar-header">
+    <div>
+      <h3>Sessions</h3>
+      <p>Recent AI chats</p>
+    </div>
+    <button type="button" class="ai-new" (click)="create.emit()" aria-label="New session">
+      +
+    </button>
+  </div>
+
+  <div class="ai-sidebar-body">
+    @if (isLoading) {
+      <div class="ai-skeleton">
+        <span></span><span></span><span></span>
+      </div>
+    } @else {
+      @if (!sessions.length) {
+        <div class="ai-empty">
+          <p>No sessions yet.</p>
+          <button type="button" (click)="create.emit()">Start one</button>
+        </div>
+      }
+      @for (session of sessions; track trackById($index, session)) {
+        <div
+          class="ai-session"
+          [class.active]="session.id === selectedSessionId"
+          role="button"
+          tabindex="0"
+          (click)="select.emit(session.id)"
+          (keydown.enter)="select.emit(session.id)"
+        >
+          @if (editingSessionId() === session.id) {
+            <div class="ai-edit">
+              <input
+                [ngModel]="titleDraft()"
+                (ngModelChange)="titleDraft.set($event)"
+                (keydown.enter)="submitRename(session)"
+                aria-label="Edit session title"
+              />
+              <div class="ai-edit-actions">
+                <button type="button" (click)="submitRename(session)">Save</button>
+                <button type="button" (click)="cancelRename()">Cancel</button>
+              </div>
+            </div>
+          } @else {
+            <div class="ai-session-title">{{ session.title || 'Untitled session' }}</div>
+            <div class="ai-session-meta">{{ session.updatedAt | date: 'short' }}</div>
+            <div class="ai-session-actions">
+              <button
+                type="button"
+                (click)="startRename(session); $event.stopPropagation()"
+                aria-label="Rename session"
+              >
+                Rename
+              </button>
+              <button
+                type="button"
+                class="danger"
+                (click)="delete.emit(session.id); $event.stopPropagation()"
+                aria-label="Delete session"
+              >
+                Delete
+              </button>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+</aside>

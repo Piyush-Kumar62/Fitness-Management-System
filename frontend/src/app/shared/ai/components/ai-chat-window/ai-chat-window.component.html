@@ -1,0 +1,112 @@
+<section class="ai-panel" role="dialog" aria-label="AI assistant">
+  <header class="ai-panel-header">
+    <div class="ai-title">
+      <div class="ai-title-badge">
+        <span class="ai-title-dot"></span>
+        <span>AI Coach</span>
+      </div>
+      <p class="ai-title-sub">Streaming fitness guidance and session history.</p>
+    </div>
+    <div class="ai-header-actions">
+      <div class="ai-connection" [class.connected]="connectionState() === 'connected'">
+        <span class="ai-connection-dot"></span>
+        <span>
+          @switch (connectionState()) {
+            @case ('connected') { Connected }
+            @case ('connecting') { Connecting }
+            @case ('error') { Reconnecting }
+            @default { Offline }
+          }
+        </span>
+      </div>
+      <button type="button" class="ai-close" (click)="onClose()" aria-label="Close assistant">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M18 6l-12 12" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="ai-panel-body">
+    <app-ai-session-sidebar
+      class="ai-sessions"
+      [sessions]="sessions()"
+      [selectedSessionId]="selectedSessionId()"
+      [isLoading]="isLoadingSessions()"
+      (select)="onSelectSession($event)"
+      (create)="onCreateNewSession()"
+      (rename)="onRenameSession($event)"
+      (delete)="onDeleteSession($event)"
+    ></app-ai-session-sidebar>
+
+    <div class="ai-chat">
+      <div class="ai-chat-toolbar">
+        <div>
+          <h3 class="ai-session-title">
+            {{ selectedSession()?.title || 'Start a new AI session' }}
+          </h3>
+          <p class="ai-session-meta">
+            @if (selectedSession()) {
+              {{ selectedSession()?.updatedAt | date: 'medium' }}
+            } @else {
+              Connect a session to begin.
+            }
+          </p>
+        </div>
+        <button
+          type="button"
+          class="ai-new-chat"
+          (click)="onCreateNewSession()"
+          aria-label="Start a new chat"
+        >
+          New Chat
+        </button>
+      </div>
+
+      <div #messagesViewport class="ai-messages" role="log" aria-live="polite">
+        @if (isLoadingMessages()) {
+          <div class="ai-loading">
+            <span></span><span></span><span></span>
+          </div>
+        } @else {
+          @if (!messages().length) {
+            <div class="ai-empty">
+              <h4>Your assistant is ready</h4>
+              <p>Ask about training plans, nutrition, or progress insights.</p>
+            </div>
+          }
+          @for (message of messages(); track message.id) {
+            <app-ai-message [message]="message"></app-ai-message>
+          }
+        }
+      </div>
+
+      @if (isStreaming()) {
+        <div class="ai-typing" aria-live="polite">
+          <span class="ai-typing-dot"></span>
+          <span class="ai-typing-text">AI is thinking...</span>
+        </div>
+      }
+
+      <div class="ai-composer">
+        <textarea
+          [ngModel]="composer()"
+          (ngModelChange)="composer.set($event)"
+          (keydown)="onComposerKeydown($event)"
+          placeholder="Ask about workouts, meals, or progress..."
+          rows="2"
+          aria-label="Message composer"
+        ></textarea>
+        <button
+          type="button"
+          class="ai-send"
+          (click)="sendMessage()"
+          [disabled]="isStreaming() || !composer().trim()"
+          aria-label="Send message"
+        >
+          Send
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

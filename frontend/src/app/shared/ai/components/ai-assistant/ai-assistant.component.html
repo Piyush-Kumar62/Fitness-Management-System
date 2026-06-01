@@ -1,0 +1,36 @@
+<div class="ai-assistant-root" aria-live="polite">
+  <button
+    class="ai-fab"
+    type="button"
+    (click)="toggleOpen()"
+    [attr.aria-expanded]="isOpen()"
+    aria-label="Toggle AI assistant"
+  >
+    <span class="ai-fab-ring"></span>
+    <span class="ai-fab-core">
+      <svg class="ai-fab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.8"
+          d="M12 3c4.97 0 9 3.58 9 8 0 2.7-1.6 5.1-4.08 6.54l.57 3.45-3.12-1.72a11.27 11.27 0 0 1-2.37.24c-4.97 0-9-3.58-9-8s4.03-8 9-8z"
+        />
+      </svg>
+    </span>
+    <span class="ai-fab-label">AI</span>
+  </button>
+
+  @if (isOpen()) {
+    @defer (when isOpen()) {
+      <app-ai-chat-window (close)="close()"></app-ai-chat-window>
+    } @placeholder {
+      <div class="ai-panel-shell" role="dialog" aria-label="AI assistant">
+        <div class="ai-panel-header">
+          <div class="ai-panel-title"></div>
+          <div class="ai-panel-actions"></div>
+        </div>
+        <div class="ai-panel-body"></div>
+      </div>
+    }
+  }
+</div>
